@@ -54,7 +54,7 @@ module.exports = cds.service.impl(async function () {
         try {
             const external = await cds.connect.to('API_SALES_ORDER_SRV');
             const tx = external.transaction(req);
-            return await tx.emit({
+            return await tx.send({
                 query: req.query,
                 headers: {
                     'APIKey': process.env.APIKey
