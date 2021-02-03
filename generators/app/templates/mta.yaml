@@ -1,0 +1,220 @@
+_schema-version: '3.1'
+ID: <%= projectName %>
+version: 0.0.1
+
+parameters:
+  enable-parallel-deployments: true
+
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm install --production
+        - npx -p @sap/cds-dk cds build --production
+
+modules:
+<% if(hana && !multiTenant){ -%>
+  # ---------------- DATABASE DEPLOYER MODULE ------------------
+  - name: <%= projectName %>-db-deployer
+  # ------------------------------------------------------------
+    type: hdb
+    path: gen/db
+    parameters:
+      buildpack: nodejs_buildpack
+      memory: 256M
+      disk-quota: 1024M
+<% if(customDomain !== ""){ -%>
+      domain: <%= customDomain %>
+<% } -%>
+    requires:
+<% if(authentication || api){ -%>
+      - name: <%= projectName %>-uaa
+<% } -%>
+      - name: <%= projectName %>-db
+<% if(schemaName !== ""){ -%>
+      - name: <%= projectName %>-db-<%= schemaName %>
+<% } -%>
+<% } -%>
+
+  # --------------------- SERVER MODULE ------------------------
+  - name: <%= projectName %>-srv
+  # ------------------------------------------------------------
+    type: nodejs
+    path: gen/srv
+    parameters:
+      buildpack: nodejs_buildpack
+      memory: 512M
+      disk-quota: 1024M
+<% if(customDomain !== ""){ -%>
+<% if(multiTenant){ -%>
+      host: <%= projectName %>-srv
+<% } -%>
+      domain: <%= customDomain %>
+<% } -%>
+<% if(api){ -%>
+    properties:
+      APIKey: <%= APIKey %>
+<% } -%>
+<% if(authentication || api || hana){ -%>
+    requires:
+<% } -%>
+<% if(authentication || api){ -%>
+      - name: <%= projectName %>-uaa
+<% } -%>
+<% if(api){ -%>
+      - name: <%= projectName %>-dest
+<% } -%>
+<% if(hana && !multiTenant){ -%>
+      - name: <%= projectName %>-db
+<% } -%>
+<% if(multiTenant){ -%>
+      - name: <%= projectName %>-registry
+      - name: <%= projectName %>-sm
+<% } -%>
+    provides:
+      - name: srv-api
+        properties:
+          srv-url: ${default-url}
+
+<% if(ui || authentication){ -%>
+  # ---------------------- APP MODULE --------------------------
+  - name: <%= projectName %>
+  # ------------------------------------------------------------
+    type: html5
+    path: app
+    parameters:
+      memory: 256M
+      disk-quota: 1024M
+<% if(customDomain !== ""){ -%>
+<% if(multiTenant){ -%>
+      host: <%= projectName %>
+<% } -%>
+      domain: <%= customDomain %>
+<% } -%>
+<% if(multiTenant){ -%>
+    properties:
+<% if(customDomain !== ""){ -%>
+      TENANT_HOST_PATTERN: '^(.*).<%= customDomain %>'
+<% } else { -%>
+      TENANT_HOST_PATTERN: '^(.*)-${space}-${app-name}.${default-domain}'
+<% } -%>
+<% } -%>
+    requires:
+<% if(authentication){ -%>
+      - name: <%= projectName %>-uaa
+<% } -%>
+      - name: srv-api
+        group: destinations
+        properties:
+          name: srv
+          url: ~{srv-url}
+<% if(authentication){ -%>
+          forwardAuthToken: true
+<% } -%>
+<% if(multiTenant){ -%>
+    provides:
+      - name: app_api
+        properties:
+          url: ${default-url}
+          application: ${app-name}
+<% } -%>
+<% } -%>
+
+<% if(authentication || api || hana){ -%>
+resources:
+<% if(authentication || api){ -%>
+  # ----------------------- UAA SERVICE ------------------------
+  - name: <%= projectName %>-uaa
+  # ------------------------------------------------------------
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: ./xs-security.json
+<% if(multiTenant){ -%>
+      xsuaa-app: ${space}-~{app_api/application}
+      config:
+        xsappname: ${xsuaa-app}
+    properties:
+      XSAPPNAME: ${xsuaa-app}
+    requires: 
+      - name: app_api
+<% } -%>
+<% } -%>
+
+<% if(api){ -%>
+  # -------------------- DESTINATION SERVICE -------------------
+  - name: <%= projectName %>-dest
+  # ------------------------------------------------------------
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite
+<% } -%>
+
+<% if(hana && !multiTenant){ -%>
+  # ------------------- HDI CONTAINER SERVICE ------------------
+  - name: <%= projectName %>-db
+  # ------------------------------------------------------------
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared
+    properties:
+      hdi-service-name: ${service-name}
+
+<% if(schemaName !== ""){ -%>
+  # ------------------- USER-PROVIDED SERVICE ------------------
+  - name: <%= projectName %>-db-<%= schemaName %>
+  # ------------------------------------------------------------
+    type: org.cloudfoundry.existing-service
+    parameters:
+      service-name: <%= projectName %>-db-<%= schemaName %>
+<% } -%>
+<% } -%>
+
+<% if(multiTenant){ -%>
+  # --------------------- REGISTRY SERVICE ---------------------
+  - name: <%= projectName %>-registry
+  # ------------------------------------------------------------
+    type: org.cloudfoundry.managed-service
+    requires:
+      - name: <%= projectName %>-uaa
+    parameters:
+      service: saas-registry
+      service-plan: application
+      service-name: <%= projectName %>-registry
+      config:
+        xsappname: ~{<%= projectName %>-uaa/XSAPPNAME}
+        appName: <%= projectName %>
+        displayName: '<%= displayName %>'
+        description: '<%= description %>'
+        category: '<%= category %>'
+        appUrls:
+<% if(customDomain !== ""){ -%>
+          onSubscription: https://<%= projectName %>-srv.<%= customDomain %>/mtx/v1/provisioning/tenant/{tenantId}
+<% if(api){ -%>
+          getDependencies: https://<%= projectName %>-srv.<%= customDomain %>/mtx/v1/provisioning/dependencies
+<% } -%>
+<% } else { -%>
+          onSubscription: https://${org}-${space}-<%= projectName %>-srv.${default-domain}/mtx/v1/provisioning/tenant/{tenantId}
+<% if(api){ -%>
+          getDependencies: https://${org}-${space}-<%= projectName %>-srv.${default-domain}/mtx/v1/provisioning/dependencies
+<% } -%>
+<% } -%>
+
+  # ------------------- SERVICE MANAGER SERVICE ----------------
+  - name: <%= projectName %>-sm
+  # ------------------------------------------------------------
+    type: org.cloudfoundry.managed-service
+    requires:
+     - name: <%= projectName %>-uaa
+    parameters:
+       service: service-manager
+       service-plan: container
+       polling_timeout_seconds: 240
+       config:
+         acquireTimeoutMillis: max
+         polling_timeout_seconds: 480
+<% } -%>
+<% } -%>

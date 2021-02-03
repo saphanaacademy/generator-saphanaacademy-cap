@@ -1,0 +1,139 @@
+{
+    "xsappname": "<%= projectName %>",
+<% if(!multiTenant){ -%>
+    "tenant-mode": "dedicated"
+<% } else { -%>
+    "tenant-mode": "shared",
+    "scopes": [
+        {
+            "name": "$XSAPPNAME.Callback",
+            "grant-as-authority-to-apps": [
+                "$XSAPPNAME(application,sap-provisioning,tenant-onboarding)"
+            ]
+        }
+<% } -%>
+<% if(authorization){ -%>
+<% if(multiTenant){ -%>
+        ,
+<% } else { -%>
+    ,"scopes": [
+<% } -%>
+        {
+            "name": "$XSAPPNAME.Viewer",
+            "description": "Viewer"
+        },
+        {
+            "name": "$XSAPPNAME.Admin",
+            "description": "Administrator"
+        }
+<% if(multiTenant){ -%>
+        ,
+        {
+            "name": "$XSAPPNAME.ExtendCDS",
+            "description": "Create Extensions"
+        },
+        {
+            "name": "$XSAPPNAME.ExtendCDSdelete",
+            "description": "Delete Extensions"
+        }
+<% } -%>
+    ],
+<% } -%>
+<% if(multiTenant && !authorization){ -%>
+    ]
+<% } -%>
+<% if(authorization){ -%>
+<% if(attributes){ -%>
+    "attributes": [
+        {
+            "name": "Region",
+            "description": "Region",
+            "valueType": "string"
+        }
+    ],
+<% } -%>
+    "role-templates": [
+        {
+            "name": "Viewer",
+            "description": "Viewer",
+<% if(attributes){ -%>
+            "attribute-references": [
+                {
+                    "name": "Region"
+                }
+            ],
+<% } -%>
+            "scope-references": [
+                "$XSAPPNAME.Viewer"
+            ]
+        },
+        {
+            "name": "Admin",
+            "description": "Administrator",
+            "scope-references": [
+                "$XSAPPNAME.Admin"
+            ]
+        }
+<% if(multiTenant){ -%>
+        ,
+        {
+            "name": "ExtendCDS",
+            "description": "Extension Developer",
+            "scope-references": [
+                "$XSAPPNAME.ExtendCDS"
+            ]
+        },
+        {
+            "name": "ExtendCDSdelete",
+            "description": "Extension Developer - Delete",
+            "scope-references": [
+                "$XSAPPNAME.ExtendCDSdelete"
+            ]
+        }
+<% } -%>
+    ],
+    "role-collections": [
+<% if(!attributes){ -%>
+        {
+            "name": "<%= projectName %>_Viewer",
+            "description": "Viewing access",
+            "role-template-references": [
+                "$XSAPPNAME.Viewer"
+            ]
+        },
+<% } -%>
+        {
+            "name": "<%= projectName %>_Administrator",
+            "description": "Administrative access",
+            "role-template-references": [
+                "$XSAPPNAME.Admin"
+            ]
+        }
+<% if(multiTenant){ -%>
+        ,
+        {
+            "name": "<%= projectName %>_Extension_Developer",
+            "description": "Extension development access",
+            "role-template-references": [
+                "$XSAPPNAME.ExtendCDS"
+            ]
+        },
+        {
+            "name": "<%= projectName %>_Extension_Developer_Delete",
+            "description": "Extension development delete access",
+            "role-template-references": [
+                "$XSAPPNAME.ExtendCDSdelete"
+            ]
+        }
+<% } -%>
+    ]
+<% } -%>
+<% if(customDomain !== ""){ -%>
+    ,
+    "oauth2-configuration": {
+        "redirect-uris": [
+            "http*://*.<%= customDomain %>/**"
+        ]
+    }
+<% } -%>
+}

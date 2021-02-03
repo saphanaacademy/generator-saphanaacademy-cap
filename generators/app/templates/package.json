@@ -1,0 +1,93 @@
+{
+  "name": "<%= projectName %>",
+  "dependencies": {
+    "@sap/cds": "^4",
+<% if(v2support){ -%>
+    "@sap/cds-odata-v2-adapter-proxy": "^1",
+<% } -%>
+<% if(hana){ -%>
+    "@sap/hana-client": "^2",
+<% } -%>
+<% if(authentication){ -%>
+    "@sap/xsenv": "^3",
+    "@sap/xssec": "^3",
+    "@sap/audit-logging": "^3",
+    "passport": "^0.4.1",
+<% } -%>
+<% if(multiTenant){ -%>
+    "@sap/cds-mtx": "^1",
+    "@sap/hdi-deploy": "^3",
+    "@sap/instance-manager": "^2",
+    "cfenv": "^1",
+<% } -%>
+<% if(routes){ -%>
+    "axios": "^0.21.1",
+    "qs": "^6",
+<% } %>
+    "express": "^4"
+  },
+  "devDependencies": {
+    "sqlite3": "5.0.0"
+  },
+  "scripts": {
+    "start": "npx cds run"
+  },
+  "cds": {
+    "requires": {
+<% if(authentication){ -%>
+      "uaa": {
+        "kind": "xsuaa"
+      },
+      "auth": {
+        "strategy": "xsuaa"
+      },
+<% } -%>
+      "db": {
+        "kind": "sql"
+<% if(multiTenant){ -%>
+        ,
+        "multiTenant": true,
+        "vcap": {
+          "label": "service-manager"
+        }
+<% } -%>
+      }
+<% if(api){ -%>
+      ,
+      "API_SALES_ORDER_SRV": {
+        "kind": "odata",
+        "model": "srv/external/API_SALES_ORDER_SRV",
+        "credentials": {
+          "destination": "API_SALES_ORDER_SRV"
+        }
+      }
+<% } -%>
+    }
+<% if(multiTenant){ -%>
+    ,
+    "mtx": {
+      "element-prefix": [
+        "Z_",
+        "ZZ_"
+      ],
+      "namespace-blacklist": [
+        "com.sap.",
+        "sap.",
+        "<%= projectName %>."
+      ],
+      "entity-whitelist": [
+        "<%= projectName %>.db.Sales"
+      ],
+      "service-whitelist": [
+        "CatalogService"
+      ]
+    }
+<% } -%>
+<% if(hana){ -%>
+    ,
+    "hana": {
+      "deploy-format": "hdbtable"
+    }
+<% } -%>
+  }
+}

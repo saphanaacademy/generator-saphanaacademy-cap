@@ -1,0 +1,84 @@
+{
+    "welcomeFile": "index.html",
+<% if(authentication){ -%>
+    "authenticationMethod": "route",
+    "logout": {
+        "logoutEndpoint": "/logout",
+        "logoutPage": "/logout.html"
+    },
+    "errorPage": [
+        {
+            "status": [403],
+            "file": "/resources/forbidden.html"
+        }
+    ],
+<% }else{ -%>
+    "authenticationMethod": "none",
+<% } -%>
+    "routes": [
+        {
+            "source": "^/catalog/(.*)$",
+<% if(authentication){ -%>
+            "authenticationType": "xsuaa",
+<% } -%>
+<% if(authorization){ -%>
+            "scope": "$XSAPPNAME.Viewer",
+<% } -%>
+            "destination": "srv"
+        },
+<% if(v2support){ -%>
+        {
+            "source": "^/v2/catalog/(.*)$",
+<% if(authentication){ -%>
+            "authenticationType": "xsuaa",
+<% } -%>
+<% if(authorization){ -%>
+            "scope": "$XSAPPNAME.Viewer",
+<% } -%>
+            "destination": "srv"
+        },
+<% } -%>
+<% if(schemaName !== ''){ -%>
+        {
+            "source": "^/<%= schemaName %>/(.*)$",
+<% if(authentication){ -%>
+            "authenticationType": "xsuaa",
+<% } -%>
+<% if(authorization){ -%>
+            "scope": "$XSAPPNAME.Viewer",
+<% } -%>
+            "destination": "srv"
+        },
+<% } -%>
+<% if(schemaName !== '' && v2support){ -%>
+        {
+            "source": "^/v2/<%= schemaName %>/(.*)$",
+<% if(authentication){ -%>
+            "authenticationType": "xsuaa",
+<% } -%>
+<% if(authorization){ -%>
+            "scope": "$XSAPPNAME.Viewer",
+<% } -%>
+            "destination": "srv"
+        },
+<% } -%>
+        {
+            "source": "^/webapp/(.*)$",
+<% if(authentication){ -%>
+            "authenticationType": "xsuaa",
+<% } -%>
+<% if(authorization){ -%>
+            "scope": "$XSAPPNAME.Viewer",
+<% } -%>
+            "localDir": "resources"
+        },
+        {
+            "source": "^/(.*)$",
+<% if(authentication){ -%>
+            "authenticationType": "none",
+<% } -%>
+            "localDir": "resources",
+            "cacheControl": "no-cache"
+        }
+    ]
+}

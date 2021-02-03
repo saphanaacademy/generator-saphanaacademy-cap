@@ -1,0 +1,8 @@
+Name=API_SALES_ORDER_SRV
+URL=https\://sandbox.api.sap.com/s4hanacloud/sap/opu/odata/sap/API_SALES_ORDER_SRV
+Type=HTTP
+ProxyType=Internet
+Authentication=NoAuthentication
+WebIDEEnabled=true
+WebIDEUsage=odata_gen
+HTML5.DynamicDestination=true

@@ -1,0 +1,94 @@
+{
+  "name": "generator-saphanaacademy-cap",
+  "version": "0.0.1",
+  "description": "Yeoman Generator to jump-start CAP Multitarget Applications",
+  "homepage": "https://www.youtube.com/saphanaacademy",
+  "author": {
+    "name": "SAP HANA Academy",
+    "email": "hanaacademy@sap.com",
+    "url": "https://www.youtube.com/saphanaacademy"
+  },
+  "files": [
+    "generators"
+  ],
+  "main": "generators/index.js",
+  "keywords": [
+    "mta",
+    "multitarget",
+    "api",
+    "sdk",
+    "cloudsdk",
+    "uaa",
+    "security",
+    "authentication",
+    "authorization",
+    "odata",
+    "cap",
+    "hana",
+    "saphanaacademy",
+    "hanaacademy",
+    "dpe",
+    "digitalpartnerengineering",
+    "yeoman-generator"
+  ],
+  "devDependencies": {
+    "eslint": "^6.6.0",
+    "eslint-config-prettier": "^6.6.0",
+    "eslint-config-xo": "^0.29.1",
+    "eslint-plugin-prettier": "^3.1.4",
+    "husky": "^4.2.5",
+    "jest": "^25.4.0",
+    "lint-staged": "^10.2.11",
+    "prettier": "^2.0.5",
+    "yeoman-assert": "^3.1.0",
+    "yeoman-test": "^2.4.1"
+  },
+  "engines": {
+    "npm": ">= 4.0.0"
+  },
+  "dependencies": {
+    "@sap/hana-client": "^2",
+    "generate-password": "^1",
+    "chalk": "^4.1.0",
+    "yeoman-generator": "^4.11.0",
+    "yosay": "^2.0.2"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix"
+    ],
+    "*.json": [
+      "prettier --write"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": ""
+    }
+  },
+  "eslintConfig": {
+    "extends": [
+      "xo",
+      "prettier"
+    ],
+    "env": {
+      "jest": true,
+      "node": true
+    },
+    "rules": {
+      "prettier/prettier": "error"
+    },
+    "plugins": [
+      "prettier"
+    ]
+  },
+  "scripts": {
+    "pretest": "eslint .",
+    "test": "jest"
+  },
+  "repository": "saphanaacademy/generator-saphanaacademy-cap",
+  "license": "Apache-2.0"
+}

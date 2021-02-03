@@ -1,0 +1,14 @@
+{
+    "<%= projectName %>-db-<%= schemaName %>": {
+        "object_owner": {
+            "roles": [
+                "<%= projectName %>_<%= schemaName %>::EXTERNAL_ACCESS_G"
+            ]
+        },
+        "application_user": {
+            "roles": [
+                "<%= projectName %>_<%= schemaName %>::EXTERNAL_ACCESS"
+            ]
+        }
+    }
+}

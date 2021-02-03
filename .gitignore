@@ -1,0 +1,9 @@
+.DS_Store
+coverage
+node_modules/
+package-lock.json
+mta_archives/
+default-env.json
+.env
+.vscode/
+.yo-rc.json
