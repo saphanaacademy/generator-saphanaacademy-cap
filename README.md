@@ -17,7 +17,7 @@ In order to build the project ensure [@sap/cds-dk](https://www.npmjs.com/package
 
 This is already the case for SAP Business Application Studio.
 
-If using SAP HANA ensure you have an instance in the space where you'll be deploying the app.
+If using SAP HANA Cloud ensure you have an instance in the space where you'll be deploying the app.
 
 Also ensure that you are logged in to the Cloud Foundry CLI and are targeting the org and space into which you want to deploy the project.
 
