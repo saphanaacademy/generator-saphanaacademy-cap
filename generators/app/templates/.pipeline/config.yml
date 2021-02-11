@@ -1,7 +1,7 @@
 # Project configuration
 general:
   inferBuildTool: true
-  productiveBranch: 'master'
+  productiveBranch: 'main'
 
 # Stage configuration
 stages:

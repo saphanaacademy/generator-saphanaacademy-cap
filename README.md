@@ -40,7 +40,7 @@ Copyright (c) 2021 SAP SE or an SAP affiliate company. All rights reserved. This
 
 [npm-image]: https://badge.fury.io/js/generator-saphanaacademy-cap.svg
 [npm-url]: https://npmjs.org/package/generator-saphanaacademy-cap
-[travis-image]: https://travis-ci.com/saphanaacademy/generator-saphanaacademy-cap.svg?branch=master
+[travis-image]: https://travis-ci.com/saphanaacademy/generator-saphanaacademy-cap.svg?branch=main
 [travis-url]: https://travis-ci.com/saphanaacademy/generator-saphanaacademy-cap
 [daviddm-image]: https://david-dm.org/saphanaacademy/generator-saphanaacademy-cap.svg?theme=shields.io
 [daviddm-url]: https://david-dm.org/saphanaacademy/generator-saphanaacademy-cap
