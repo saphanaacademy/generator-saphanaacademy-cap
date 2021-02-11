@@ -22,9 +22,7 @@
 <% } -%>
 <% if(api){ -%>
     <a href="/catalog/SalesOrders?$top=10&$filter=TotalNetAmount%20gt%202000&$orderby=SalesOrder%20desc">Sales Orders</a><br />
-<% } -%>
-<% if(authorization){ -%>
-    <a href="/catalog/SalesAdmin">Sales (Admin)</a><br />
+    <a href="/catalog/Sales(9)/CatalogService.largestOrder()">Largest Sales Order</a><br />
 <% } -%>
 <% if(authentication){ -%>
     <a href="/catalog/userInfo()">User Info</a><br />
@@ -39,9 +37,7 @@
 <% } -%>
 <% if(api){ -%>
     <a href="/v2/catalog/SalesOrders?$top=10&$filter=TotalNetAmount%20gt%202000&$orderby=SalesOrder%20desc">Sales Orders</a><br />
-<% } -%>
-<% if(authorization){ -%>
-    <a href="/v2/catalog/SalesAdmin">Sales (Admin)</a><br />
+    <a href="/v2/catalog/Sales_largestOrder?ID=9">Largest Sales Order</a><br />
 <% } -%>
 <% if(authentication){ -%>
     <a href="/v2/catalog/userInfo()">User Info</a><br />

@@ -12,32 +12,26 @@
             defaultRenderer: 'fiori2',
             applications: {
                 'fiori-sales': {
-                    title: 'View Sales',
+                    title: 'Sales',
                     description: '<%= description %>',
-                    additionalInformation: 'SAPUI5.Component=<%= projectName %>-sales-view',
+                    additionalInformation: 'SAPUI5.Component=<%= projectName %>-sales',
                     applicationType : 'URL',
-                    url: './view',
+                    url: './sales',
                     navigationMode: 'embedded'
                 }
-<% if(authorization){ -%>
-                ,
-                'fiori-sales-admin': {
-                    title: 'Administrate Sales',
-                    description: '<%= description %>',
-                    additionalInformation: 'SAPUI5.Component=<%= projectName %>-sales-admin',
-                    applicationType : 'URL',
-                    url: './admin',
-                    navigationMode: 'embedded'
-                }
-<% } -%>
             }
         };
     </script>
 
-    <script src="https://ui5.sap.com/1.84.0/test-resources/sap/ushell/bootstrap/sandbox.js"></script>
-    <script src="https://ui5.sap.com/1.84.0/resources/sap-ui-core.js"
-        data-sap-ui-libs="sap.m, sap.ushell, sap.fe.templates" data-sap-ui-compatVersion="edge"
-        data-sap-ui-theme="sap_fiori_3" data-sap-ui-frameOptions="allow" data-sap-ui-bindingSyntax="complex"></script>
+    <script src="https://ui5.sap.com/test-resources/sap/ushell/bootstrap/sandbox.js">
+    </script>
+    <script src="https://ui5.sap.com/resources/sap-ui-core.js"
+            data-sap-ui-libs="sap.m, sap.ushell, sap.fe.templates"
+            data-sap-ui-compatVersion="edge"
+            data-sap-ui-theme="sap_fiori_3"
+            data-sap-ui-frameOptions="allow"
+            data-sap-ui-bindingSyntax="complex">
+    </script>
     <script>
         sap.ui.getCore().attachInit(function () {
             sap.ushell.Container.createRenderer().placeAt('content');

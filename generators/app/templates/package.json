@@ -35,21 +35,83 @@
   "cds": {
     "requires": {
 <% if(authentication){ -%>
-      "uaa": {
-        "kind": "xsuaa"
+      "[production]": {
+        "uaa": {
+          "kind": "xsuaa"
+        }
       },
       "auth": {
-        "strategy": "xsuaa"
+        "[production]": {
+          "strategy": "xsuaa"
+        },
+        "[development]": {
+          "strategy": "mock"
+<% if(authorization){ -%>
+          ,
+          "users": {
+            "joe": {
+              "roles": [
+                "Admin",
+                "Viewer"
+              ]
+<% if(attributes){ -%>
+              ,
+              "userAttributes": {
+                "Region": [
+                  "$UNRESTRICTED"
+                ]
+              }
+<% } -%>
+            },
+            "julie": {
+              "roles": [
+                "Viewer"
+              ]
+<% if(attributes){ -%>
+              ,
+              "userAttributes": {
+                "Region": [
+                  "North America",
+                  "Asia"
+                ]
+              }
+<% } -%>
+            },
+            "bob": {
+              "roles": [
+                "Viewer"
+              ]
+<% if(attributes){ -%>
+              ,
+              "userAttributes": {
+                "Region": [
+                  "Europe"
+                ]
+              }
+<% } -%>
+            }
+          }
+<% } -%>
+        }
       },
 <% } -%>
       "db": {
-        "kind": "sql"
+<% if(hana){ -%>
+        "[production]": {
+          "kind": "hana"
+        },
+        "[development]": {
+          "kind": "sql"
+        }
 <% if(multiTenant){ -%>
         ,
         "multiTenant": true,
         "vcap": {
           "label": "service-manager"
         }
+<% } -%>
+<% } else { -%>
+        "kind": "sql"
 <% } -%>
       }
 <% if(api){ -%>
@@ -58,7 +120,13 @@
         "kind": "odata",
         "model": "srv/external/API_SALES_ORDER_SRV",
         "credentials": {
-          "destination": "API_SALES_ORDER_SRV"
+          "[production]": {
+            "destination": "sandbox",
+            "path": "s4hanacloud/sap/opu/odata/sap/API_SALES_ORDER_SRV"
+          },
+          "[development]": {
+            "url": "https://sandbox.api.sap.com/s4hanacloud/sap/opu/odata/sap/API_SALES_ORDER_SRV"
+          }
         }
       }
 <% } -%>

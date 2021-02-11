@@ -4,9 +4,6 @@ module.exports = cds.service.impl(async function () {
 <% if(api){ -%>
            ,SalesOrders
 <% } -%>
-<% if(authorization){ -%>
-           ,SalesAdmin
-<% } -%>
           } = this.entities;
 
     this.after('READ', Sales, (each) => {
@@ -19,12 +16,11 @@ module.exports = cds.service.impl(async function () {
         }
     });
 
-<% if(authorization){ -%>
-    this.on('submitBoost', async req => {
+    this.on('boost', async req => {
         try {
             const ID = req.params[0];
             const tx = cds.tx(req);
-            await tx.update(SalesAdmin)
+            await tx.update(Sales)
                 .with({ amount: { '+=': 250 }, comments: 'Boosted!' })
                 .where({ ID: { '=': ID } })
                 ;
@@ -34,7 +30,6 @@ module.exports = cds.service.impl(async function () {
             return {};
         }
     });
-<% } -%>
 
 <% if(hanaNative){ -%>
     this.on('topSales', async (req) => {
@@ -60,6 +55,29 @@ module.exports = cds.service.impl(async function () {
                     'APIKey': process.env.APIKey
                 }
             })
+        } catch (err) {
+            req.reject(err);
+        }
+    });
+
+    this.on('largestOrder', Sales, async (req) => {
+        try {
+            let cql = SELECT.one(Sales).where({ ID: req.params[0] });
+            const res1 = await cds.read(cql);
+            cql = SELECT.one(SalesOrders).where({ SalesOrganization: res1[0].org }).orderBy({ TotalNetAmount: 'desc' });
+            const external = await cds.connect.to('API_SALES_ORDER_SRV');
+            const tx = external.transaction(req);
+            const res2 = await tx.send({
+                query: cql,
+                headers: {
+                    'APIKey': process.env.APIKey
+                }
+            });
+            if (res2) {
+                return res2.SoldToParty + ' @ ' + res2.TransactionCurrency + ' ' + Math.round(res2.TotalNetAmount).toString();
+            } else {
+                return 'Not found';
+            }
         } catch (err) {
             req.reject(err);
         }

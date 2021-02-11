@@ -1,7 +1,7 @@
 using {<%= projectName %>.db as <%= projectName %>} from '../db/data-model';
 
 <% if(api){ -%>
-using { API_SALES_ORDER_SRV as external } from './external/API_SALES_ORDER_SRV.csn';
+using { API_SALES_ORDER_SRV } from './external/API_SALES_ORDER_SRV.csn';
 <% } -%>
 
 service CatalogService @(path : '/catalog')
@@ -9,17 +9,33 @@ service CatalogService @(path : '/catalog')
 @(requires: 'authenticated-user')
 <% } -%>
 {
-    @readonly
     entity Sales
 <% if(authorization){ -%>
-      @(restrict: [{ 
+      @(restrict: [{ grant: ['READ'],
                      to: 'Viewer'
 <% if(attributes){ -%>
                     ,where: 'region = $user.Region' 
 <% } -%>
-                  }])
+                   },
+                   { grant: ['WRITE'],
+                     to: 'Admin' 
+                   }
+                  ])
 <% } -%>
-      as select * from <%= projectName %>.Sales;
+      as select * from <%= projectName %>.Sales
+      actions {
+<% if(api){ -%>
+<% if(authorization){ -%>
+        @(restrict: [{ to: 'Viewer' }])
+<% } -%>
+        function largestOrder() returns String;
+<% } -%>
+<% if(authorization){ -%>
+        @(restrict: [{ to: 'Admin' }])
+<% } -%>
+        action boost();
+      }
+    ;
 
 <% if(hanaNative){ -%>
     function topSales
@@ -32,11 +48,11 @@ service CatalogService @(path : '/catalog')
 
 <% if(api){ -%>
     @readonly
-    entity SalesOrders 
+    entity SalesOrders
 <% if(authorization){ -%>
       @(restrict: [{ to: 'Viewer' }])
 <% } -%>
-      as projection on external.A_SalesOrder {
+      as projection on API_SALES_ORDER_SRV.A_SalesOrder {
           SalesOrder,
           SalesOrganization,
           DistributionChannel,
@@ -44,13 +60,6 @@ service CatalogService @(path : '/catalog')
           TotalNetAmount,
           TransactionCurrency
         };
-<% } -%>
-
-<% if(authorization){ -%>
-    entity SalesAdmin
-      @(restrict: [{ to: 'Admin' }])
-      as select * from <%= projectName %>.Sales
-      actions { action submitBoost(); };
 <% } -%>
 
 <% if(authentication){ -%>

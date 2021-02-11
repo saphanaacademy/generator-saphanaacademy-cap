@@ -174,8 +174,14 @@ module.exports = class extends Generator {
       },
       {
         type: "confirm",
+        name: "cicd",
+        message: "Would you like to include Continuous Integration and Delivery (CI/CD) support?",
+        default: true
+      },
+      {
+        type: "confirm",
         name: "buildDeploy",
-        message: "Would you like to build and deploy the project?",
+        message: "Would you like to build and deploy the project now?",
         default: false
       },
     ]).then((answers) => {
@@ -237,6 +243,31 @@ module.exports = class extends Generator {
         });
       }
     }
+    if (answers.get('cicd') === true) {
+      answers.set('cforg', 'org');
+      answers.set('cfspace', 'space');
+      answers.set('cfapi', 'https://api.cf.region.hana.ondemand.com');
+      // try to identify the targeted api, org & space
+      const res = this.spawnCommandSync('cf', ['target'], { stdio: 'pipe' });
+      const stdout = res.stdout.toString('utf8');
+      var field_strings = stdout.split(/[\r\n]*---[\r\n]*/);
+      for (var i = 0; i < field_strings.length; i++) {
+        if (field_strings[i] == '') {
+          continue;
+        }
+        var props_strings = field_strings[i].split('\n');
+        for (var j = 0; j < props_strings.length; j++) {
+          var keyvalue = props_strings[j].split(':');
+          if (keyvalue[0].toUpperCase() === 'API ENDPOINT') {
+            answers.set('cfapi', keyvalue[1].trim() + ':' + keyvalue[2].trim());
+          } else if (keyvalue[0] === 'org') {
+            answers.set('cforg', keyvalue[1].trim());
+          } else if (keyvalue[0] === 'space') {
+            answers.set('cfspace', keyvalue[1].trim());
+          }
+        }
+      }
+    }
 
     // scaffold the project
     this.sourceRoot(path.join(__dirname, "templates"));
@@ -248,30 +279,35 @@ module.exports = class extends Generator {
       })
       .forEach((file) => {
         if (!(file.includes('.DS_Store'))) {
-          if (!(file === 'xs-security.json' && answers.get('authentication') === false && answers.get('api') === false)) {
-            if (!(file === 'srv/provisioning.js' && answers.get('multiTenant') === false)) {
-              if (!(file === 'srv/server.js' && answers.get('v2support') === false && answers.get('multiTenant') === false)) {
-                if (!(file.substring(0, 13) === 'srv/external/' && answers.get('api') === false)) {
-                  if (!(file.substring(0, 4) === 'app/' && answers.get('ui') === false)) {
-                    if (!(file.substring(0, 7) === 'db/src/' && answers.get('hanaNative') === false && answers.get('schemaName') === "")) {
-                      if (!(file.substring(0, 8) === 'mta.yaml' && (answers.get('hana') === false && answers.get('authentication') === false && answers.get('api') === false && answers.get('ui') === false))) {
-                        if (!((file.includes('i18n') || file.includes('webapp') || file.includes('index.cds') || file.includes('fiori-service.cds')) && answers.get('fiori') === false)) {
-                          if (!((file.substring(0, 15) === 'app/xs-app.json' || file.substring(0, 16) === 'app/package.json') && answers.get('ui') === false)) {
-                            if (!((file.includes('forbidden.html') || file.includes('logout.html')) && answers.get('authentication') === false)) {
-                              if (!(file.substring(0, 27) === 'app/resources/webapp/admin/' && answers.get('authorization') === false)) {
-                                if (!(file.substring(0, 20) === 'db/src/_SCHEMA_NAME_' && answers.get('schemaName') === "")) {
-                                  if (!((file.substring(0, 10) === 'db/src/SP_' || file.substring(0, 10) === 'db/src/TT_') && answers.get('hanaNative') === false)) {
-                                    const sOrigin = this.templatePath(file);
-                                    let fileDest = file;
-                                    console.log(file);
-                                    if (fileDest.includes('_PROJECT_NAME_')) {
-                                      fileDest = 'db/data/' + answers.get('projectName') + '.db-Sales.csv';
+          if (!(file === 'dotenv' && answers.get('api') === false)) {
+            if (!(file === 'xs-security.json' && answers.get('authentication') === false && answers.get('api') === false)) {
+              if (!((file === 'Jenkinsfile' || file.substring(0, 9) === '.pipeline') && answers.get('cicd') === false)) {
+                if (!(file === 'srv/provisioning.js' && answers.get('multiTenant') === false)) {
+                  if (!(file === 'srv/server.js' && answers.get('v2support') === false && answers.get('multiTenant') === false)) {
+                    if (!(file.substring(0, 13) === 'srv/external/' && answers.get('api') === false)) {
+                      if (!(file.substring(0, 4) === 'app/' && answers.get('ui') === false)) {
+                        if (!(file.substring(0, 7) === 'db/src/' && answers.get('hanaNative') === false && answers.get('schemaName') === "")) {
+                          if (!(file.substring(0, 8) === 'mta.yaml' && (answers.get('hana') === false && answers.get('authentication') === false && answers.get('api') === false && answers.get('ui') === false))) {
+                            if (!((file.includes('i18n') || file.includes('webapp') || file.includes('index.cds') || file.includes('fiori-service.cds')) && answers.get('fiori') === false)) {
+                              if (!((file.substring(0, 15) === 'app/xs-app.json' || file.substring(0, 16) === 'app/package.json') && answers.get('ui') === false)) {
+                                if (!((file.includes('forbidden.html') || file.includes('logout.html')) && answers.get('authentication') === false)) {
+                                  if (!(file.substring(0, 20) === 'db/src/_SCHEMA_NAME_' && answers.get('schemaName') === "")) {
+                                    if (!((file.substring(0, 10) === 'db/src/SP_' || file.substring(0, 10) === 'db/src/TT_') && answers.get('hanaNative') === false)) {
+                                      const sOrigin = this.templatePath(file);
+                                      let fileDest = file;
+                                      console.log(file);
+                                      if (fileDest.includes('_PROJECT_NAME_')) {
+                                        fileDest = 'db/data/' + answers.get('projectName') + '.db-Sales.csv';
+                                      }
+                                      if (fileDest.includes('_SCHEMA_NAME_')) {
+                                        fileDest = 'db/src/' + answers.get('schemaName') + '.hdbgrants';
+                                      }
+                                      if (fileDest === 'dotenv') {
+                                        fileDest = '.env';
+                                      }
+                                      const sTarget = this.destinationPath(fileDest);
+                                      this.fs.copyTpl(sOrigin, sTarget, this.config.getAll());
                                     }
-                                    if (fileDest.includes('_SCHEMA_NAME_')) {
-                                      fileDest = 'db/src/' + answers.get('schemaName') + '.hdbgrants';
-                                    }
-                                    const sTarget = this.destinationPath(fileDest);
-                                    this.fs.copyTpl(sOrigin, sTarget, this.config.getAll());
                                   }
                                 }
                               }
@@ -496,7 +532,7 @@ module.exports = class extends Generator {
               resObjects.forEach(element => {
                 serviceCDS += " entity " + element.OBJECT_NAME;
                 if (answers.get('authorization')) {
-                  serviceCDS += " @(restrict: [{ grant: ['READ','WRITE'], to: 'Admin' }, { grant: 'READ', to: 'Viewer' }])";
+                  serviceCDS += " @(restrict: [{ grant: 'READ', to: 'Viewer' }, { grant: 'WRITE', to: 'Admin' } ])";
                 }
                 if (element.OBJECT_TYPE === "V") {
                   serviceCDS += " as select * from " + answers.get('schemaName') + "." + element.OBJECT_NAME + ";";

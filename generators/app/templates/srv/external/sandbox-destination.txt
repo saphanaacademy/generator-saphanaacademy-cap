@@ -1,5 +1,5 @@
-Name=API_SALES_ORDER_SRV
-URL=https\://sandbox.api.sap.com/s4hanacloud/sap/opu/odata/sap/API_SALES_ORDER_SRV
+Name=sandbox
+URL=https\://sandbox.api.sap.com
 Type=HTTP
 ProxyType=Internet
 Authentication=NoAuthentication

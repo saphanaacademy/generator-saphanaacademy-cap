@@ -1,0 +1,42 @@
+# Project configuration
+general:
+  inferBuildTool: true
+  productiveBranch: 'master'
+
+# Stage configuration
+stages:
+  'Confirm':
+    manualConfirmation: false
+
+#  npmAudit:
+#    auditedAdvisories:
+
+#  lint:
+#    ui5BestPractices:
+#      failThreshold:
+#        error: <THRESHOLD>
+#        warning: <THRESHOLD>
+#        info: <THRESHOLD>
+
+# deploy to Cloud Foundry
+  productionDeployment:
+    cfTargets:
+      - appName: '<%= projectName %>'
+        org: '<%= cforg %>'
+        space: '<%= cfspace %>'
+        apiEndpoint: '<%= cfapi %>'
+        credentialsId: 'deploy-to-cf'
+
+# Step configuration
+steps:
+  mavenExecute:
+    dockerImage: devxci/mbtci:1.0.14
+
+  artifactPrepareVersion:
+    versioningType: cloud_noTag
+
+# transport management upload
+#  tmsUpload:
+#    nodeName: '<%= cfspace %>'
+#    credentialsId: 'tms-sk'
+#    customDescription: '<%= projectName %> <%= cfspace %>'

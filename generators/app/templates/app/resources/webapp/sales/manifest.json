@@ -1,5 +1,5 @@
 {
-    "_version": "1.28.0",
+    "_version": "1.29.0",
     "sap.app": {
         "id": "ui",
         "type": "application",
