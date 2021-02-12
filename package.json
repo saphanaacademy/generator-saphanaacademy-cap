@@ -1,7 +1,9 @@
 {
   "name": "generator-saphanaacademy-cap",
-  "version": "0.0.3",
+  "displayName": "SAP HANA Academy CAP",
   "description": "Yeoman Generator to jump-start SAP Cloud Business Applications",
+  "version": "0.0.4",
+  "license": "SEE LICENSE IN LICENSE",
   "homepage": "https://www.youtube.com/saphanaacademy",
   "author": {
     "name": "SAP HANA Academy",
@@ -47,6 +49,7 @@
     "npm": ">= 4.0.0"
   },
   "dependencies": {
+    "@sap/generator-hdb-project": "^1.0.0",
     "@sap/hana-client": "^2",
     "chalk": "^4.1.0",
     "generate-password": "^1",
@@ -90,6 +93,5 @@
     "pretest": "eslint .",
     "test": "jest"
   },
-  "repository": "saphanaacademy/generator-saphanaacademy-cap",
-  "license": "Apache-2.0"
+  "repository": "saphanaacademy/generator-saphanaacademy-cap"
 }

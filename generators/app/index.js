@@ -305,6 +305,9 @@ module.exports = class extends Generator {
                                       if (fileDest === 'dotenv') {
                                         fileDest = '.env';
                                       }
+                                      if (fileDest === 'dotgitignore') {
+                                        fileDest = '.gitignore';
+                                      }
                                       const sTarget = this.destinationPath(fileDest);
                                       this.fs.copyTpl(sOrigin, sTarget, this.config.getAll());
                                     }
