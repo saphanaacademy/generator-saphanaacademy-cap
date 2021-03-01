@@ -1,17 +1,17 @@
 {
   "name": "<%= projectName %>",
+  "version": "0.0.1",
+  "description": "<%= description %>",
   "dependencies": {
     "@sap/cds": "^4",
+    "@sap/audit-logging": "^3",
+    "@sap/hana-client": "^2",
 <% if(v2support){ -%>
     "@sap/cds-odata-v2-adapter-proxy": "^1",
-<% } -%>
-<% if(hana){ -%>
-    "@sap/hana-client": "^2",
 <% } -%>
 <% if(authentication){ -%>
     "@sap/xsenv": "^3",
     "@sap/xssec": "^3",
-    "@sap/audit-logging": "^3",
     "passport": "^0.4.1",
 <% } -%>
 <% if(multiTenant){ -%>
@@ -24,7 +24,10 @@
     "axios": "^0.21.1",
     "qs": "^6",
 <% } %>
-    "express": "^4"
+<% if(applicationLogging){ -%>
+  "cf-nodejs-logging-support": "^6",
+<% } -%>
+  "express": "^4"
   },
   "devDependencies": {
     "sqlite3": "5.0.0"
@@ -42,7 +45,7 @@
       },
       "auth": {
         "[production]": {
-          "strategy": "xsuaa"
+          "strategy": "JWT"
         },
         "[development]": {
           "strategy": "mock"
@@ -96,7 +99,6 @@
       },
 <% } -%>
       "db": {
-<% if(hana){ -%>
         "[production]": {
           "kind": "hana"
         },
@@ -110,9 +112,6 @@
           "label": "service-manager"
         }
 <% } -%>
-<% } else { -%>
-        "kind": "sql"
-<% } -%>
       }
 <% if(api){ -%>
       ,
@@ -121,7 +120,7 @@
         "model": "srv/external/API_SALES_ORDER_SRV",
         "credentials": {
           "[production]": {
-            "destination": "sandbox",
+            "destination": "<%= projectName %>-API_SALES_ORDER_SRV",
             "path": "s4hanacloud/sap/opu/odata/sap/API_SALES_ORDER_SRV"
           },
           "[development]": {
@@ -151,11 +150,9 @@
       ]
     }
 <% } -%>
-<% if(hana){ -%>
     ,
     "hana": {
       "deploy-format": "hdbtable"
     }
-<% } -%>
   }
 }

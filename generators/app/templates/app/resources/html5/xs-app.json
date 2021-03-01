@@ -1,16 +1,5 @@
 {
-<% if(html5repo && !managedAppRouter){ -%>
-    "welcomeFile": "/<%= projectName %>html5/index.html",
-<% if(authentication){ -%>
-    "authenticationMethod": "route",
-<% } else { -%>
-    "authenticationMethod": "none",
-<% } -%>
-    "routes": []
-<% } else { -%>
-<% if(ui){ -%>
     "welcomeFile": "index.html",
-<% } -%>
 <% if(authentication){ -%>
     "authenticationMethod": "route",
 <% } else { -%>
@@ -19,51 +8,54 @@
     "routes": [
         {
             "source": "^/catalog/(.*)$",
+            "csrfProtection": false,
 <% if(authentication){ -%>
             "authenticationType": "xsuaa",
 <% } -%>
 <% if(authorization){ -%>
             "scope": "$XSAPPNAME.Viewer",
 <% } -%>
-            "destination": "srv"
+            "destination": "<%= projectName %>-srv"
         }
 <% if(v2support){ -%>
         ,{
             "source": "^/v2/catalog/(.*)$",
+            "csrfProtection": false,
 <% if(authentication){ -%>
             "authenticationType": "xsuaa",
 <% } -%>
 <% if(authorization){ -%>
             "scope": "$XSAPPNAME.Viewer",
 <% } -%>
-            "destination": "srv"
+            "destination": "<%= projectName %>-srv"
         }
 <% } -%>
 <% if(schemaName !== ''){ -%>
         ,{
             "source": "^/<%= schemaName %>/(.*)$",
+            "csrfProtection": false,
 <% if(authentication){ -%>
             "authenticationType": "xsuaa",
 <% } -%>
 <% if(authorization){ -%>
             "scope": "$XSAPPNAME.Viewer",
 <% } -%>
-            "destination": "srv"
+            "destination": "<%= projectName %>-srv"
         }
 <% } -%>
 <% if(schemaName !== '' && v2support){ -%>
         ,{
             "source": "^/v2/<%= schemaName %>/(.*)$",
+            "csrfProtection": false,
 <% if(authentication){ -%>
             "authenticationType": "xsuaa",
 <% } -%>
 <% if(authorization){ -%>
             "scope": "$XSAPPNAME.Viewer",
 <% } -%>
-            "destination": "srv"
+            "destination": "<%= projectName %>-srv"
         }
 <% } -%>
-<% if(ui){ -%>
         ,{
             "source": "^/(.*)$",
 <% if(authentication){ -%>
@@ -72,9 +64,7 @@
 <% if(authorization){ -%>
             "scope": "$XSAPPNAME.Viewer",
 <% } -%>
-            "localDir": "resources"
+            "service": "html5-apps-repo-rt"
         }
-<% } -%>
     ]
-<% } -%>
 }

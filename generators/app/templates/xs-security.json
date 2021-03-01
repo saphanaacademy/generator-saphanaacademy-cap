@@ -1,8 +1,6 @@
 {
     "xsappname": "<%= projectName %>",
-<% if(!multiTenant){ -%>
-    "tenant-mode": "dedicated"
-<% } else { -%>
+<% if(multiTenant){ -%>
     "tenant-mode": "shared",
     "scopes": [
         {
@@ -10,14 +8,17 @@
             "grant-as-authority-to-apps": [
                 "$XSAPPNAME(application,sap-provisioning,tenant-onboarding)"
             ]
-        }
-<% } -%>
-<% if(authorization){ -%>
-<% if(multiTenant){ -%>
-        ,
+        },
 <% } else { -%>
-    ,"scopes": [
+    "tenant-mode": "dedicated",
+    "scopes": [
 <% } -%>
+        {
+            "name": "uaa.user",
+            "description": "UAA"
+        }
+<% if(authorization){ -%>
+        ,
         {
             "name": "$XSAPPNAME.Viewer",
             "description": "Viewer"
@@ -26,6 +27,7 @@
             "name": "$XSAPPNAME.Admin",
             "description": "Administrator"
         }
+<% } -%>
 <% if(multiTenant){ -%>
         ,
         {
@@ -38,11 +40,6 @@
         }
 <% } -%>
     ],
-<% } -%>
-<% if(multiTenant && !authorization){ -%>
-    ]
-<% } -%>
-<% if(authorization){ -%>
 <% if(attributes){ -%>
     "attributes": [
         {
@@ -53,6 +50,15 @@
     ],
 <% } -%>
     "role-templates": [
+        {
+            "name": "Token_Exchange",
+            "description": "UAA Token Exchange",
+            "scope-references": [
+                "uaa.user"
+            ]
+        }
+<% if(authorization){ -%>
+        ,
         {
             "name": "Viewer",
             "description": "Viewer",
@@ -74,6 +80,7 @@
                 "$XSAPPNAME.Admin"
             ]
         }
+<% } -%>
 <% if(multiTenant){ -%>
         ,
         {
@@ -91,8 +98,12 @@
             ]
         }
 <% } -%>
-    ],
+    ]
+<% if(authorization || multiTenant){ -%>
+    ,
     "role-collections": [
+<% } -%>
+<% if(authorization){ -%>
 <% if(!attributes){ -%>
         {
             "name": "<%= projectName %>_Viewer",
@@ -109,8 +120,11 @@
                 "$XSAPPNAME.Admin"
             ]
         }
+<% } -%>
 <% if(multiTenant){ -%>
+<% if(authorization){ -%>
         ,
+<% } -%>
         {
             "name": "<%= projectName %>_Extension_Developer",
             "description": "Extension development access",
@@ -126,6 +140,7 @@
             ]
         }
 <% } -%>
+<% if(authorization || multiTenant){ -%>
     ]
 <% } -%>
 <% if(customDomain !== ""){ -%>

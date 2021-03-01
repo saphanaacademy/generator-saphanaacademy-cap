@@ -1,0 +1,15 @@
+{
+  "scripts": {
+      "deploy": "npx -p @sap/ux-ui5-tooling fiori add deploy-config cf",
+      "build": "npm run clean && npm run zip",
+      "zip": "npx bestzip manifest-bundle.zip manifest.json && npx bestzip fiori-content.zip *",
+      "clean": "npx rimraf manifest-bundle.zip fiori-content.zip"
+  },
+  "devDependencies": {
+      "@ui5/cli": "2.7.1",
+      "@ui5/fs": "2.0.1",
+      "@ui5/logger": "2.0.0",
+      "@sap/ux-ui5-tooling": "1",
+      "@sap/ux-specification": "latest"
+  }
+}

@@ -1,3 +1,9 @@
+<% if(applicationLogging){ -%>
+const log = require('cf-nodejs-logging-support');
+log.setLoggingLevel('info');
+log.registerCustomFields(["country", "amount"]);
+<% } -%>
+
 module.exports = cds.service.impl(async function () {
 
     const { Sales
@@ -13,6 +19,9 @@ module.exports = cds.service.impl(async function () {
             else
                 each.comments += ' ';
             each.comments += 'Exceptional!';
+<% if(applicationLogging){ -%>
+            log.info(each.comments, {"country": each.country, "amount": each.amount});
+<% } -%>
         }
     });
 
@@ -62,12 +71,14 @@ module.exports = cds.service.impl(async function () {
 
     this.on('largestOrder', Sales, async (req) => {
         try {
-            let cql = SELECT.one(Sales).where({ ID: req.params[0] });
-            const res1 = await cds.read(cql);
-            cql = SELECT.one(SalesOrders).where({ SalesOrganization: res1[0].org }).orderBy({ TotalNetAmount: 'desc' });
+            const tx1 = cds.tx(req);
+            const res1 = await tx1.read(Sales)
+                .where({ ID: { '=': req.params[0] } })
+                ;
+            let cql = SELECT.one(SalesOrders).where({ SalesOrganization: res1[0].org }).orderBy({ TotalNetAmount: 'desc' });
             const external = await cds.connect.to('API_SALES_ORDER_SRV');
-            const tx = external.transaction(req);
-            const res2 = await tx.send({
+            const tx2 = external.transaction(req);
+            const res2 = await tx2.send({
                 query: cql,
                 headers: {
                     'APIKey': process.env.APIKey

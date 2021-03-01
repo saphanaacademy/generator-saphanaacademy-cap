@@ -1,4 +1,4 @@
-using CatalogService as catalog from '../../srv/catalog-service';
+using CatalogService as catalog from '../../../srv/catalog-service';
 
 annotate catalog.Sales with @(
     UI: {

@@ -1,1 +1,1 @@
-using from './resources/fiori-service';
+using from './resources/fiori/annotations';

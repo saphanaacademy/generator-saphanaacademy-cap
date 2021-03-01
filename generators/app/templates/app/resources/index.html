@@ -9,54 +9,8 @@
 
 <body>
     <h2><%= description %></h2>
-<% if(fiori){ -%>
-    <h3>Fiori</h3>
-    <a href="webapp/index.html">Launchpad</a><br />
-<% } -%>
-    <h3>Catalog</h3>
-    <a href="/catalog/">Catalog</a><br />
-    <a href="/catalog/$metadata">Metadata</a><br />
-    <a href="/catalog/Sales">Sales</a><br />
-<% if(hanaNative){ -%>
-    <a href="/catalog/topSales(amount=700)">Top Sales</a><br />
-<% } -%>
-<% if(api){ -%>
-    <a href="/catalog/SalesOrders?$top=10&$filter=TotalNetAmount%20gt%202000&$orderby=SalesOrder%20desc">Sales Orders</a><br />
-    <a href="/catalog/Sales(9)/CatalogService.largestOrder()">Largest Sales Order</a><br />
-<% } -%>
-<% if(authentication){ -%>
-    <a href="/catalog/userInfo()">User Info</a><br />
-<% } -%>
-<% if(v2support){ -%>
-    <h3>v2</h3>
-    <a href="/v2/catalog/">Catalog</a><br />
-    <a href="/v2/catalog/$metadata">Metadata</a><br />
-    <a href="/v2/catalog/Sales">Sales</a><br />
-<% if(hanaNative){ -%>
-    <a href="/v2/catalog/topSales()?amount=700">Top Sales</a><br />
-<% } -%>
-<% if(api){ -%>
-    <a href="/v2/catalog/SalesOrders?$top=10&$filter=TotalNetAmount%20gt%202000&$orderby=SalesOrder%20desc">Sales Orders</a><br />
-    <a href="/v2/catalog/Sales_largestOrder?ID=9">Largest Sales Order</a><br />
-<% } -%>
-<% if(authentication){ -%>
-    <a href="/v2/catalog/userInfo()">User Info</a><br />
-<% } -%>
-<% } -%>
-<% if(schemaName !== ''){ -%>
-    <h3><%= schemaName %></h3>
-    <a href="/<%= schemaName %>/">Catalog</a><br />
-    <a href="/<%= schemaName %>/$metadata">Metadata</a><br />
-<% if(v2support){ -%>
-    <h3>v2</h3>
-    <a href="/v2/<%= schemaName %>/">Catalog</a><br />
-    <a href="/v2/<%= schemaName %>/$metadata">Metadata</a><br />
-<% } -%>
-<% } -%>
-<% if(authentication){ -%>
-    <h3>Session</h3>
-    <a href="/logout">Logout</a><br />
-<% } -%>
+    <a href="html5/index.html">HTML5</a><br />
+    <a href="fiori/index.html">Fiori</a><br />
 </body>
 
 </html>

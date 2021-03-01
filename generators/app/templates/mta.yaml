@@ -1,4 +1,4 @@
-_schema-version: '3.1'
+_schema-version: '3.2'
 ID: <%= projectName %>
 version: 0.0.1
 
@@ -13,7 +13,7 @@ build-parameters:
         - npx -p @sap/cds-dk cds build --production
 
 modules:
-<% if(hana && !multiTenant){ -%>
+<% if(!multiTenant){ -%>
   # ---------------- DATABASE DEPLOYER MODULE ------------------
   - name: <%= projectName %>-db-deployer
   # ------------------------------------------------------------
@@ -55,32 +55,32 @@ modules:
     properties:
       APIKey: <%= APIKey %>
 <% } -%>
-<% if(authentication || api || hana){ -%>
     requires:
-<% } -%>
 <% if(authentication || api){ -%>
       - name: <%= projectName %>-uaa
 <% } -%>
 <% if(api){ -%>
       - name: <%= projectName %>-dest
 <% } -%>
-<% if(hana && !multiTenant){ -%>
-      - name: <%= projectName %>-db
+<% if(applicationLogging){ -%>
+      - name: <%= projectName %>-logging
 <% } -%>
 <% if(multiTenant){ -%>
       - name: <%= projectName %>-registry
       - name: <%= projectName %>-sm
+<% } else { -%>
+      - name: <%= projectName %>-db
 <% } -%>
     provides:
       - name: srv-api
         properties:
           srv-url: ${default-url}
 
-<% if(ui || authentication){ -%>
-  # ---------------------- APP MODULE --------------------------
+<% if((authentication || ui) && !managedAppRouter){ -%>
+  # ------------------ APP ROUTER MODULE -----------------------
   - name: <%= projectName %>
   # ------------------------------------------------------------
-    type: html5
+    type: approuter.nodejs
     path: app
     parameters:
       memory: 256M
@@ -100,16 +100,25 @@ modules:
 <% } -%>
 <% } -%>
     requires:
-<% if(authentication){ -%>
+<% if(authentication || html5repo){ -%>
       - name: <%= projectName %>-uaa
 <% } -%>
+<% if(html5repo){ -%>
+      - name: <%= projectName %>-dest
+      - name: <%= projectName %>-html5repo-rt
+<% } else { -%>
       - name: srv-api
         group: destinations
         properties:
           name: srv
           url: ~{srv-url}
+          timeout: 60000
 <% if(authentication){ -%>
           forwardAuthToken: true
+<% } -%>
+<% } -%>
+<% if(applicationLogging){ -%>
+      - name: <%= projectName %>-logging
 <% } -%>
 <% if(multiTenant){ -%>
     provides:
@@ -120,9 +129,86 @@ modules:
 <% } -%>
 <% } -%>
 
-<% if(authentication || api || hana){ -%>
+<% if(html5repo){ -%>
+  # ----------- HTML5 APP REPOSITORY APP HTML5 MODULE ----------
+  - name: <%= projectName %>-html5
+  # ------------------------------------------------------------
+    type: html5
+    path: app/resources/html5
+    build-parameters:
+      builder: custom
+      commands:
+        - npm run build
+      supported-platforms: []
+
+  # ----------- HTML5 APP REPOSITORY APP FIORI MODULE ----------
+  - name: <%= projectName %>-fiori
+  # ------------------------------------------------------------
+    type: html5
+    path: app/resources/fiori
+    build-parameters:
+      builder: custom
+      commands:
+        - npm run build
+      supported-platforms: []
+
+  # ----------- HTML5 APP REPOSITORY DEPLOYER MODULE -----------
+  - name: <%= projectName %>-ui-deployer
+  # ------------------------------------------------------------
+    type: com.sap.application.content
+    path: .
+    requires:
+      - name: <%= projectName %>-html5repo
+        parameters:
+          content-target: true
+    build-parameters:
+      build-result: gen/app
+      requires:
+        - artifacts:
+            - html5-content.zip
+          name: <%= projectName %>-html5
+          target-path: gen/app/
+        - artifacts:
+            - fiori-content.zip
+          name: <%= projectName %>-fiori
+          target-path: gen/app/
+
+  # ----- HTML5 APP REPOSITORY DESTINATION CONTENT MODULE ------
+  - name: <%= projectName %>-dest-content
+  # ------------------------------------------------------------
+    type: com.sap.application.content
+    requires:
+      - name: <%= projectName %>-uaa
+        parameters:
+          service-key:
+            name: <%= projectName %>-uaa-sk
+      - name: <%= projectName %>-dest
+        parameters:
+          content-target: true
+      - name: <%= projectName %>-html5repo
+        parameters:
+          service-key:
+            name: <%= projectName %>-html5repo-sk
+    parameters:
+      content:
+        subaccount:
+          existing_destinations_policy: update
+          destinations:
+            - Name: <%= projectName %>-service-<%= projectName %>-uaa
+              ServiceInstanceName: <%= projectName %>-uaa
+              ServiceKeyName: <%= projectName %>-uaa-sk
+              Authentication: OAuth2UserTokenExchange
+              sap.cloud.service: <%= projectName %>-service
+            - Name: <%= projectName %>-service-<%= projectName %>-html5repo
+              ServiceInstanceName: <%= projectName %>-html5repo
+              ServiceKeyName: <%= projectName %>-html5repo-sk
+              sap.cloud.service: <%= projectName %>-service
+    build-parameters:
+      no-source: true
+<% } -%>
+
 resources:
-<% if(authentication || api){ -%>
+<% if(authentication || api || html5repo){ -%>
   # ----------------------- UAA SERVICE ------------------------
   - name: <%= projectName %>-uaa
   # ------------------------------------------------------------
@@ -142,17 +228,70 @@ resources:
 <% } -%>
 <% } -%>
 
-<% if(api){ -%>
+<% if(api || html5repo){ -%>
   # -------------------- DESTINATION SERVICE -------------------
   - name: <%= projectName %>-dest
   # ------------------------------------------------------------
     type: org.cloudfoundry.managed-service
+<% if(html5repo){ -%>
+    requires:
+      - name: srv-api
+<% } -%>
     parameters:
       service: destination
       service-plan: lite
+      config:
+<% if(html5repo){ -%>
+        HTML5Runtime_enabled: true
+<% } -%>
+<% if(api || html5repo){ -%>
+        init_data:
+          subaccount:
+            existing_destinations_policy: update
+            destinations:
+<% } -%>
+<% if(api){ -%>
+              - Name: <%= projectName %>-API_SALES_ORDER_SRV
+                Description: SAP S/4HANA Cloud - Sales Order (A2X)
+                URL: https://sandbox.api.sap.com
+                Type: HTTP
+                ProxyType: Internet
+                Authentication: NoAuthentication
+                HTML5.DynamicDestination: true
+<% } -%>
+<% if(html5repo){ -%>
+              - Name: <%= projectName %>-srv
+                Description: <%= displayName %> - Server Module
+                URL: ~{srv-api/srv-url}
+                Type: HTTP
+                ProxyType: Internet
+                Authentication: NoAuthentication
+                HTML5.DynamicDestination: true
+<% if(authentication){ -%>
+                HTML5.ForwardAuthToken: true
 <% } -%>
 
-<% if(hana && !multiTenant){ -%>
+  # ----------- HTML5 APP REPOSITORY HOSTING SERVICE -----------
+  - name: <%= projectName %>-html5repo
+  # ------------------------------------------------------------
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-plan: app-host
+
+<% if(!managedAppRouter){ -%>
+  # ----------- HTML5 APP REPOSITORY RUNTIME SERVICE -----------
+  - name: <%= projectName %>-html5repo-rt
+  # ------------------------------------------------------------
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-plan: app-runtime
+<% } -%>
+<% } -%>
+<% } -%>
+
+<% if(!multiTenant){ -%>
   # ------------------- HDI CONTAINER SERVICE ------------------
   - name: <%= projectName %>-db
   # ------------------------------------------------------------
@@ -183,13 +322,11 @@ resources:
     parameters:
       service: saas-registry
       service-plan: application
-      service-name: <%= projectName %>-registry
       config:
         xsappname: ~{<%= projectName %>-uaa/XSAPPNAME}
         appName: <%= projectName %>
         displayName: '<%= displayName %>'
         description: '<%= description %>'
-        category: '<%= category %>'
         appUrls:
 <% if(customDomain !== ""){ -%>
           onSubscription: https://<%= projectName %>-srv.<%= customDomain %>/mtx/v1/provisioning/tenant/{tenantId}
@@ -217,4 +354,13 @@ resources:
          acquireTimeoutMillis: max
          polling_timeout_seconds: 480
 <% } -%>
+
+<% if(applicationLogging){ -%>
+  # ---------------- APPLICATION LOGGING SERVICE ---------------
+  - name: <%= projectName %>-logging
+  # ------------------------------------------------------------
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: application-logs
+      service-plan: lite
 <% } -%>

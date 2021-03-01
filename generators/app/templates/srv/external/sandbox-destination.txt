@@ -1,8 +1,0 @@
-Name=sandbox
-URL=https\://sandbox.api.sap.com
-Type=HTTP
-ProxyType=Internet
-Authentication=NoAuthentication
-WebIDEEnabled=true
-WebIDEUsage=odata_gen
-HTML5.DynamicDestination=true

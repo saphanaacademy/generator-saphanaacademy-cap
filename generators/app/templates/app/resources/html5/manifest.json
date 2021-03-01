@@ -1,0 +1,19 @@
+{
+    "_version": "",
+    "sap.cloud": {
+<% if(!authentication){ -%>
+        "public": true,
+<% } -%>
+        "service": "<%= projectName %>-service"
+    },
+    "sap.app": {
+        "id": "<%= projectName %>-html5",
+        "type": "application",
+        "applicationVersion": {
+            "version": "0.0.1"
+        },
+        "title": "<%= displayName %> HTML5",
+        "description": "<%= description %> HTML5",
+        "offline": false
+    }
+}

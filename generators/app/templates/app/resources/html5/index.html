@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <title><%= displayName %></title>
+</head>
+
+<body>
+    <h2><%= description %></h2>
+    <h3>Catalog</h3>
+    <a href="<%= srvPath %>catalog/">Catalog</a><br />
+    <a href="<%= srvPath %>catalog/$metadata">Metadata</a><br />
+    <a href="<%= srvPath %>catalog/Sales">Sales</a><br />
+<% if(hanaNative){ -%>
+    <a href="<%= srvPath %>catalog/topSales(amount=700)">Top Sales</a><br />
+<% } -%>
+<% if(api){ -%>
+    <a href="<%= srvPath %>catalog/SalesOrders?$top=10&$filter=TotalNetAmount%20gt%202000&$orderby=SalesOrder%20desc">Sales Orders</a><br />
+    <a href="<%= srvPath %>catalog/Sales(9)/CatalogService.largestOrder()">Largest Sales Order</a><br />
+<% } -%>
+<% if(authentication){ -%>
+    <a href="<%= srvPath %>catalog/userInfo()">User Info</a><br />
+<% } -%>
+<% if(v2support){ -%>
+    <h3>v2</h3>
+    <a href="<%= srvPath %>v2/catalog/">Catalog</a><br />
+    <a href="<%= srvPath %>v2/catalog/$metadata">Metadata</a><br />
+    <a href="<%= srvPath %>v2/catalog/Sales">Sales</a><br />
+<% if(hanaNative){ -%>
+    <a href="<%= srvPath %>v2/catalog/topSales()?amount=700">Top Sales</a><br />
+<% } -%>
+<% if(api){ -%>
+    <a href="<%= srvPath %>v2/catalog/SalesOrders?$top=10&$filter=TotalNetAmount%20gt%202000&$orderby=SalesOrder%20desc">Sales Orders</a><br />
+    <a href="<%= srvPath %>v2/catalog/Sales_largestOrder?ID=9">Largest Sales Order</a><br />
+<% } -%>
+<% if(authentication){ -%>
+    <a href="<%= srvPath %>v2/catalog/userInfo()">User Info</a><br />
+<% } -%>
+<% } -%>
+<% if(schemaName !== ''){ -%>
+    <h3><%= schemaName %></h3>
+    <a href="<%= srvPath %><%= schemaName %>/">Catalog</a><br />
+    <a href="<%= srvPath %><%= schemaName %>/$metadata">Metadata</a><br />
+<% if(v2support){ -%>
+    <h3>v2</h3>
+    <a href="<%= srvPath %>v2/<%= schemaName %>/">Catalog</a><br />
+    <a href="<%= srvPath %>v2/<%= schemaName %>/$metadata">Metadata</a><br />
+<% } -%>
+<% } -%>
+</body>
+
+</html>

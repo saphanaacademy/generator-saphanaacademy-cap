@@ -37,48 +37,40 @@ module.exports = class extends Generator {
         default: "Business Application",
       },
       {
-        type: "confirm",
-        name: "hana",
-        message: "Would you like to use SAP HANA Cloud?",
-        default: true
-      },
-      {
-        when: response => response.hana === true,
         type: "input",
         name: "schemaName",
         message: "Will you be using an existing SAP HANA Cloud schema? If so please enter the schema name here or leave blank for none. Note: schema names in mixed case are case sensitive!",
         default: ""
       },
       {
-        when: response => response.hana === true && response.schemaName !== "",
+        when: response => response.schemaName !== "",
         type: "input",
         name: "hanaEndpoint",
         message: "What is your SAP HANA Cloud SQL endpoint?",
         default: "<guid>.hana.<region>.hanacloud.ondemand.com:443"
       },
       {
-        when: response => response.hana === true && response.schemaName !== "",
+        when: response => response.schemaName !== "",
         type: "input",
         name: "hanaUser",
         message: "What is your SAP HANA Cloud user name?",
         default: "DBADMIN"
       },
       {
-        when: response => response.hana === true && response.schemaName !== "",
+        when: response => response.schemaName !== "",
         type: "password",
         name: "hanaPassword",
         message: "What is the password for your SAP HANA Cloud user?",
         default: ""
       },
       {
-        when: response => response.hana === true && response.schemaName !== "",
+        when: response => response.schemaName !== "",
         type: "confirm",
         name: "schemaUPS",
         message: "Would you like to create the SAP HANA Cloud technical user and User-Provided Service Instance?",
         default: true
       },
       {
-        when: response => response.hana === true,
         type: "confirm",
         name: "hanaNative",
         message: "Would you like to use native SAP HANA Cloud artifacts?",
@@ -119,6 +111,12 @@ module.exports = class extends Generator {
       },
       {
         type: "confirm",
+        name: "v2support",
+        message: "Would you like to enable OData v2 support?",
+        default: false
+      },
+      {
+        type: "confirm",
         name: "ui",
         message: "Would you like a UI?",
         default: true
@@ -126,15 +124,16 @@ module.exports = class extends Generator {
       {
         when: response => response.ui === true,
         type: "confirm",
-        name: "fiori",
-        message: "Would you like the UI to include a Fiori application?",
-        default: true
+        name: "html5repo",
+        message: "Would you like to use the HTML5 Application Repository?",
+        default: false
       },
       {
+        when: response => response.html5repo === true,
         type: "confirm",
-        name: "v2support",
-        message: "Would you like to enable OData v2 support?",
-        default: false
+        name: "managedAppRouter",
+        message: "Would you like to use the managed application router?",
+        default: true
       },
       {
         type: "input",
@@ -152,18 +151,11 @@ module.exports = class extends Generator {
         default: "",
       },
       {
-        when: response => response.hana === true && response.authentication === true && response.schemaName === "",
+        when: response => response.authentication === true && response.schemaName === "" && response.html5repo === false,
         type: "confirm",
         name: "multiTenant",
         message: "Would you like to create a SaaS multitenant app?",
         default: false
-      },
-      {
-        when: response => response.multiTenant === true,
-        type: "input",
-        name: "category",
-        message: "What would you like as the SaaS category?",
-        default: "SaaS Apps",
       },
       {
         when: response => response.multiTenant === true && response.customDomain === "",
@@ -175,22 +167,24 @@ module.exports = class extends Generator {
       {
         type: "confirm",
         name: "cicd",
-        message: "Would you like to include Continuous Integration and Delivery (CI/CD) support?",
+        message: "Would you like to enable Continuous Integration and Delivery (CI/CD)?",
+        default: true
+      },
+      {
+        type: "confirm",
+        name: "applicationLogging",
+        message: "Would you like to enable Application Logging?",
         default: true
       },
       {
         type: "confirm",
         name: "buildDeploy",
-        message: "Would you like to build and deploy the project now?",
+        message: "Would you like to immediately build and deploy the project?",
         default: false
       },
     ]).then((answers) => {
       if (answers.newDir) {
         this.destinationRoot(`${answers.projectName}`);
-      }
-      if (answers.hana === false) {
-        answers.hanaNative = false;
-        answers.schemaName = "";
       }
       if (answers.schemaName === "") {
         answers.hanaEndpoint = "";
@@ -205,18 +199,23 @@ module.exports = class extends Generator {
       }
       if (answers.authentication === false) {
         answers.authorization = false;
+        answers.multiTenant = false;
       }
       if (answers.authentication === false || answers.authorization === false) {
         answers.attributes = false;
       }
       if (answers.ui === false) {
-        answers.fiori = false;
+        answers.html5repo = false;
+        answers.managedAppRouter = false;
       }
-      if (answers.hana === false || answers.authentication === false) {
+      if (answers.html5repo === true) {
+        answers.srvPath = "";
+      } else {
+        answers.srvPath = "/";
+        answers.managedAppRouter = false;
         answers.multiTenant = false;
       }
       if (answers.multiTenant === false) {
-        answers.category = "";
         answers.routes = false;
       }
       if (answers.customDomain !== "") {
@@ -280,37 +279,35 @@ module.exports = class extends Generator {
       .forEach((file) => {
         if (!(file.includes('.DS_Store'))) {
           if (!(file === 'dotenv' && answers.get('api') === false)) {
-            if (!(file === 'xs-security.json' && answers.get('authentication') === false && answers.get('api') === false)) {
+            if (!(file === 'xs-security.json' && answers.get('authentication') === false && answers.get('api') === false && answers.get('html5repo') === false)) {
               if (!((file === 'Jenkinsfile' || file.substring(0, 9) === '.pipeline') && answers.get('cicd') === false)) {
                 if (!(file === 'srv/provisioning.js' && answers.get('multiTenant') === false)) {
                   if (!(file === 'srv/server.js' && answers.get('v2support') === false && answers.get('multiTenant') === false)) {
                     if (!(file.substring(0, 13) === 'srv/external/' && answers.get('api') === false)) {
-                      if (!(file.substring(0, 4) === 'app/' && answers.get('ui') === false)) {
-                        if (!(file.substring(0, 7) === 'db/src/' && answers.get('hanaNative') === false && answers.get('schemaName') === "")) {
-                          if (!(file.substring(0, 8) === 'mta.yaml' && (answers.get('hana') === false && answers.get('authentication') === false && answers.get('api') === false && answers.get('ui') === false))) {
-                            if (!((file.includes('i18n') || file.includes('webapp') || file.includes('index.cds') || file.includes('fiori-service.cds')) && answers.get('fiori') === false)) {
-                              if (!((file.substring(0, 15) === 'app/xs-app.json' || file.substring(0, 16) === 'app/package.json') && answers.get('ui') === false)) {
-                                if (!((file.includes('forbidden.html') || file.includes('logout.html')) && answers.get('authentication') === false)) {
-                                  if (!(file.substring(0, 20) === 'db/src/_SCHEMA_NAME_' && answers.get('schemaName') === "")) {
-                                    if (!((file.substring(0, 10) === 'db/src/SP_' || file.substring(0, 10) === 'db/src/TT_') && answers.get('hanaNative') === false)) {
-                                      const sOrigin = this.templatePath(file);
-                                      let fileDest = file;
-                                      console.log(file);
-                                      if (fileDest.includes('_PROJECT_NAME_')) {
-                                        fileDest = 'db/data/' + answers.get('projectName') + '.db-Sales.csv';
-                                      }
-                                      if (fileDest.includes('_SCHEMA_NAME_')) {
-                                        fileDest = 'db/src/' + answers.get('schemaName') + '.hdbgrants';
-                                      }
-                                      if (fileDest === 'dotenv') {
-                                        fileDest = '.env';
-                                      }
-                                      if (fileDest === 'dotgitignore') {
-                                        fileDest = '.gitignore';
-                                      }
-                                      const sTarget = this.destinationPath(fileDest);
-                                      this.fs.copyTpl(sOrigin, sTarget, this.config.getAll());
+                      if (!((file.substring(0, 15) === 'app/xs-app.json' || file.substring(0, 16) === 'app/package.json') && (answers.get('managedAppRouter') === true || (answers.get('authentication') === false && answers.get('ui') === false)))) {
+                        if (!((file.substring(0, 13) === 'app/resources' || file.includes('i18n') || file.includes('index.cds')) && answers.get('ui') === false)) {
+                          if (!((file.substring(0, 31) === 'app/resources/fiori/xs-app.json' || file.substring(0, 32) === 'app/resources/fiori/package.json') && answers.get('html5repo') === false)) {
+                            if (!((file.substring(0, 31) === 'app/resources/html5/xs-app.json' || file.substring(0, 32) === 'app/resources/html5/package.json' || file.substring(0, 33) === 'app/resources/html5/manifest.json') && answers.get('html5repo') === false)) {
+                              if (!(file.substring(0, 7) === 'db/src/' && answers.get('hanaNative') === false && answers.get('schemaName') === "")) {
+                                if (!(file.substring(0, 20) === 'db/src/_SCHEMA_NAME_' && answers.get('schemaName') === "")) {
+                                  if (!((file.substring(0, 10) === 'db/src/SP_' || file.substring(0, 10) === 'db/src/TT_') && answers.get('hanaNative') === false)) {
+                                    const sOrigin = this.templatePath(file);
+                                    let fileDest = file;
+                                    console.log(file);
+                                    if (fileDest.includes('_PROJECT_NAME_')) {
+                                      fileDest = 'db/data/' + answers.get('projectName') + '.db-Sales.csv';
                                     }
+                                    if (fileDest.includes('_SCHEMA_NAME_')) {
+                                      fileDest = 'db/src/' + answers.get('schemaName') + '.hdbgrants';
+                                    }
+                                    if (fileDest === 'dotenv') {
+                                      fileDest = '.env';
+                                    }
+                                    if (fileDest === 'dotgitignore') {
+                                      fileDest = '.gitignore';
+                                    }
+                                    const sTarget = this.destinationPath(fileDest);
+                                    this.fs.copyTpl(sOrigin, sTarget, this.config.getAll());
                                   }
                                 }
                               }
