@@ -254,13 +254,13 @@ module.exports = class extends Generator {
       if (answers.get('schemaName') === answers.get('schemaName').toLowerCase()) {
         schemaNameAdjustedCase = answers.get('schemaName').toUpperCase();
       }
+      var pwdgen = require('generate-password');
+      var grantorPassword = pwdgen.generate({
+        length: 30,
+        numbers: true
+      });
       if (answers.get('schemaUPS') === true) {
         var done = this.async();
-        var pwdgen = require('generate-password');
-        var grantorPassword = pwdgen.generate({
-          length: 30,
-          numbers: true
-        });
       }
     }
     if (answers.get('cicd') === true) {
@@ -319,7 +319,6 @@ module.exports = class extends Generator {
                                             if (!((file.substring(0, 10) === 'db/src/SP_' || file.substring(0, 10) === 'db/src/TT_') && answers.get('hanaNative') === false)) {
                                               const sOrigin = this.templatePath(file);
                                               let fileDest = file;
-                                              console.log(file);
                                               if (fileDest.includes('_PROJECT_NAME_')) {
                                                 fileDest = 'db/data/' + answers.get('projectName') + '.db-Sales.csv';
                                               }
@@ -359,6 +358,7 @@ module.exports = class extends Generator {
       var fs = this.fs;
       var destinationRoot = this.destinationRoot();
       var prefix = answers.get('projectName') + '_' + answers.get('schemaName');
+      var thisgen = this;
 
       // connect to HANA to obtain metadata for tables in schema, scaffold project files & create technical user and roles
       var hana = require('@sap/hana-client')
@@ -452,7 +452,7 @@ module.exports = class extends Generator {
                   // add any view parameters
                   i = 0;
                   resParameters.forEach(elementP => {
-                    console.log(elementP.OBJECT_NAME,elementO.OBJECT_NAME);
+                    this.log(elementP.OBJECT_NAME,elementO.OBJECT_NAME);
                     if (elementP.OBJECT_NAME === elementO.OBJECT_NAME) {
                       if (i) {
                         schemaCDS += ",";
@@ -581,49 +581,58 @@ module.exports = class extends Generator {
               fs.write(destinationRoot + "/db/" + answers.get('schemaName') + ".cds", schemaCDS);
               fs.write(destinationRoot + "/srv/" + answers.get('schemaName') + "-service.cds", serviceCDS);
 
+              // define SAP HANA Cloud technical user, roles and grants
+              thisgen.log('Syntax to create the SAP HANA Cloud technical user, roles and grants:');
+              const sql1 = 'CREATE USER ' + prefix + '_GRANTOR PASSWORD ' + grantorPassword + ' NO FORCE_FIRST_PASSWORD_CHANGE';
+              thisgen.log(sql1 + ";");
+              const sql2 = 'CREATE ROLE "' + prefix + '::EXTERNAL_ACCESS_G"';
+              thisgen.log(sql2 + ";");
+              const sql3 = 'CREATE ROLE "' + prefix + '::EXTERNAL_ACCESS"';
+              thisgen.log(sql3 + ";");
+              const sql4 = 'GRANT "' + prefix + '::EXTERNAL_ACCESS_G", "' + prefix + '::EXTERNAL_ACCESS" TO ' + prefix + '_GRANTOR WITH ADMIN OPTION';
+              thisgen.log(sql4 + ";");
+              const sql5 = 'GRANT SELECT,INSERT,UPDATE,DELETE ON SCHEMA "' + schemaNameAdjustedCase + '" TO "' + prefix + '::EXTERNAL_ACCESS_G" WITH GRANT OPTION';
+              thisgen.log(sql5 + ";");
+              const sql6 = 'GRANT SELECT,INSERT,UPDATE,DELETE ON SCHEMA "' + schemaNameAdjustedCase + '" TO "' + prefix + '::EXTERNAL_ACCESS"';
+              thisgen.log(sql6 + ";");
+              thisgen.log("");
+
+              // define user-provided service instance
+              // we take this approach instead of writing to mta.yaml to avoid the SAP HANA Cloud technical user & password being visible in project source files
+              const cupsParams = '{"user":"' + prefix + '_GRANTOR","password":"' + grantorPassword + '","schema":"' + schemaNameAdjustedCase + '","tags":["hana"]}';
+              thisgen.log('Syntax to create the User-Provided Service Instance:');
+              thisgen.log('cf cups ' + answers.get('projectName') + '-db-' + answers.get('schemaName') + " -p '" + cupsParams + "'");
+              thisgen.log("");
+
+              // create HANA technical user and roles only when requested
               if (answers.get('schemaUPS') === true) {
-
-                // create HANA technical user and roles
-                console.log('Creating SAP HANA Cloud technical user and roles:');
-
-                sql = 'CREATE USER ' + prefix + '_GRANTOR PASSWORD ' + grantorPassword + ' NO FORCE_FIRST_PASSWORD_CHANGE';
-                console.log(sql + ";");
-                connection.exec(sql, function (err, result) {
+                connection.exec(sql1, function (err, result) {
                   if (err) {
                     return console.error(err);
                   }
-                  sql = 'CREATE ROLE "' + prefix + '::EXTERNAL_ACCESS_G"';
-                  console.log(sql + ";");
-                  connection.exec(sql, function (err, result) {
+                  connection.exec(sql2, function (err, result) {
                     if (err) {
                       return console.error(err);
                     }
-                    sql = 'CREATE ROLE "' + prefix + '::EXTERNAL_ACCESS"';
-                    console.log(sql + ";");
-                    connection.exec(sql, function (err, result) {
+                    connection.exec(sql3, function (err, result) {
                       if (err) {
                         return console.error(err);
                       }
-                      sql = 'GRANT "' + prefix + '::EXTERNAL_ACCESS_G", "' + prefix + '::EXTERNAL_ACCESS" TO ' + prefix + '_GRANTOR WITH ADMIN OPTION';
-                      console.log(sql + ";");
-                      connection.exec(sql, function (err, result) {
+                      connection.exec(sql4, function (err, result) {
                         if (err) {
                           return console.error(err);
                         }
-                        sql = 'GRANT SELECT,INSERT,UPDATE,DELETE ON SCHEMA "' + schemaNameAdjustedCase + '" TO "' + prefix + '::EXTERNAL_ACCESS_G" WITH GRANT OPTION';
-                        console.log(sql + ";");
-                        connection.exec(sql, function (err, result) {
+                        connection.exec(sql5, function (err, result) {
                           if (err) {
                             return console.error(err);
                           }
-                          sql = 'GRANT SELECT,INSERT,UPDATE,DELETE ON SCHEMA "' + schemaNameAdjustedCase + '" TO "' + prefix + '::EXTERNAL_ACCESS"';
-                          console.log(sql + ";");
-                          connection.exec(sql, function (err, result) {
+                          connection.exec(sql6, function (err, result) {
                             if (err) {
                               return console.error(err);
                             }
                             connection.disconnect(function (err) {
                               done(err);
+                              thisgen.spawnCommandSync('cf', ['cups', answers.get('projectName') + '-db-' + answers.get('schemaName'), '-p', cupsParams]);
                             });
                           });
                         });
@@ -636,15 +645,6 @@ module.exports = class extends Generator {
           });
         });
       });
-
-      if (answers.get('schemaUPS') === true) {
-        // create the user-provided service instance
-        // we do this instead of adding to the mta.yaml to avoid the HANA technical user & password being visible in project source files
-        let cupsParams = '{"user":"' + prefix + '_GRANTOR","password":"' + grantorPassword + '","schema":"' + schemaNameAdjustedCase + '","tags":["hana"]}';
-        console.log('Creating User-Provided Service Instance:');
-        console.log('cf cups ' + answers.get('projectName') + '-db-' + answers.get('schemaName') + " -p '" + cupsParams + "'");
-        this.spawnCommandSync('cf', ['cups', answers.get('projectName') + '-db-' + answers.get('schemaName'), '-p', cupsParams]);
-      }
     }
 
     answers.delete('hanaUser');
@@ -664,7 +664,8 @@ module.exports = class extends Generator {
         this.spawnCommandSync("cf", ["deploy", mta], opt);
       }
     } else {
-      this.log("You need to build and deploy your project as follows:");
+      this.log("");
+      this.log("You can build and deploy your project from the command line as follows:");
       this.log(" cd " + answers.get("projectName"));
       this.log(" mbt build");
       this.log(" cf deploy " + mta);
