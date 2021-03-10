@@ -9,33 +9,49 @@
 
 <body>
     <h2><%= description %></h2>
+<% if(hana || api){ -%>
     <h3>Catalog</h3>
     <a href="<%= srvPath %>catalog/">Catalog</a><br />
     <a href="<%= srvPath %>catalog/$metadata">Metadata</a><br />
+<% } -%>
+<% if(hana){ -%>
     <a href="<%= srvPath %>catalog/Sales">Sales</a><br />
+<% } -%>
 <% if(hanaNative){ -%>
     <a href="<%= srvPath %>catalog/topSales(amount=700)">Top Sales</a><br />
 <% } -%>
-<% if(api){ -%>
+<% if(apiS4HCSO){ -%>
     <a href="<%= srvPath %>catalog/SalesOrders?$top=10&$filter=TotalNetAmount%20gt%202000&$orderby=SalesOrder%20desc">Sales Orders</a><br />
+<% if(hana){ -%>
     <a href="<%= srvPath %>catalog/Sales(9)/CatalogService.largestOrder()">Largest Sales Order</a><br />
 <% } -%>
-<% if(authentication){ -%>
+<% } -%>
+<% if(apiSFSFRC){ -%>
+    <a href="map.html">Candidates - Map</a><br />
+    <a href="<%= srvPath %>catalog/Candidates?$top=10&$filter=country%20eq%20%27US%27%20and%20zip%20gt%20%2700000%27">Candidates</a><br />
+<% } -%>
+<% if((hana || api) && authentication){ -%>
     <a href="<%= srvPath %>catalog/userInfo()">User Info</a><br />
 <% } -%>
 <% if(v2support){ -%>
+<% if(hana || api){ -%>
     <h3>v2</h3>
     <a href="<%= srvPath %>v2/catalog/">Catalog</a><br />
     <a href="<%= srvPath %>v2/catalog/$metadata">Metadata</a><br />
+<% } -%>
+<% if(hana){ -%>
     <a href="<%= srvPath %>v2/catalog/Sales">Sales</a><br />
+<% } -%>
 <% if(hanaNative){ -%>
     <a href="<%= srvPath %>v2/catalog/topSales()?amount=700">Top Sales</a><br />
 <% } -%>
-<% if(api){ -%>
+<% if(apiS4HCSO){ -%>
     <a href="<%= srvPath %>v2/catalog/SalesOrders?$top=10&$filter=TotalNetAmount%20gt%202000&$orderby=SalesOrder%20desc">Sales Orders</a><br />
+<% if(hana){ -%>
     <a href="<%= srvPath %>v2/catalog/Sales_largestOrder?ID=9">Largest Sales Order</a><br />
 <% } -%>
-<% if(authentication){ -%>
+<% } -%>
+<% if((hana || api) && authentication){ -%>
     <a href="<%= srvPath %>v2/catalog/userInfo()">User Info</a><br />
 <% } -%>
 <% } -%>

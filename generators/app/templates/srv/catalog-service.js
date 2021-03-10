@@ -1,17 +1,32 @@
 <% if(applicationLogging){ -%>
 const log = require('cf-nodejs-logging-support');
 log.setLoggingLevel('info');
+<% if(hana){ -%>
 log.registerCustomFields(["country", "amount"]);
+<% } -%>
 <% } -%>
 
 module.exports = cds.service.impl(async function () {
 
-    const { Sales
-<% if(api){ -%>
-           ,SalesOrders
+    const { 
+<% if(hana){ -%>
+            Sales
+<% } -%>
+<% if(apiS4HCSO){ -%>
+<% if(hana){ -%>
+           ,
+<% } -%>
+           SalesOrders
+<% } -%>
+<% if(apiSFSFRC){ -%>
+<% if(hana || apiS4HCSO){ -%>
+           ,
+<% } -%>
+           Candidates
 <% } -%>
           } = this.entities;
 
+<% if(hana){ -%>
     this.after('READ', Sales, (each) => {
         if (each.amount > 500) {
             if (each.comments === null)
@@ -39,6 +54,7 @@ module.exports = cds.service.impl(async function () {
             return {};
         }
     });
+<% } -%>
 
 <% if(hanaNative){ -%>
     this.on('topSales', async (req) => {
@@ -53,7 +69,7 @@ module.exports = cds.service.impl(async function () {
     });
 <% } -%>
 
-<% if(api){ -%>
+<% if(apiS4HCSO){ -%>
     this.on('READ', SalesOrders, async (req) => {
         try {
             const external = await cds.connect.to('API_SALES_ORDER_SRV');
@@ -69,6 +85,7 @@ module.exports = cds.service.impl(async function () {
         }
     });
 
+<% if(hana){ -%>
     this.on('largestOrder', Sales, async (req) => {
         try {
             const tx1 = cds.tx(req);
@@ -89,6 +106,24 @@ module.exports = cds.service.impl(async function () {
             } else {
                 return 'Not found';
             }
+        } catch (err) {
+            req.reject(err);
+        }
+    });
+<% } -%>
+<% } -%>
+
+<% if(apiSFSFRC){ -%>
+    this.on('READ', Candidates, async (req) => {
+        try {
+            const external = await cds.connect.to('RCMCandidate');
+            const tx = external.transaction(req);
+            return await tx.send({
+                query: req.query,
+                headers: {
+                    'APIKey': process.env.APIKey
+                }
+            })
         } catch (err) {
             req.reject(err);
         }

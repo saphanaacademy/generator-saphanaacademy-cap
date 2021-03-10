@@ -5,7 +5,9 @@
   "dependencies": {
     "@sap/cds": "^4",
     "@sap/audit-logging": "^3",
+<% if(hana || schemaName !== ''){ -%>
     "@sap/hana-client": "^2",
+<% } -%>
 <% if(v2support){ -%>
     "@sap/cds-odata-v2-adapter-proxy": "^1",
 <% } -%>
@@ -25,9 +27,9 @@
     "qs": "^6",
 <% } %>
 <% if(applicationLogging){ -%>
-  "cf-nodejs-logging-support": "^6",
+    "cf-nodejs-logging-support": "^6",
 <% } -%>
-  "express": "^4"
+    "express": "^4"
   },
   "devDependencies": {
     "sqlite3": "5.0.0"
@@ -96,7 +98,11 @@
           }
 <% } -%>
         }
-      },
+      }
+<% } -%>
+<% if(hana || schemaName !== ''){ -%>
+<% if(authentication){ -%>
+      ,
 <% } -%>
       "db": {
         "[production]": {
@@ -113,8 +119,11 @@
         }
 <% } -%>
       }
-<% if(api){ -%>
+<% } -%>
+<% if(apiS4HCSO){ -%>
+<% if(authentication || hana || schemaName !== ''){ -%>
       ,
+<% } -%>
       "API_SALES_ORDER_SRV": {
         "kind": "odata",
         "model": "srv/external/API_SALES_ORDER_SRV",
@@ -125,6 +134,24 @@
           },
           "[development]": {
             "url": "https://sandbox.api.sap.com/s4hanacloud/sap/opu/odata/sap/API_SALES_ORDER_SRV"
+          }
+        }
+      }
+<% } -%>
+<% if(apiSFSFRC){ -%>
+<% if(authentication || hana || schemaName !== '' || apiS4HCSO){ -%>
+      ,
+<% } -%>
+      "RCMCandidate": {
+        "kind": "odata",
+        "model": "srv/external/RCMCandidate",
+        "credentials": {
+          "[production]": {
+            "destination": "<%= projectName %>-RCMCandidate",
+            "path": "successfactors/odata/v2"
+          },
+          "[development]": {
+            "url": "https://sandbox.api.sap.com/successfactors/odata/v2"
           }
         }
       }
@@ -142,17 +169,21 @@
         "sap.",
         "<%= projectName %>."
       ],
+<% if(hana){ -%>
       "entity-whitelist": [
         "<%= projectName %>.db.Sales"
       ],
+<% } -%>
       "service-whitelist": [
         "CatalogService"
       ]
     }
 <% } -%>
+<% if(hana || schemaName !== ''){ -%>
     ,
     "hana": {
       "deploy-format": "hdbtable"
     }
+<% } -%>
   }
 }

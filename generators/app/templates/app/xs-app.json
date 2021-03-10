@@ -17,6 +17,7 @@
     "authenticationMethod": "none",
 <% } -%>
     "routes": [
+<% if(hana || api){ -%>
         {
             "source": "^/catalog/(.*)$",
 <% if(authentication){ -%>
@@ -28,7 +29,8 @@
             "destination": "srv"
         }
 <% if(v2support){ -%>
-        ,{
+        ,
+        {
             "source": "^/v2/catalog/(.*)$",
 <% if(authentication){ -%>
             "authenticationType": "xsuaa",
@@ -40,7 +42,11 @@
         }
 <% } -%>
 <% if(schemaName !== ''){ -%>
-        ,{
+        ,
+<% } -%>
+<% } -%>
+<% if(schemaName !== ''){ -%>
+        {
             "source": "^/<%= schemaName %>/(.*)$",
 <% if(authentication){ -%>
             "authenticationType": "xsuaa",
@@ -52,7 +58,8 @@
         }
 <% } -%>
 <% if(schemaName !== '' && v2support){ -%>
-        ,{
+        ,
+        {
             "source": "^/v2/<%= schemaName %>/(.*)$",
 <% if(authentication){ -%>
             "authenticationType": "xsuaa",
@@ -64,7 +71,10 @@
         }
 <% } -%>
 <% if(ui){ -%>
-        ,{
+<% if(hana || api || schemaName !== ''){ -%>
+        ,
+<% } -%>
+        {
             "source": "^/(.*)$",
 <% if(authentication){ -%>
             "authenticationType": "xsuaa",

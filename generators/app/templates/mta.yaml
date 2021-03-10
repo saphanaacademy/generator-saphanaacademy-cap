@@ -13,7 +13,7 @@ build-parameters:
         - npx -p @sap/cds-dk cds build --production
 
 modules:
-<% if(!multiTenant){ -%>
+<% if((hana || schemaName !== '') && !multiTenant){ -%>
   # ---------------- DATABASE DEPLOYER MODULE ------------------
   - name: <%= projectName %>-db-deployer
   # ------------------------------------------------------------
@@ -68,7 +68,7 @@ modules:
 <% if(multiTenant){ -%>
       - name: <%= projectName %>-registry
       - name: <%= projectName %>-sm
-<% } else { -%>
+<% } else if (hana || schemaName !== ''){ -%>
       - name: <%= projectName %>-db
 <% } -%>
     provides:
@@ -141,6 +141,7 @@ modules:
         - npm run build
       supported-platforms: []
 
+<% if(hana){ -%>
   # ----------- HTML5 APP REPOSITORY APP FIORI MODULE ----------
   - name: <%= projectName %>-fiori
   # ------------------------------------------------------------
@@ -151,6 +152,7 @@ modules:
       commands:
         - npm run build
       supported-platforms: []
+<% } -%>
 
   # ----------- HTML5 APP REPOSITORY DEPLOYER MODULE -----------
   - name: <%= projectName %>-ui-deployer
@@ -168,10 +170,12 @@ modules:
             - html5-content.zip
           name: <%= projectName %>-html5
           target-path: gen/app/
+<% if(hana){ -%>
         - artifacts:
             - fiori-content.zip
           name: <%= projectName %>-fiori
           target-path: gen/app/
+<% } -%>
 
   # ----- HTML5 APP REPOSITORY DESTINATION CONTENT MODULE ------
   - name: <%= projectName %>-dest-content
@@ -250,9 +254,18 @@ resources:
             existing_destinations_policy: update
             destinations:
 <% } -%>
-<% if(api){ -%>
+<% if(apiS4HCSO){ -%>
               - Name: <%= projectName %>-API_SALES_ORDER_SRV
-                Description: SAP S/4HANA Cloud - Sales Order (A2X)
+                Description: SAP S/4HANA Cloud Sales Order (A2X)
+                URL: https://sandbox.api.sap.com
+                Type: HTTP
+                ProxyType: Internet
+                Authentication: NoAuthentication
+                HTML5.DynamicDestination: true
+<% } -%>
+<% if(apiSFSFRC){ -%>
+              - Name: <%= projectName %>-RCMCandidate
+                Description: SAP SuccessFactors Recruiting
                 URL: https://sandbox.api.sap.com
                 Type: HTTP
                 ProxyType: Internet
@@ -291,7 +304,7 @@ resources:
 <% } -%>
 <% } -%>
 
-<% if(!multiTenant){ -%>
+<% if((hana || schemaName !== '') && !multiTenant){ -%>
   # ------------------- HDI CONTAINER SERVICE ------------------
   - name: <%= projectName %>-db
   # ------------------------------------------------------------

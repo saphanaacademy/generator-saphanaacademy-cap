@@ -1,7 +1,13 @@
+<% if(hana){ -%>
 using {<%= projectName %>.db as <%= projectName %>} from '../db/data-model';
+<% } -%>
 
-<% if(api){ -%>
+<% if(apiS4HCSO){ -%>
 using { API_SALES_ORDER_SRV } from './external/API_SALES_ORDER_SRV.csn';
+<% } -%>
+
+<% if(apiSFSFRC){ -%>
+using { RCMCandidate } from './external/RCMCandidate.csn';
 <% } -%>
 
 service CatalogService @(path : '/catalog')
@@ -9,6 +15,7 @@ service CatalogService @(path : '/catalog')
 @(requires: 'authenticated-user')
 <% } -%>
 {
+<% if(hana){ -%>
     entity Sales
 <% if(authorization){ -%>
       @(restrict: [{ grant: ['READ'],
@@ -24,7 +31,7 @@ service CatalogService @(path : '/catalog')
 <% } -%>
       as select * from <%= projectName %>.Sales
       actions {
-<% if(api){ -%>
+<% if(apiS4HCSO){ -%>
 <% if(authorization){ -%>
         @(restrict: [{ to: 'Viewer' }])
 <% } -%>
@@ -36,6 +43,7 @@ service CatalogService @(path : '/catalog')
         action boost();
       }
     ;
+<% } -%>
 
 <% if(hanaNative){ -%>
     function topSales
@@ -46,7 +54,7 @@ service CatalogService @(path : '/catalog')
       returns many Sales;
 <% } -%>
 
-<% if(api){ -%>
+<% if(apiS4HCSO){ -%>
     @readonly
     entity SalesOrders
 <% if(authorization){ -%>
@@ -59,6 +67,21 @@ service CatalogService @(path : '/catalog')
           SoldToParty,
           TotalNetAmount,
           TransactionCurrency
+        };
+<% } -%>
+
+<% if(apiSFSFRC){ -%>
+    @readonly
+    entity Candidates
+<% if(authorization){ -%>
+      @(restrict: [{ to: 'Viewer' }])
+<% } -%>
+      as projection on RCMCandidate.Candidate {
+          firstName,
+          lastName,
+          city,
+          zip,
+          country
         };
 <% } -%>
 

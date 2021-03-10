@@ -1,0 +1,296 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title><%= displayName %></title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.18/esri/css/main.css">
+    <script src="https://js.arcgis.com/4.18/"></script>
+    <script>
+        require([
+            "esri/Map",
+            "esri/views/MapView",
+            "esri/Graphic"
+        ], function (Map, MapView, Graphic) {
+            var map = new Map({
+                basemap: "streets-navigation-vector"
+            });
+            var view = new MapView({
+                container: "viewDiv",
+                map: map,
+                center: [-75, 40],
+                zoom: 6
+            });
+           const zip2latlong = {
+                "982": {
+                    "latitude": 18.409345,
+                    "longitude": -65.99313
+                },
+                "2148": {
+                    "latitude": 42.428549,
+                    "longitude": -71.06059
+                },
+                "2918": {
+                    "latitude": 41.841499,
+                    "longitude": -71.440352
+                },
+                "7050": {
+                    "latitude": 40.7683,
+                    "longitude": -74.23603
+                },
+                "7101": {
+                    "latitude": 40.736101,
+                    "longitude": -74.22509
+                },
+                "7175": {
+                    "latitude": 40.79185,
+                    "longitude": -74.245241
+                },
+                "10001": {
+                    "latitude": 40.750742,
+                    "longitude": -73.99653
+                },
+                "10005": {
+                    "latitude": 40.706019,
+                    "longitude": -74.00858
+                },
+                "10013": {
+                    "latitude": 40.720666,
+                    "longitude": -74.00526
+                },
+                "10021": {
+                    "latitude": 40.76842,
+                    "longitude": -73.96045
+                },
+                "10033": {
+                    "latitude": 40.848764,
+                    "longitude": -73.93496
+                },
+                "10994": {
+                    "latitude": 41.097529,
+                    "longitude": -73.96996
+                },
+                "11208": {
+                    "latitude": 40.672666,
+                    "longitude": -73.87248
+                },
+                "11730": {
+                    "latitude": 40.72921,
+                    "longitude": -73.18073
+                },
+                "11743": {
+                    "latitude": 40.867498,
+                    "longitude": -73.41146
+                },
+                "12345": {
+                    "latitude": 42.833261,
+                    "longitude": -74.058015
+                },
+                "14205": {
+                    "latitude": 42.768413,
+                    "longitude": -78.887094
+                },
+                "18011": {
+                    "latitude": 40.496375,
+                    "longitude": -75.62213
+                },
+                "19087": {
+                    "latitude": 40.058808,
+                    "longitude": -75.40069
+                },
+                "20019": {
+                    "latitude": 38.891445,
+                    "longitude": -76.93811
+                },
+                "20134": {
+                    "latitude": 39.152187,
+                    "longitude": -77.702576
+                },
+                "21202": {
+                    "latitude": 39.296507,
+                    "longitude": -76.60693
+                },
+                "24540": {
+                    "latitude": 36.622638,
+                    "longitude": -79.39998
+                },
+                "26003": {
+                    "latitude": 40.071472,
+                    "longitude": -80.6868
+                },
+                "32098": {
+                    "latitude": 30.164918,
+                    "longitude": -81.378181
+                },
+                "32202": {
+                    "latitude": 30.328539,
+                    "longitude": -81.65101
+                },
+                "32901": {
+                    "latitude": 28.077494,
+                    "longitude": -80.61987
+                },
+                "33825": {
+                    "latitude": 27.60047,
+                    "longitude": -81.50932
+                },
+                "34788": {
+                    "latitude": 28.857425,
+                    "longitude": -81.7845
+                },
+                "47804": {
+                    "latitude": 39.495436,
+                    "longitude": -87.39209
+                },
+                "47840": {
+                    "latitude": 39.406161,
+                    "longitude": -87.06899
+                },
+                "49068": {
+                    "latitude": 42.277837,
+                    "longitude": -84.94869
+                },
+                "49501": {
+                    "latitude": 42.984226,
+                    "longitude": -85.629101
+                },
+                "55375": {
+                    "latitude": 44.906512,
+                    "longitude": -93.7439
+                },
+                "55404": {
+                    "latitude": 44.963365,
+                    "longitude": -93.26179
+                },
+                "55555": {
+                    "latitude": 44.805487,
+                    "longitude": -93.766524
+                },
+                "59311": {
+                    "latitude": 45.189905,
+                    "longitude": -104.38569
+                },
+                "59829": {
+                    "latitude": 45.836508,
+                    "longitude": -114.20624
+                },
+                "76104": {
+                    "latitude": 32.730265,
+                    "longitude": -97.32002
+                },
+                "78476": {
+                    "latitude": 27.777,
+                    "longitude": -97.463213
+                },
+                "80111": {
+                    "latitude": 39.610431,
+                    "longitude": -104.88139
+                },
+                "85282": {
+                    "latitude": 33.394067,
+                    "longitude": -111.92873
+                },
+                "90210": {
+                    "latitude": 34.088808,
+                    "longitude": -118.40612
+                },
+                "91202": {
+                    "latitude": 34.166567,
+                    "longitude": -118.26994
+                },
+                "92075": {
+                    "latitude": 32.997543,
+                    "longitude": -117.26087
+                },
+                "94080": {
+                    "latitude": 37.652857,
+                    "longitude": -122.4301
+                },
+                "94101": {
+                    "latitude": 37.784827,
+                    "longitude": -122.727802
+                },
+                "94104": {
+                    "latitude": 37.791728,
+                    "longitude": -122.4019
+                },
+                "94108": {
+                    "latitude": 37.792678,
+                    "longitude": -122.40793
+                },
+                "94116": {
+                    "latitude": 37.743381,
+                    "longitude": -122.48578
+                },
+                "94404": {
+                    "latitude": 37.554335,
+                    "longitude": -122.27032
+                },
+                "94583": {
+                    "latitude": 37.75735,
+                    "longitude": -121.95213
+                },
+                "98102": {
+                    "latitude": 47.63287,
+                    "longitude": -122.32253
+                },
+                "98229": {
+                    "latitude": 48.725417,
+                    "longitude": -122.435478
+                }
+            };
+            $.ajax({
+                url: "<%= srvPath %>catalog/Candidates?$filter=country eq 'US' and zip gt '00000'",
+                method: "GET",
+                dataType: "json",
+                error: function (res) {
+                    console.log(res);
+                },
+                success: function (res) {
+                    res.value.forEach(candidate => {
+                        if (zip2latlong[candidate.zip] === undefined) {
+                            console.log("Unable to geocode " + candidate.zip);
+                        } else {
+                            var point = {
+                                type: "point",
+                                longitude: zip2latlong[candidate.zip].longitude,
+                                latitude: zip2latlong[candidate.zip].latitude
+                            };
+                            var popupTemplate = {
+                                content: candidate.firstName + " " + candidate.lastName
+                            };
+                            var pointGraphic = new Graphic({
+                                geometry: point,
+                                symbol: {
+                                    type: "simple-marker",
+                                    size: 20,
+                                    color: [240, 171, 0]
+                                },
+                                popupTemplate: popupTemplate
+                            });
+                            view.graphics.add(pointGraphic);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div id="viewDiv"></div>
+</body>
+
+</html>

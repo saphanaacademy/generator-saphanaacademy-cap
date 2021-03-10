@@ -6,6 +6,7 @@
     "authenticationMethod": "none",
 <% } -%>
     "routes": [
+<% if(hana || api){ -%>
         {
             "source": "^/catalog/(.*)$",
             "csrfProtection": false,
@@ -18,7 +19,8 @@
             "destination": "<%= projectName %>-srv"
         }
 <% if(v2support){ -%>
-        ,{
+        ,
+        {
             "source": "^/v2/catalog/(.*)$",
             "csrfProtection": false,
 <% if(authentication){ -%>
@@ -31,7 +33,11 @@
         }
 <% } -%>
 <% if(schemaName !== ''){ -%>
-        ,{
+        ,
+<% } -%>
+<% } -%>
+<% if(schemaName !== ''){ -%>
+        {
             "source": "^/<%= schemaName %>/(.*)$",
             "csrfProtection": false,
 <% if(authentication){ -%>
@@ -44,7 +50,8 @@
         }
 <% } -%>
 <% if(schemaName !== '' && v2support){ -%>
-        ,{
+        ,
+        {
             "source": "^/v2/<%= schemaName %>/(.*)$",
             "csrfProtection": false,
 <% if(authentication){ -%>
@@ -56,7 +63,10 @@
             "destination": "<%= projectName %>-srv"
         }
 <% } -%>
-        ,{
+<% if(hana || api || schemaName !== ''){ -%>
+        ,
+<% } -%>
+        {
             "source": "^/(.*)$",
 <% if(authentication){ -%>
             "authenticationType": "xsuaa",

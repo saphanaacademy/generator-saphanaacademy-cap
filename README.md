@@ -19,7 +19,11 @@ This is already the case for SAP Business Application Studio.
 
 If using SAP HANA Cloud ensure you have an instance in the space where you'll be deploying the app.
 
-Also ensure that you are logged in to the Cloud Foundry CLI and are targeting the org and space into which you want to deploy the project.
+If using the HTML5 Application Repository ensure you have subscribed to the SAP Launchpad service in the subaccount where you'll be deploying the app.
+
+If enabling Continuous Integration and Delivery (CI/CD) ensure you have subscribed to the Continuous Integration & Delivery service and optionally the Transport Management service in the subaccount where you'll be deploying the app.
+
+Also ensure that you are logged in to the Cloud Foundry CLI and are targeting the org and space into which you want to deploy the app.
 
 To generate your new project:
 
