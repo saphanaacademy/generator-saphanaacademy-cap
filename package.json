@@ -2,7 +2,7 @@
   "name": "generator-saphanaacademy-cap",
   "displayName": "SAP HANA Academy CAP",
   "description": "Yeoman Generator to jump-start SAP Cloud Business Applications",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "license": "SEE LICENSE IN LICENSE",
   "homepage": "https://www.youtube.com/saphanaacademy",
   "author": {

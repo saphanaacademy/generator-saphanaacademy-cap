@@ -181,15 +181,37 @@ module.exports = class extends Generator {
       },
       {
         type: "confirm",
+        name: "em",
+        message: "Would you like to enable messaging with SAP Event Mesh?",
+        default: false
+      },
+      {
+        when: response => response.em === true,
+        type: "input",
+        name: "emNamespace",
+        message: "What messaging namespace would you like? Note: Namespaces must contain exactly three segments and be unique per subaccount.",
+        validate: (s) => {
+          if (s === "") {
+            return true;
+          }
+          if (/^[a-zA-Z0-9//]*$/g.test(s)) {
+            return true;
+          }
+          return "Please only use alphanumeric characters for the messaging namespace.";
+        },
+        default: "my/em/ns",
+      },
+      {
+        type: "confirm",
         name: "cicd",
         message: "Would you like to enable Continuous Integration and Delivery (CI/CD)?",
-        default: true
+        default: false
       },
       {
         type: "confirm",
         name: "applicationLogging",
         message: "Would you like to enable Application Logging?",
-        default: true
+        default: false
       },
       {
         type: "confirm",
@@ -228,6 +250,9 @@ module.exports = class extends Generator {
       if (answers.ui === false) {
         answers.html5repo = false;
         answers.managedAppRouter = false;
+        if (answers.authentication === true) {
+          answers.multiTenant = false;
+        }
       }
       if (answers.html5repo === true) {
         answers.srvPath = "";
@@ -238,6 +263,9 @@ module.exports = class extends Generator {
       }
       if (answers.multiTenant === false) {
         answers.routes = false;
+      }
+      if (answers.em === false) {
+        answers.emNamespace = "";
       }
       if (answers.customDomain !== "") {
         answers.routes = false;
@@ -301,38 +329,40 @@ module.exports = class extends Generator {
         if (!(file.includes('.DS_Store'))) {
           if (!(file === 'dotenv' && answers.get('api') === false)) {
             if (!(file === 'xs-security.json' && answers.get('authentication') === false && answers.get('api') === false && answers.get('html5repo') === false)) {
-              if (!((file === 'Jenkinsfile' || file.substring(0, 9) === '.pipeline') && answers.get('cicd') === false)) {
-                if (!(file.substring(0, 19) === 'srv/catalog-service' && answers.get('hana') === false && answers.get('api') === false)) {
-                  if (!(file === 'srv/provisioning.js' && answers.get('multiTenant') === false)) {
-                    if (!(file === 'srv/server.js' && answers.get('v2support') === false && answers.get('multiTenant') === false)) {
-                      if (!(file.substring(0, 32) === 'srv/external/API_SALES_ORDER_SRV' && answers.get('apiS4HCSO') === false)) {
-                        if (!((file.substring(0, 25) === 'srv/external/RCMCandidate' || file.includes('map.html')) && answers.get('apiSFSFRC') === false)) {
-                          if (!((file.substring(0, 15) === 'app/xs-app.json' || file.substring(0, 16) === 'app/package.json') && (answers.get('managedAppRouter') === true || (answers.get('authentication') === false && answers.get('ui') === false)))) {
-                            if (!((file.substring(0, 13) === 'app/resources' || file.includes('i18n') || file.includes('index.cds')) && answers.get('ui') === false)) {
-                              if (!((file.substring(0, 19) === 'app/resources/fiori' || file.includes('i18n') || file.includes('index.cds')) && answers.get('hana') === false)) {
-                                if (!((file.substring(0, 31) === 'app/resources/fiori/xs-app.json' || file.substring(0, 32) === 'app/resources/fiori/package.json') && answers.get('html5repo') === false)) {
-                                  if (!((file.substring(0, 31) === 'app/resources/html5/xs-app.json' || file.substring(0, 32) === 'app/resources/html5/package.json' || file.substring(0, 33) === 'app/resources/html5/manifest.json') && answers.get('html5repo') === false)) {
-                                    if (!(file.substring(0, 2) === 'db' && answers.get('hana') === false && answers.get('schemaName') === "")) {
-                                      if (!((file.substring(0, 17) === 'db/data-model.cds' || file.substring(0, 7) === 'db/data') && answers.get('hana') === false)) {
-                                        if (!(file.substring(0, 7) === 'db/src/' && answers.get('hanaNative') === false && answers.get('schemaName') === "")) {
-                                          if (!(file.substring(0, 20) === 'db/src/_SCHEMA_NAME_' && answers.get('schemaName') === "")) {
-                                            if (!((file.substring(0, 10) === 'db/src/SP_' || file.substring(0, 10) === 'db/src/TT_') && answers.get('hanaNative') === false)) {
-                                              const sOrigin = this.templatePath(file);
-                                              let fileDest = file;
-                                              if (fileDest.includes('_PROJECT_NAME_')) {
-                                                fileDest = 'db/data/' + answers.get('projectName') + '.db-Sales.csv';
+              if (!(file === 'em.json' && answers.get('em') === false)) {
+                if (!((file === 'Jenkinsfile' || file.substring(0, 9) === '.pipeline') && answers.get('cicd') === false)) {
+                  if (!(file.substring(0, 19) === 'srv/catalog-service' && answers.get('hana') === false && answers.get('api') === false)) {
+                    if (!(file === 'srv/provisioning.js' && answers.get('multiTenant') === false)) {
+                      if (!(file === 'srv/server.js' && answers.get('v2support') === false && answers.get('multiTenant') === false)) {
+                        if (!(file.substring(0, 32) === 'srv/external/API_SALES_ORDER_SRV' && answers.get('apiS4HCSO') === false)) {
+                          if (!((file.substring(0, 25) === 'srv/external/RCMCandidate' || file.includes('map.html')) && answers.get('apiSFSFRC') === false)) {
+                            if (!((file.substring(0, 15) === 'app/xs-app.json' || file.substring(0, 16) === 'app/package.json') && (answers.get('managedAppRouter') === true || (answers.get('authentication') === false && answers.get('ui') === false)))) {
+                              if (!((file.substring(0, 13) === 'app/resources' || file.includes('i18n') || file.includes('index.cds')) && answers.get('ui') === false)) {
+                                if (!((file.substring(0, 19) === 'app/resources/fiori' || file.includes('i18n') || file.includes('index.cds')) && answers.get('hana') === false)) {
+                                  if (!((file.substring(0, 31) === 'app/resources/fiori/xs-app.json' || file.substring(0, 32) === 'app/resources/fiori/package.json') && answers.get('html5repo') === false)) {
+                                    if (!((file.substring(0, 31) === 'app/resources/html5/xs-app.json' || file.substring(0, 32) === 'app/resources/html5/package.json' || file.substring(0, 33) === 'app/resources/html5/manifest.json') && answers.get('html5repo') === false)) {
+                                      if (!(file.substring(0, 2) === 'db' && answers.get('hana') === false && answers.get('schemaName') === "")) {
+                                        if (!((file.substring(0, 17) === 'db/data-model.cds' || file.substring(0, 7) === 'db/data') && answers.get('hana') === false)) {
+                                          if (!(file.substring(0, 7) === 'db/src/' && answers.get('hanaNative') === false && answers.get('schemaName') === "")) {
+                                            if (!(file.substring(0, 20) === 'db/src/_SCHEMA_NAME_' && answers.get('schemaName') === "")) {
+                                              if (!((file.substring(0, 10) === 'db/src/SP_' || file.substring(0, 10) === 'db/src/TT_') && answers.get('hanaNative') === false)) {
+                                                const sOrigin = this.templatePath(file);
+                                                let fileDest = file;
+                                                if (fileDest.includes('_PROJECT_NAME_')) {
+                                                  fileDest = 'db/data/' + answers.get('projectName') + '.db-Sales.csv';
+                                                }
+                                                if (fileDest.includes('_SCHEMA_NAME_')) {
+                                                  fileDest = 'db/src/' + answers.get('schemaName') + '.hdbgrants';
+                                                }
+                                                if (fileDest === 'dotenv') {
+                                                  fileDest = '.env';
+                                                }
+                                                if (fileDest === 'dotgitignore') {
+                                                  fileDest = '.gitignore';
+                                                }
+                                                const sTarget = this.destinationPath(fileDest);
+                                                this.fs.copyTpl(sOrigin, sTarget, this.config.getAll());
                                               }
-                                              if (fileDest.includes('_SCHEMA_NAME_')) {
-                                                fileDest = 'db/src/' + answers.get('schemaName') + '.hdbgrants';
-                                              }
-                                              if (fileDest === 'dotenv') {
-                                                fileDest = '.env';
-                                              }
-                                              if (fileDest === 'dotgitignore') {
-                                                fileDest = '.gitignore';
-                                              }
-                                              const sTarget = this.destinationPath(fileDest);
-                                              this.fs.copyTpl(sOrigin, sTarget, this.config.getAll());
                                             }
                                           }
                                         }

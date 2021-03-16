@@ -62,6 +62,9 @@ modules:
 <% if(api){ -%>
       - name: <%= projectName %>-dest
 <% } -%>
+<% if(em){ -%>
+      - name: <%= projectName %>-em
+<% } -%>
 <% if(applicationLogging){ -%>
       - name: <%= projectName %>-logging
 <% } -%>
@@ -302,6 +305,17 @@ resources:
       service-plan: app-runtime
 <% } -%>
 <% } -%>
+<% } -%>
+
+<% if(em){ -%>
+  # --------------------- EVENT MESH SERVICE -------------------
+  - name: <%= projectName %>-em
+  # ------------------------------------------------------------
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: enterprise-messaging
+      service-plan: default
+      path: ./em.json
 <% } -%>
 
 <% if((hana || schemaName !== '') && !multiTenant){ -%>

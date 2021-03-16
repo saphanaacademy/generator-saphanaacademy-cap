@@ -11,6 +11,9 @@
 <% if(v2support){ -%>
     "@sap/cds-odata-v2-adapter-proxy": "^1",
 <% } -%>
+<% if(em){ -%>
+    "@sap/xb-msg-amqp-v100": "^0.9.48",
+<% } -%>
 <% if(authentication){ -%>
     "@sap/xsenv": "^3",
     "@sap/xssec": "^3",
@@ -153,6 +156,26 @@
           "[development]": {
             "url": "https://sandbox.api.sap.com/successfactors/odata/v2"
           }
+        }
+      }
+<% } -%>
+<% if(em){ -%>
+<% if(authentication || hana || schemaName !== '' || apiS4HCSO || apiSFSFRC){ -%>
+      ,
+<% } -%>
+      "messaging": {
+        "[production]": {
+<% if(multiTenant){ -%>
+          "kind": "enterprise-messaging",
+<% } else { -%>
+          "kind": "enterprise-messaging-shared",
+<% } -%>
+          "queue": {
+            "name": "<%= emNamespace %>/<%= projectName %>/queue/default"
+          }
+        },
+        "[development]": {
+          "kind": "local-messaging"
         }
       }
 <% } -%>

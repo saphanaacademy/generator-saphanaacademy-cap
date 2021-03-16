@@ -1,5 +1,5 @@
 <% if(hana){ -%>
-using {<%= projectName %>.db as <%= projectName %>} from '../db/data-model';
+using {<%= projectName %>.db as db} from '../db/data-model';
 <% } -%>
 
 <% if(apiS4HCSO){ -%>
@@ -29,7 +29,7 @@ service CatalogService @(path : '/catalog')
                    }
                   ])
 <% } -%>
-      as select * from <%= projectName %>.Sales
+      as select * from db.Sales
       actions {
 <% if(apiS4HCSO){ -%>
 <% if(authorization){ -%>

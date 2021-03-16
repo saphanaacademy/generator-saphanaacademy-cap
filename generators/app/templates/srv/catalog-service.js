@@ -8,6 +8,13 @@ log.registerCustomFields(["country", "amount"]);
 
 module.exports = cds.service.impl(async function () {
 
+<% if(em){ -%>
+    const em = await cds.connect.to('messaging'); 
+<% if(!multiTenant && hana){ -%>
+    const db = await cds.connect.to('db'); 
+<% } -%>
+<% } -%>
+
     const { 
 <% if(hana){ -%>
             Sales
@@ -48,12 +55,29 @@ module.exports = cds.service.impl(async function () {
                 .with({ amount: { '+=': 250 }, comments: 'Boosted!' })
                 .where({ ID: { '=': ID } })
                 ;
+<% if(em){ -%>
+            em.tx(req).emit('<%= emNamespace %>/<%= projectName %>/topic/boost', { "ID": ID });
+<% } -%>
             return {};
         } catch (err) {
             console.error(err);
             return {};
         }
     });
+<% if(em && !multiTenant){ -%>
+
+    em.on('<%= emNamespace %>/<%= projectName %>/topic/boost', async msg => {
+        try {
+            console.log('Event Mesh: Boost:', msg.data);
+            await db.tx(msg).run (
+                UPDATE(db.entities['Sales']).with({ comments: 'Boosted! Mesh!' }).where({ ID: { '=': msg.data.ID } })
+            );
+        } catch (err) {
+            console.error(err);
+            return {};
+        }
+    });
+<% } -%>
 <% } -%>
 
 <% if(hanaNative){ -%>
@@ -156,8 +180,22 @@ module.exports = cds.service.impl(async function () {
             results.attrs.Region = req.user.attr.Region;
         }
 <% } -%>
+<% if(em){ -%>
+        em.tx(req).emit('<%= emNamespace %>/<%= projectName %>/topic/user', results);
+<% } -%>
         return results;
     });
+<% if(em && !multiTenant){ -%>
+
+    em.on('<%= emNamespace %>/<%= projectName %>/topic/user', async msg => {
+        try {
+            console.log('Event Mesh: User:', msg.data);
+        } catch (err) {
+            console.error(err);
+            return {};
+        }
+    });
+<% } -%>
 <% } -%>
 
 });

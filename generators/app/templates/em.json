@@ -1,0 +1,28 @@
+{
+    "version": "1.1.0",
+    "emname": "<%= projectName %>-em",
+    "namespace": "<%= emNamespace %>",
+    "options": {
+        "management": true,
+        "messagingrest": true,
+        "messaging": true
+    },
+    "rules": {
+        "topicRules": {
+            "publishFilter": [
+                "${namespace}/*"
+            ],
+            "subscribeFilter": [
+                "${namespace}/*"
+            ]
+        },
+        "queueRules": {
+            "publishFilter": [
+                "${namespace}/*"
+            ],
+            "subscribeFilter": [
+                "${namespace}/*"
+            ]
+        }
+    }
+}
