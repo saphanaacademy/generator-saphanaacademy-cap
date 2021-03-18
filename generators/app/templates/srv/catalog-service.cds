@@ -65,9 +65,19 @@ service CatalogService @(path : '/catalog')
           SalesOrganization,
           DistributionChannel,
           SoldToParty,
+          IncotermsLocation1,
           TotalNetAmount,
           TransactionCurrency
         };
+
+<% if(em){ -%>
+    entity SalesOrdersLog
+<% if(authorization){ -%>
+      @(restrict: [{ to: 'Viewer' }])
+<% } -%>
+      as select * from db.SalesOrdersLog
+    ;
+<% } -%>
 <% } -%>
 
 <% if(apiSFSFRC){ -%>

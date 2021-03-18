@@ -1,0 +1,157 @@
+<% if(hana || api){ -%>
+GET http://localhost:4004/catalog
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+GET http://localhost:4004/catalog/$metadata
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
+<% if(hana){ -%>
+GET http://localhost:4004/catalog/Sales
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+POST http://localhost:4004/catalog/Sales(1)/CatalogService.boost
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+Content-Type: application/json
+
+{}
+###
+<% } -%>
+<% if(hanaNative){ -%>
+GET http://localhost:4004/catalog/topSales(amount=700)
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
+<% if(apiS4HCSO){ -%>
+GET http://localhost:4004/catalog/SalesOrders?$top=10&$filter=TotalNetAmount%20gt%202000&$orderby=SalesOrder%20desc
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% if(hana){ -%>
+GET http://localhost:4004/catalog/Sales(9)/CatalogService.largestOrder()
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
+<% if(em){ -%>
+GET http://localhost:4004/catalog/SalesOrdersLog
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
+<% } -%>
+<% if(apiSFSFRC){ -%>
+GET http://localhost:4004/catalog/Candidates?$top=10&$filter=country%20eq%20%27US%27%20and%20zip%20gt%20%2700000%27
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
+<% if((hana || api) && authentication){ -%>
+GET http://localhost:4004/catalog/userInfo()
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
+<% if(v2support){ -%>
+<% if(hana || api){ -%>
+GET http://localhost:4004/v2/catalog
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+GET http://localhost:4004/v2/catalog/$metadata
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
+<% if(hana){ -%>
+GET http://localhost:4004/v2/catalog/Sales
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+POST http://localhost:4004/v2/catalog/Sales_boost?ID=1
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+Content-Type: application/json
+
+{}
+###
+<% } -%>
+<% if(hanaNative){ -%>
+GET http://localhost:4004/v2/catalog/topSales()?amount=700
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
+<% if(apiS4HCSO){ -%>
+GET http://localhost:4004/v2/catalog/SalesOrders?$top=10&$filter=TotalNetAmount%20gt%202000&$orderby=SalesOrder%20desc
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% if(hana){ -%>
+GET http://localhost:4004/v2/catalog/Sales_largestOrder?ID=9
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
+<% if(em){ -%>
+GET http://localhost:4004/v2/catalog/SalesOrdersLog
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
+<% } -%>
+<% if((hana || api) && authentication){ -%>
+GET http://localhost:4004/v2/catalog/userInfo()
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
+<% } -%>
+<% if(schemaName !== ''){ -%>
+GET http://localhost:4004/<%= schemaName %>/
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+GET http://localhost:4004/<%= schemaName %>/$metadata
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% if(v2support){ -%>
+GET http://localhost:4004/v2/<%= schemaName %>/
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+GET http://localhost:4004/v2/<%= schemaName %>/$metadata
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
+<% } -%>

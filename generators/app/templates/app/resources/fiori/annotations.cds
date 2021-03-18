@@ -28,3 +28,30 @@ annotate catalog.Sales with {
     amount   @title:'{i18n>amount}';
     comments @title:'{i18n>comments}';
 }
+
+<% if(apiS4HCSO && em){ -%>
+annotate catalog.SalesOrdersLog with @(
+    UI: {
+        Identification: [ {Value: ID} ],
+        SelectionFields: [ ],
+        LineItem: [
+            {Value: ID},
+            {Value: modifiedAt},
+            {Value: salesOrder},
+            {Value: incotermsLocation1}
+        ],
+        HeaderInfo: {
+            TypeName: '{i18n>salesOrder}',
+            TypeNamePlural: '{i18n>salesOrders}',
+            Title: {Value: ID},
+            Description: {Value: salesOrder}
+        }
+    }
+);
+
+annotate catalog.SalesOrdersLog with {
+    ID                 @title:'{i18n>ID}' @UI.HiddenFilter;
+    salesOrder         @title:'{i18n>salesOrder}';
+    incotermsLocation1 @title:'{i18n>incotermsLocation1}';
+}
+<% } -%>

@@ -61,6 +61,7 @@ module.exports = class extends Generator {
         type: "password",
         name: "hanaPassword",
         message: "What is the password for your SAP HANA Cloud user?",
+        mask: "*",
         default: ""
       },
       {
@@ -191,15 +192,25 @@ module.exports = class extends Generator {
         name: "emNamespace",
         message: "What messaging namespace would you like? Note: Namespaces must contain exactly three segments and be unique per subaccount.",
         validate: (s) => {
-          if (s === "") {
+          if (/^[a-zA-Z0-9//]*$/g.test(s) && s.split("/").length === 3 && s.substring(0,1) !== "/" && s.substring(s.length - 1, s.length) !== "/") {
             return true;
           }
-          if (/^[a-zA-Z0-9//]*$/g.test(s)) {
-            return true;
-          }
-          return "Please only use alphanumeric characters for the messaging namespace.";
+          return "Please specify exactly three segments and only use alphanumeric characters for the messaging namespace.";
         },
-        default: "my/em/ns",
+        default: "company/technology/events",
+      },
+      {
+        when: response => response.em === true && response.apiLoB.includes("SAP S/4HANA Cloud Sales Order (A2X)"),
+        type: "input",
+        name: "emClientId",
+        message: "What is the emClientId of your SAP S/4HANA Cloud Extensibility messaging service instance?",
+        validate: (s) => {
+          if (s.length >= 1 && s.length <= 4 && /^[a-zA-Z0-9]*$/g.test(s)) {
+            return true;
+          }
+          return "Please use between 1 and 4 alphanumeric characters for the emClientID.";
+        },
+        default: "",
       },
       {
         type: "confirm",
@@ -266,6 +277,10 @@ module.exports = class extends Generator {
       }
       if (answers.em === false) {
         answers.emNamespace = "";
+        answers.emClientId = "";
+      }
+      if (answers.apiS4HCSO === false) {
+        answers.emClientId = "";
       }
       if (answers.customDomain !== "") {
         answers.routes = false;

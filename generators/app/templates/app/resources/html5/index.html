@@ -25,6 +25,9 @@
 <% if(hana){ -%>
     <a href="<%= srvPath %>catalog/Sales(9)/CatalogService.largestOrder()">Largest Sales Order</a><br />
 <% } -%>
+<% if(em){ -%>
+    <a href="<%= srvPath %>catalog/SalesOrdersLog">Sales Orders Log</a><br />
+<% } -%>
 <% } -%>
 <% if(apiSFSFRC){ -%>
     <a href="map.html">Candidates - Map</a><br />
@@ -49,6 +52,9 @@
     <a href="<%= srvPath %>v2/catalog/SalesOrders?$top=10&$filter=TotalNetAmount%20gt%202000&$orderby=SalesOrder%20desc">Sales Orders</a><br />
 <% if(hana){ -%>
     <a href="<%= srvPath %>v2/catalog/Sales_largestOrder?ID=9">Largest Sales Order</a><br />
+<% } -%>
+<% if(em){ -%>
+    <a href="<%= srvPath %>v2/catalog/SalesOrdersLog">Sales Orders Log</a><br />
 <% } -%>
 <% } -%>
 <% if((hana || api) && authentication){ -%>

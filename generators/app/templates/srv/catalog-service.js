@@ -8,6 +8,12 @@ log.registerCustomFields(["country", "amount"]);
 
 module.exports = cds.service.impl(async function () {
 
+<% if(apiS4HCSO){ -%>
+    const s4hcso = await cds.connect.to('API_SALES_ORDER_SRV');
+<% } -%>
+<% if(apiSFSFRC){ -%>
+    const sfrcm = await cds.connect.to('RCMCandidate');
+<% } -%>
 <% if(em){ -%>
     const em = await cds.connect.to('messaging'); 
 <% if(!multiTenant && hana){ -%>
@@ -24,6 +30,10 @@ module.exports = cds.service.impl(async function () {
            ,
 <% } -%>
            SalesOrders
+<% if(em){ -%>
+           ,
+           SalesOrdersLog
+<% } -%>
 <% } -%>
 <% if(apiSFSFRC){ -%>
 <% if(hana || apiS4HCSO){ -%>
@@ -70,13 +80,36 @@ module.exports = cds.service.impl(async function () {
         try {
             console.log('Event Mesh: Boost:', msg.data);
             await db.tx(msg).run (
-                UPDATE(db.entities['Sales']).with({ comments: 'Boosted! Mesh!' }).where({ ID: { '=': msg.data.ID } })
+                UPDATE(Sales).with({ comments: 'Boosted! Mesh!' }).where({ ID: { '=': msg.data.ID } })
             );
         } catch (err) {
             console.error(err);
             return {};
         }
     });
+
+<% if(apiS4HCSO){ -%>
+    em.on('sap/S4HANAOD/<%= emClientId %>/ce/sap/s4/beh/salesorder/v1/SalesOrder/Changed/v1', async msg => {
+        try {
+            console.log('Event Mesh: SalesOrder Changed:', msg.data);
+            const cql = SELECT.one(SalesOrders).where({ SalesOrder: msg.data.SalesOrder });
+            const tx = s4hcso.transaction(msg);
+            const res = await tx.send({
+                query: cql,
+                headers: {
+                    'Application-Interface-Key': process.env.ApplicationInterfaceKey,
+                    'APIKey': process.env.APIKey
+                }
+            });
+            await db.tx(msg).run (
+                INSERT.into(SalesOrdersLog).entries({ salesOrder: msg.data.SalesOrder, incotermsLocation1: res.IncotermsLocation1 })
+            );
+        } catch (err) {
+            console.error(err);
+            return {};
+        }
+    });
+<% } -%>
 <% } -%>
 <% } -%>
 
@@ -96,11 +129,11 @@ module.exports = cds.service.impl(async function () {
 <% if(apiS4HCSO){ -%>
     this.on('READ', SalesOrders, async (req) => {
         try {
-            const external = await cds.connect.to('API_SALES_ORDER_SRV');
-            const tx = external.transaction(req);
+            const tx = s4hcso.transaction(req);
             return await tx.send({
                 query: req.query,
                 headers: {
+                    'Application-Interface-Key': process.env.ApplicationInterfaceKey,
                     'APIKey': process.env.APIKey
                 }
             })
@@ -117,11 +150,11 @@ module.exports = cds.service.impl(async function () {
                 .where({ ID: { '=': req.params[0] } })
                 ;
             let cql = SELECT.one(SalesOrders).where({ SalesOrganization: res1[0].org }).orderBy({ TotalNetAmount: 'desc' });
-            const external = await cds.connect.to('API_SALES_ORDER_SRV');
-            const tx2 = external.transaction(req);
+            const tx2 = s4hcso.transaction(req);
             const res2 = await tx2.send({
                 query: cql,
                 headers: {
+                    'Application-Interface-Key': process.env.ApplicationInterfaceKey,
                     'APIKey': process.env.APIKey
                 }
             });
@@ -140,11 +173,11 @@ module.exports = cds.service.impl(async function () {
 <% if(apiSFSFRC){ -%>
     this.on('READ', Candidates, async (req) => {
         try {
-            const external = await cds.connect.to('RCMCandidate');
-            const tx = external.transaction(req);
+            const tx = sfrcm.transaction(req);
             return await tx.send({
                 query: req.query,
                 headers: {
+                    'Application-Interface-Key': process.env.ApplicationInterfaceKey,
                     'APIKey': process.env.APIKey
                 }
             })

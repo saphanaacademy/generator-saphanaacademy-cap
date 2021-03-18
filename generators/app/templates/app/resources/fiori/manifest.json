@@ -57,7 +57,11 @@
                     "icon": "sap-icon://sales-document",
                     "indicatorDataSource": {
                         "dataSource": "indicatorService",
+<% if(apiS4HCSO && em){ -%>
+                        "path": "SalesOrdersLog/$count",
+<% } else { -%>
                         "path": "Sales/$count",
+<% } -%>
                         "refresh": 10
                     }
                 }
@@ -117,7 +121,11 @@
                     "target": "List"
                 },
                 {
-                    "pattern": "Sales({key}):?query:",
+<% if(apiS4HCSO && em){ -%>
+                        "pattern": "SalesOrdersLog({key}):?query:",
+<% } else { -%>
+                        "pattern": "Sales({key}):?query:",
+<% } -%>
                     "name": "ObjectPage",
                     "target": "ObjectPage"
                 }
@@ -129,10 +137,18 @@
                     "name": "sap.fe.templates.ListReport",
                     "options": {
                         "settings": {
+<% if(apiS4HCSO && em){ -%>
+                            "entitySet": "SalesOrdersLog",
+<% } else { -%>
                             "entitySet": "Sales",
+<% } -%>
                             "variantManagement": "Page",
                             "navigation": {
+<% if(apiS4HCSO && em){ -%>
+                                "SalesOrdersLog": {
+<% } else { -%>
                                 "Sales": {
+<% } -%>
                                     "detail": {
                                         "route": "ObjectPage"
                                     }
@@ -147,7 +163,11 @@
                     "name": "sap.fe.templates.ObjectPage",
                     "options": {
                         "settings": {
+<% if(apiS4HCSO && em){ -%>
+                            "entitySet": "SalesOrdersLog"
+<% } else { -%>
                             "entitySet": "Sales"
+<% } -%>
                         }
                     }
                 }

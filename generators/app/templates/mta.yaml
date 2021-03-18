@@ -53,6 +53,7 @@ modules:
 <% } -%>
 <% if(api){ -%>
     properties:
+      ApplicationInterfaceKey: saptest0
       APIKey: <%= APIKey %>
 <% } -%>
     requires:
