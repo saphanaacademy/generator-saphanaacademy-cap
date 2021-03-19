@@ -43,21 +43,18 @@
   "cds": {
     "requires": {
 <% if(authentication){ -%>
-      "[production]": {
-        "uaa": {
-          "kind": "xsuaa"
-        }
+      "uaa": {
+        "kind": "xsuaa"
       },
       "auth": {
         "[production]": {
           "strategy": "JWT"
         },
         "[development]": {
-          "strategy": "mock"
-<% if(authorization){ -%>
-          ,
+          "strategy": "mock",
           "users": {
             "joe": {
+<% if(authorization){ -%>
               "roles": [
                 "Admin",
                 "Viewer"
@@ -70,8 +67,10 @@
                 ]
               }
 <% } -%>
+<% } -%>
             },
             "julie": {
+<% if(authorization){ -%>
               "roles": [
                 "Viewer"
               ]
@@ -84,8 +83,10 @@
                 ]
               }
 <% } -%>
+<% } -%>
             },
             "bob": {
+<% if(authorization){ -%>
               "roles": [
                 "Viewer"
               ]
@@ -97,9 +98,9 @@
                 ]
               }
 <% } -%>
+<% } -%>
             }
           }
-<% } -%>
         }
       }
 <% } -%>
