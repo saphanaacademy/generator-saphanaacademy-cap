@@ -87,12 +87,23 @@ service CatalogService @(path : '/catalog')
       @(restrict: [{ to: 'Viewer' }])
 <% } -%>
       as projection on RCMCandidate.Candidate {
+          candidateId,
           firstName,
           lastName,
+          cellPhone,
           city,
           zip,
           country
         };
+
+<% if(em){ -%>
+    entity CandidatesLog
+<% if(authorization){ -%>
+      @(restrict: [{ to: 'Viewer' }])
+<% } -%>
+      as select * from db.CandidatesLog
+    ;
+<% } -%>
 <% } -%>
 
 <% if(authentication){ -%>

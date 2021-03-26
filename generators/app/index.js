@@ -99,6 +99,13 @@ module.exports = class extends Generator {
         default: ["SAP S/4HANA Cloud Sales Order (A2X)"],
       },
       {
+        when: response => response.api === true && response.apiLoB.includes("SAP SuccessFactors Recruiting"),
+        type: "input",
+        name: "systemName",
+        message: "What is the System Name for SAP SuccessFactors?",
+        default: "",
+      },
+      {
         when: response => response.api === true,
         type: "input",
         name: "APIKey",
@@ -248,9 +255,13 @@ module.exports = class extends Generator {
       if (answers.api === false) {
         answers.apiLoB = [];
         answers.APIKey = "";
+        answers.systemName = "";
       }
       answers.apiS4HCSO = answers.apiLoB.includes("SAP S/4HANA Cloud Sales Order (A2X)");
       answers.apiSFSFRC = answers.apiLoB.includes("SAP SuccessFactors Recruiting");
+      if (answers.apiSFSFRC === false) {
+        answers.systemName = "";
+      }
       if (answers.authentication === false) {
         answers.authorization = false;
         answers.multiTenant = false;

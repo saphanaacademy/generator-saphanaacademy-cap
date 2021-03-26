@@ -9,11 +9,20 @@ entity Sales {
         comments : String(100);
 };
 
-<% if(apiS4HCSO && em){ -%>
+<% if(em){ -%>
 using { cuid, managed } from '@sap/cds/common';
 
+<% if(apiS4HCSO){ -%>
 entity SalesOrdersLog : cuid, managed {
       salesOrder         : String;
       incotermsLocation1 : String;
 };
+<% } -%>
+
+<% if(apiSFSFRC){ -%>
+entity CandidatesLog : cuid, managed {
+      candidateId : Integer;
+      cellPhone   : String;
+};
+<% } -%>
 <% } -%>

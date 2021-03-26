@@ -40,7 +40,11 @@ module.exports = cds.service.impl(async function () {
            ,
 <% } -%>
            Candidates
-<% } -%>
+<% if(em){ -%>
+           ,
+           CandidatesLog
+ <% } -%>
+ <% } -%>
           } = this.entities;
 
 <% if(hana){ -%>
@@ -103,6 +107,19 @@ module.exports = cds.service.impl(async function () {
             });
             await db.tx(msg).run (
                 INSERT.into(SalesOrdersLog).entries({ salesOrder: msg.data.SalesOrder, incotermsLocation1: res.IncotermsLocation1 })
+            );
+        } catch (err) {
+            console.error(err);
+            return {};
+        }
+    });
+<% } -%>
+<% if(apiSFSFRC){ -%>
+    em.on('<%= emNamespace %>/<%= projectName %>/candidate/updated', async msg => {
+        try {
+            console.log('Event Mesh: Candidate Updated:', msg.headers);
+            await db.tx(msg).run (
+                INSERT.into(CandidatesLog).entries({ candidateId: msg.headers.candidateId, cellPhone: msg.headers.cellPhone })
             );
         } catch (err) {
             console.error(err);

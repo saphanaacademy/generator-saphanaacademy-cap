@@ -27,7 +27,7 @@ annotate catalog.Sales with {
     country  @title:'{i18n>country}';
     amount   @title:'{i18n>amount}';
     comments @title:'{i18n>comments}';
-}
+};
 
 <% if(apiS4HCSO && em){ -%>
 annotate catalog.SalesOrdersLog with @(
@@ -53,5 +53,30 @@ annotate catalog.SalesOrdersLog with {
     ID                 @title:'{i18n>ID}' @UI.HiddenFilter;
     salesOrder         @title:'{i18n>salesOrder}';
     incotermsLocation1 @title:'{i18n>incotermsLocation1}';
-}
+};
+<% } -%>
+
+<% if(apiSFSFRC && em){ -%>
+annotate catalog.CandidatesLog with @(
+    UI: {
+        Identification: [ {Value: candidateId} ],
+        SelectionFields: [ ],
+        LineItem: [
+            {Value: candidateId},
+            {Value: modifiedAt},
+            {Value: cellPhone}
+        ],
+        HeaderInfo: {
+            TypeName: '{i18n>candidate}',
+            TypeNamePlural: '{i18n>candidates}',
+            Title: {Value: candidateId},
+            Description: {Value: cellPhone}
+        }
+    }
+);
+
+annotate catalog.CandidatesLog with {
+    candidateId @title:'{i18n>candidateId}' @UI.HiddenFilter;
+    cellPhone   @title:'{i18n>cellPhone}';
+};
 <% } -%>

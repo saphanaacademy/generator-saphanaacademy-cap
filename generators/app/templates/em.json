@@ -25,9 +25,9 @@
             ],
             "subscribeFilter": [
 <% if(apiS4HCSO){ -%>
-                    "sap/S4HANAOD/<%= emClientId %>/*",
+                "sap/S4HANAOD/<%= emClientId %>/*",
 <% } -%>
-                    "${namespace}/*"
+                "${namespace}/*"
             ]
         }
     }

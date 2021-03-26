@@ -267,15 +267,6 @@ resources:
                 Authentication: NoAuthentication
                 HTML5.DynamicDestination: true
 <% } -%>
-<% if(apiSFSFRC){ -%>
-              - Name: <%= projectName %>-RCMCandidate
-                Description: SAP SuccessFactors Recruiting
-                URL: https://sandbox.api.sap.com
-                Type: HTTP
-                ProxyType: Internet
-                Authentication: NoAuthentication
-                HTML5.DynamicDestination: true
-<% } -%>
 <% if(html5repo){ -%>
               - Name: <%= projectName %>-srv
                 Description: <%= displayName %> - Server Module
@@ -306,6 +297,18 @@ resources:
       service-plan: app-runtime
 <% } -%>
 <% } -%>
+<% } -%>
+
+<% if(apiSFSFRC){ -%>
+  # ----------------- SUCCESSFACTORS API SERVICE ---------------
+  - name: <%= projectName %>-sf-api
+  # ------------------------------------------------------------
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: sap-successfactors-extensibility
+      service-plan: api-access
+      config:
+        systemName: <%= systemName %>
 <% } -%>
 
 <% if(em){ -%>

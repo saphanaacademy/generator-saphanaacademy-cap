@@ -59,6 +59,8 @@
                         "dataSource": "indicatorService",
 <% if(apiS4HCSO && em){ -%>
                         "path": "SalesOrdersLog/$count",
+<% } else if(apiSFSFRC && em){ -%>
+                        "path": "CandidatesLog/$count",
 <% } else { -%>
                         "path": "Sales/$count",
 <% } -%>
@@ -123,6 +125,8 @@
                 {
 <% if(apiS4HCSO && em){ -%>
                         "pattern": "SalesOrdersLog({key}):?query:",
+<% } else if(apiSFSFRC && em){ -%>
+                        "pattern": "CandidatesLog({key}):?query:",
 <% } else { -%>
                         "pattern": "Sales({key}):?query:",
 <% } -%>
@@ -139,6 +143,8 @@
                         "settings": {
 <% if(apiS4HCSO && em){ -%>
                             "entitySet": "SalesOrdersLog",
+<% } else if(apiSFSFRC && em){ -%>
+                            "entitySet": "CandidatesLog",
 <% } else { -%>
                             "entitySet": "Sales",
 <% } -%>
@@ -146,6 +152,8 @@
                             "navigation": {
 <% if(apiS4HCSO && em){ -%>
                                 "SalesOrdersLog": {
+<% } else if(apiSFSFRC && em){ -%>
+                                "CandidatesLog": {
 <% } else { -%>
                                 "Sales": {
 <% } -%>
@@ -165,6 +173,8 @@
                         "settings": {
 <% if(apiS4HCSO && em){ -%>
                             "entitySet": "SalesOrdersLog"
+<% } else if(apiSFSFRC && em){ -%>
+                            "entitySet": "CandidatesLog"
 <% } else { -%>
                             "entitySet": "Sales"
 <% } -%>

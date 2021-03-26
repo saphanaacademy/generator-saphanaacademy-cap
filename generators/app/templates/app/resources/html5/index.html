@@ -32,6 +32,9 @@
 <% if(apiSFSFRC){ -%>
     <a href="map.html">Candidates - Map</a><br />
     <a href="<%= srvPath %>catalog/Candidates?$top=10&$filter=country%20eq%20%27US%27%20and%20zip%20gt%20%2700000%27">Candidates</a><br />
+<% if(em){ -%>
+    <a href="<%= srvPath %>catalog/CandidatesLog">Candidates Log</a><br />
+<% } -%>
 <% } -%>
 <% if((hana || api) && authentication){ -%>
     <a href="<%= srvPath %>catalog/userInfo()">User Info</a><br />
@@ -55,6 +58,12 @@
 <% } -%>
 <% if(em){ -%>
     <a href="<%= srvPath %>v2/catalog/SalesOrdersLog">Sales Orders Log</a><br />
+<% } -%>
+<% } -%>
+<% if(apiSFSFRC){ -%>
+    <a href="<%= srvPath %>v2/catalog/Candidates?$top=10&$filter=country%20eq%20%27US%27%20and%20zip%20gt%20%2700000%27">Candidates</a><br />
+<% if(em){ -%>
+    <a href="<%= srvPath %>v2/catalog/CandidatesLog">Candidates Log</a><br />
 <% } -%>
 <% } -%>
 <% if((hana || api) && authentication){ -%>

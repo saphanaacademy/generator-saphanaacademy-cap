@@ -151,8 +151,8 @@
         "model": "srv/external/RCMCandidate",
         "credentials": {
           "[production]": {
-            "destination": "<%= projectName %>-RCMCandidate",
-            "path": "successfactors/odata/v2"
+            "destination": "<%= projectName %>-sf-api",
+            "path": "odata/v2"
           },
           "[development]": {
             "url": "https://sandbox.api.sap.com/successfactors/odata/v2"
