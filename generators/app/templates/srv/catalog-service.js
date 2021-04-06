@@ -183,7 +183,7 @@ module.exports = cds.service.impl(async function () {
                     'APIKey': process.env.APIKey
                 })
                 .execute({ 
-                    destinationName: 'app-API_BUSINESS_PARTNER'
+                    destinationName: cds.env.requires.API_BUSINESS_PARTNER.credentials.destination
                 })
                 .then((res) => {
                     if (res) {
