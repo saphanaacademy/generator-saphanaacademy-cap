@@ -29,6 +29,12 @@
     <a href="<%= srvPath %>catalog/SalesOrdersLog">Sales Orders Log</a><br />
 <% } -%>
 <% } -%>
+<% if(apiS4HCBP){ -%>
+    <a href="<%= srvPath %>catalog/BusinessPartners?$top=10&$filter=Customer%20gt%20%27%20%27%20and%20FirstName%20gt%20%27%27">Business Partners</a><br />
+<% if(em){ -%>
+    <a href="<%= srvPath %>catalog/CustomerProcesses">Customer Processes</a><br />
+<% } -%>
+<% } -%>
 <% if(apiSFSFRC){ -%>
     <a href="map.html">Candidates - Map</a><br />
     <a href="<%= srvPath %>catalog/Candidates?$top=10&$filter=country%20eq%20%27US%27%20and%20zip%20gt%20%2700000%27">Candidates</a><br />
@@ -58,6 +64,12 @@
 <% } -%>
 <% if(em){ -%>
     <a href="<%= srvPath %>v2/catalog/SalesOrdersLog">Sales Orders Log</a><br />
+<% } -%>
+<% } -%>
+<% if(apiS4HCBP){ -%>
+    <a href="<%= srvPath %>v2/catalog/BusinessPartners?$top=10&$filter=Customer%20gt%20%27%20%27%20and%20FirstName%20gt%20%27%27">Business Partners</a><br />
+<% if(em){ -%>
+    <a href="<%= srvPath %>v2/catalog/CustomerProcesses">Customer Processes</a><br />
 <% } -%>
 <% } -%>
 <% if(apiSFSFRC){ -%>

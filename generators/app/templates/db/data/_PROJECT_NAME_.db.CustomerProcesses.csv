@@ -1,0 +1,2 @@
+ID;backendEventTime;customerId;customerName;customerPhone;customerMail;customerLanguage;customerCity;customerCountry;customerCondition_conditionId;status_statusId;criticality
+8dff8548-d8b7-401a-96cc-7819cf18e485;2021-04-06T08:50:14Z;Z000001;Harvey Denton;914 653 9601;harvey.denton@gmail.com;EN;New York;US;3;2;3

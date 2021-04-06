@@ -13,6 +13,9 @@
 <% } -%>
 <% if(em){ -%>
     "@sap/xb-msg-amqp-v100": "^0.9.48",
+<% if(apiS4HCBP){ -%>
+    "@sap/cloud-sdk-vdm-business-partner-service": "^1.24",
+<% } -%>
 <% } -%>
 <% if(authentication){ -%>
     "@sap/xsenv": "^3",
@@ -32,6 +35,7 @@
 <% if(applicationLogging){ -%>
     "cf-nodejs-logging-support": "^6",
 <% } -%>
+    "debug": "^4.3",
     "express": "^4"
   },
   "devDependencies": {
@@ -142,8 +146,26 @@
         }
       }
 <% } -%>
-<% if(apiSFSFRC){ -%>
+<% if(apiS4HCBP){ -%>
 <% if(authentication || hana || schemaName !== '' || apiS4HCSO){ -%>
+      ,
+<% } -%>
+      "API_BUSINESS_PARTNER": {
+        "kind": "odata",
+        "model": "srv/external/API_BUSINESS_PARTNER",
+        "credentials": {
+          "[production]": {
+            "destination": "<%= projectName %>-API_BUSINESS_PARTNER",
+            "path": "s4hanacloud/sap/opu/odata/sap/API_BUSINESS_PARTNER"
+          },
+          "[development]": {
+            "url": "https://sandbox.api.sap.com/s4hanacloud/sap/opu/odata/sap/API_BUSINESS_PARTNER"
+          }
+        }
+      }
+<% } -%>
+<% if(apiSFSFRC){ -%>
+<% if(authentication || hana || schemaName !== '' || apiS4HCSO || apiS4HCBP){ -%>
       ,
 <% } -%>
       "RCMCandidate": {
@@ -161,7 +183,7 @@
       }
 <% } -%>
 <% if(em){ -%>
-<% if(authentication || hana || schemaName !== '' || apiS4HCSO || apiSFSFRC){ -%>
+<% if(authentication || hana || schemaName !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC){ -%>
       ,
 <% } -%>
       "messaging": {

@@ -1,0 +1,6 @@
+statusId;name;descr
+1;Kick-Off;Newly created process
+2;OK;Georelation process is OK, nothing to do
+3;Follow-Up;Needs to be taken up
+4;Critical;Process in status critical needs high prio processing
+5;Closed; Process has finished

@@ -54,10 +54,18 @@
                     "action": "display",
                     "title": "<%= displayName %>-Fiori",
                     "subTitle": "<%= description %> Fiori",
+<% if(apiS4HCBP && em){ -%>
+                    "icon": "sap-icon://customer",
+<% } else if(apiSFSFRC && em){ -%>
+                    "icon": "sap-icon://employee",
+<% } else { -%>
                     "icon": "sap-icon://sales-document",
+<% } -%>
                     "indicatorDataSource": {
                         "dataSource": "indicatorService",
-<% if(apiS4HCSO && em){ -%>
+<% if(apiS4HCBP && em){ -%>
+                        "path": "CustomerProcesses/$count",
+<% } else if(apiS4HCSO && em){ -%>
                         "path": "SalesOrdersLog/$count",
 <% } else if(apiSFSFRC && em){ -%>
                         "path": "CandidatesLog/$count",
@@ -123,7 +131,9 @@
                     "target": "List"
                 },
                 {
-<% if(apiS4HCSO && em){ -%>
+<% if(apiS4HCBP && em){ -%>
+                        "pattern": "CustomerProcesses({key}):?query:",
+<% } else if(apiS4HCSO && em){ -%>
                         "pattern": "SalesOrdersLog({key}):?query:",
 <% } else if(apiSFSFRC && em){ -%>
                         "pattern": "CandidatesLog({key}):?query:",
@@ -141,7 +151,9 @@
                     "name": "sap.fe.templates.ListReport",
                     "options": {
                         "settings": {
-<% if(apiS4HCSO && em){ -%>
+<% if(apiS4HCBP && em){ -%>
+                            "entitySet": "CustomerProcesses",
+<% } else if(apiS4HCSO && em){ -%>
                             "entitySet": "SalesOrdersLog",
 <% } else if(apiSFSFRC && em){ -%>
                             "entitySet": "CandidatesLog",
@@ -150,7 +162,9 @@
 <% } -%>
                             "variantManagement": "Page",
                             "navigation": {
-<% if(apiS4HCSO && em){ -%>
+<% if(apiS4HCBP && em){ -%>
+                                "CustomerProcesses": {
+<% } else if(apiS4HCSO && em){ -%>
                                 "SalesOrdersLog": {
 <% } else if(apiSFSFRC && em){ -%>
                                 "CandidatesLog": {
@@ -171,7 +185,9 @@
                     "name": "sap.fe.templates.ObjectPage",
                     "options": {
                         "settings": {
-<% if(apiS4HCSO && em){ -%>
+<% if(apiS4HCBP && em){ -%>
+                            "entitySet": "CustomerProcesses"
+<% } else if(apiS4HCSO && em){ -%>
                             "entitySet": "SalesOrdersLog"
 <% } else if(apiSFSFRC && em){ -%>
                             "entitySet": "CandidatesLog"

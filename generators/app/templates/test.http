@@ -53,6 +53,20 @@ Authorization: Basic joe:
 ###
 <% } -%>
 <% } -%>
+<% if(apiS4HCBP){ -%>
+GET http://localhost:4004/catalog/BusinessPartners?$top=10&$filter=Customer%20gt%20%27%20%27%20and%20FirstName%20gt%20%27%27
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% if(em){ -%>
+GET http://localhost:4004/catalog/CustomerProcesses
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
+<% } -%>
 <% if(apiSFSFRC){ -%>
 GET http://localhost:4004/catalog/Candidates?$top=10&$filter=country%20eq%20%27US%27%20and%20zip%20gt%20%2700000%27
 <% if(authentication){ -%>
@@ -124,6 +138,20 @@ Authorization: Basic joe:
 <% } -%>
 <% if(em){ -%>
 GET http://localhost:4004/v2/catalog/SalesOrdersLog
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
+<% } -%>
+<% if(apiS4HCBP){ -%>
+GET http://localhost:4004/v2/catalog/BusinessPartners?$top=10&$filter=Customer%20gt%20%27%20%27%20and%20FirstName%20gt%20%27%27
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% if(em){ -%>
+GET http://localhost:4004/v2/catalog/CustomerProcesses
 <% if(authentication){ -%>
 Authorization: Basic joe:
 <% } -%>

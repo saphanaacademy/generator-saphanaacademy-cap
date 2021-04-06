@@ -13,7 +13,7 @@
                 "${namespace}/*"
             ],
             "subscribeFilter": [
-<% if(apiS4HCSO){ -%>
+<% if(apiS4HCSO || apiS4HCBP){ -%>
                 "sap/S4HANAOD/<%= emClientId %>/*",
 <% } -%>
                 "${namespace}/*"
@@ -24,7 +24,7 @@
                 "${namespace}/*"
             ],
             "subscribeFilter": [
-<% if(apiS4HCSO){ -%>
+<% if(apiS4HCSO || apiS4HCBP){ -%>
                 "sap/S4HANAOD/<%= emClientId %>/*",
 <% } -%>
                 "${namespace}/*"

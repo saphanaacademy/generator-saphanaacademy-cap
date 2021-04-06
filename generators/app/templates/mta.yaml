@@ -55,6 +55,10 @@ modules:
     properties:
       ApplicationInterfaceKey: saptest0
       APIKey: <%= APIKey %>
+<% if(em && !multiTenant && apiS4HCBP){ -%>
+      BusinessPartnerCountry: US
+      BusinessPartnerRole: FLCU01
+<% } -%>
 <% } -%>
     requires:
 <% if(authentication || api){ -%>
@@ -261,6 +265,15 @@ resources:
 <% if(apiS4HCSO){ -%>
               - Name: <%= projectName %>-API_SALES_ORDER_SRV
                 Description: SAP S/4HANA Cloud Sales Order (A2X)
+                URL: https://sandbox.api.sap.com
+                Type: HTTP
+                ProxyType: Internet
+                Authentication: NoAuthentication
+                HTML5.DynamicDestination: true
+<% } -%>
+<% if(apiS4HCBP){ -%>
+              - Name: <%= projectName %>-API_BUSINESS_PARTNER
+                Description: SAP S/4HANA Cloud Business Partner (A2X)
                 URL: https://sandbox.api.sap.com
                 Type: HTTP
                 ProxyType: Internet

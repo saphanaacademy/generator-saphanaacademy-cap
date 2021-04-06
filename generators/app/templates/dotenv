@@ -1,2 +1,6 @@
 ApplicationInterfaceKey=saptest0
 APIKey=<%= APIKey %>
+<% if(em && !multiTenant && apiS4HCBP){ -%>
+BusinessPartnerCountry=US
+BusinessPartnerRole=FLCU01
+<% } -%>
