@@ -31,6 +31,8 @@ To generate your new project:
 yo saphanaacademy-cap
 ```
 
+![SAP Business Application Studio](demo.gif)
+
 ## Getting To Know Yeoman
 
  * Yeoman has a heart of gold.

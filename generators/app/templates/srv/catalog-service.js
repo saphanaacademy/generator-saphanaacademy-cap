@@ -70,7 +70,7 @@ module.exports = cds.service.impl(async function () {
                 each.comments += ' ';
             each.comments += 'Exceptional!';
             debug(each.comments, {"country": each.country, "amount": each.amount});
-            <% if(applicationLogging){ -%>
+<% if(applicationLogging){ -%>
             log.info(each.comments, {"country": each.country, "amount": each.amount});
 <% } -%>
         }

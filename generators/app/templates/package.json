@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "<%= description %>",
   "dependencies": {
-    "@sap/cds": "^4",
+    "@sap/cds": "^5",
     "@sap/audit-logging": "^3",
 <% if(hana || schemaName !== ''){ -%>
     "@sap/hana-client": "^2",
