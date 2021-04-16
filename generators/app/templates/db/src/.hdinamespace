@@ -1,9 +1,0 @@
-{
-<% if(schemaName !== ""){ -%>
-    "name": "",
-    "subfolder": "ignore"
-<% } else { -%>
-    "name": "<%= projectName %>.db",
-    "subfolder": "append"
-<% } -%>
-}

@@ -1,4 +1,8 @@
+<% if(hanaNative){ -%>
+context <%= projectName %>.db {
+<% } else { -%>
 namespace <%= projectName %>.db;
+<% } -%>
 
 entity Sales {
   key ID       : Integer;
@@ -55,4 +59,15 @@ entity CandidatesLog : cuid, managed {
       cellPhone   : String;
 };
 <% } -%>
+<% } -%>
+
+<% if(hanaNative){ -%>
+}
+
+@cds.persistence.exists
+@cds.persistence.calcview
+entity CV_SALES {
+key REGION  : String(100);
+    AMOUNT  : Integer;
+}
 <% } -%>

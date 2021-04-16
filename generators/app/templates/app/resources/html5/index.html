@@ -16,9 +16,11 @@
 <% } -%>
 <% if(hana){ -%>
     <a href="<%= srvPath %>catalog/Sales">Sales</a><br />
+    <a href="<%= srvPath %>catalog/Sales?$apply=filter(amount%20gt%20700)/groupby((region),aggregate($count%20as%20nrCountries))">Top Sales Count</a><br />
 <% } -%>
 <% if(hanaNative){ -%>
     <a href="<%= srvPath %>catalog/topSales(amount=700)">Top Sales</a><br />
+    <a href="<%= srvPath %>catalog/VSales">Sales by Region</a><br />
 <% } -%>
 <% if(apiS4HCSO){ -%>
     <a href="<%= srvPath %>catalog/SalesOrders?$top=10&$filter=TotalNetAmount%20gt%202000&$orderby=SalesOrder%20desc">Sales Orders</a><br />
@@ -53,9 +55,11 @@
 <% } -%>
 <% if(hana){ -%>
     <a href="<%= srvPath %>v2/catalog/Sales">Sales</a><br />
+    <a href="<%= srvPath %>v2/catalog/Sales?$apply=filter(amount%20gt%20700)/groupby((region),aggregate($count%20as%20nrCountries))">Top Sales Count</a><br />
 <% } -%>
 <% if(hanaNative){ -%>
     <a href="<%= srvPath %>v2/catalog/topSales()?amount=700">Top Sales</a><br />
+    <a href="<%= srvPath %>v2/catalog/VSales">Sales by Region</a><br />
 <% } -%>
 <% if(apiS4HCSO){ -%>
     <a href="<%= srvPath %>v2/catalog/SalesOrders?$top=10&$filter=TotalNetAmount%20gt%202000&$orderby=SalesOrder%20desc">Sales Orders</a><br />

@@ -1,4 +1,4 @@
-PROCEDURE "<%= projectName %>.db::SP_TopSales" (IN amount INTEGER, OUT result "<%= projectName %>.db::TT_TopSales")
+PROCEDURE "<%= projectName.toUpperCase() %>_DB_SP_TopSales" (IN amount INTEGER, OUT result "<%= projectName.toUpperCase() %>_DB_TT_TopSales")
   LANGUAGE SQLSCRIPT
   SQL SECURITY INVOKER
   READS SQL DATA

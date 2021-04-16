@@ -329,7 +329,7 @@ module.exports = cds.service.impl(async function () {
     this.on('topSales', async (req) => {
         try {
             const tx = cds.tx(req);
-            const results = await tx.run(`CALL "<%= projectName %>.db::SP_TopSales"(?,?)`, [req.data.amount]);
+            const results = await tx.run(`CALL "<%= projectName.toUpperCase() %>_DB_SP_TopSales"(?,?)`, [req.data.amount]);
             return results;
         } catch (err) {
             console.error(err);

@@ -374,18 +374,14 @@ module.exports = class extends Generator {
                                             if (!((file.substring(0, 36) === 'db/data/_PROJECT_NAME_.db.Conditions' || file.substring(0, 34) === 'db/data/_PROJECT_NAME_.db.Customer' || file.substring(0, 32) === 'db/data/_PROJECT_NAME_.db.Status' ) && (answers.get('apiS4HCBP') === false || answers.get('em') === false))) {
                                               if (!(file.substring(0, 7) === 'db/src/' && answers.get('hanaNative') === false && answers.get('schemaName') === "")) {
                                                 if (!(file.substring(0, 20) === 'db/src/_SCHEMA_NAME_' && answers.get('schemaName') === "")) {
-                                                  if (!((file.substring(0, 10) === 'db/src/SP_' || file.substring(0, 10) === 'db/src/TT_') && answers.get('hanaNative') === false)) {
+                                                  if (!((file.substring(0, 10) === 'db/src/SP_' || file.substring(0, 10) === 'db/src/TT_' || file.substring(0, 10) === 'db/src/CV_') && answers.get('hanaNative') === false)) {
                                                     const sOrigin = this.templatePath(file);
                                                     let fileDest = file;
                                                     if (fileDest.includes('_PROJECT_NAME_')) {
-                                                      console.log('before:', fileDest);
                                                       fileDest = 'db/data/' + answers.get('projectName') + '.db-' + fileDest.split(".", 3)[2] + '.csv';
-                                                      console.log('after:', fileDest);
                                                     }
                                                     if (fileDest.includes('_SCHEMA_NAME_')) {
-                                                      console.log('before:', fileDest);
                                                       fileDest = 'db/src/' + answers.get('schemaName') + '.' + fileDest.split(".", 3)[1];
-                                                      console.log('after:', fileDest);
                                                     }
                                                     if (fileDest === 'dotenv') {
                                                       fileDest = '.env';
@@ -454,7 +450,7 @@ module.exports = class extends Generator {
           let i = 0;
           resObjects.forEach(element => {
             if (i) hdbSynonym += ",";
-            hdbSynonym += '"' + answers.get('projectName') + '.db::' + answers.get('schemaName') + '.' + element.OBJECT_NAME + '": {"target": {"object":"' + element.OBJECT_NAME + '","schema":"' + schemaNameAdjustedCase + '"}}';
+            hdbSynonym += '"' + answers.get('projectName').toUpperCase() + '_DB_' + answers.get('schemaName').toUpperCase() + '_SY_' + element.OBJECT_NAME + '": {"target": {"object":"' + element.OBJECT_NAME + '","schema":"' + schemaNameAdjustedCase + '"}}';
             i++;
           });
           hdbSynonym += "}";
@@ -492,7 +488,7 @@ module.exports = class extends Generator {
                   i++;
                 }
               });
-              hdbView += ' FROM "' + answers.get('projectName') + '.db::' + answers.get('schemaName') + '.' + elementO.OBJECT_NAME + '"';
+              hdbView += ' FROM "' + answers.get('projectName').toUpperCase() + '_DB_' + answers.get('schemaName').toUpperCase() + '_SY_' + elementO.OBJECT_NAME + '"';
               var view = { "NAME": elementO.OBJECT_NAME, "VIEW": hdbView };
               hdbViews.push(view);
             });

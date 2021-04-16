@@ -24,9 +24,19 @@ Content-Type: application/json
 
 {}
 ###
+GET http://localhost:4004/catalog/Sales?$apply=filter(amount%20gt%20500)/groupby((region),aggregate($count%20as%20nrCountries))
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
 <% } -%>
 <% if(hanaNative){ -%>
 GET http://localhost:4004/catalog/topSales(amount=700)
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+GET http://localhost:4004/catalog/VSales
 <% if(authentication){ -%>
 Authorization: Basic joe:
 <% } -%>
@@ -115,9 +125,19 @@ Content-Type: application/json
 
 {}
 ###
+GET http://localhost:4004/v2/catalog/Sales?$apply=filter(amount%20gt%20500)/groupby((region),aggregate($count%20as%20nrCountries))
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
 <% } -%>
 <% if(hanaNative){ -%>
 GET http://localhost:4004/v2/catalog/topSales()?amount=700
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+GET http://localhost:4004/v2/catalog/VSales
 <% if(authentication){ -%>
 Authorization: Basic joe:
 <% } -%>

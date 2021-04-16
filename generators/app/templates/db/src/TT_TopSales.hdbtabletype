@@ -1,4 +1,4 @@
-TYPE "<%= projectName %>.db::TT_TopSales" AS TABLE (
+TYPE "<%= projectName.toUpperCase() %>_DB_TT_TopSales" AS TABLE (
    "ID" INTEGER,
    "region" NVARCHAR(100),
    "country" NVARCHAR(100),

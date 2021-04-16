@@ -2,6 +2,10 @@
 using {<%= projectName %>.db as db} from '../db/data-model';
 <% } -%>
 
+<% if(hanaNative){ -%>
+using {CV_SALES} from '../db/data-model';
+<% } -%>
+
 <% if(apiS4HCSO){ -%>
 using { API_SALES_ORDER_SRV } from './external/API_SALES_ORDER_SRV.csn';
 <% } -%>
@@ -50,6 +54,14 @@ service CatalogService @(path : '/catalog')
 <% } -%>
 
 <% if(hanaNative){ -%>
+    @readonly
+    entity VSales
+<% if(authorization){ -%>
+      @(restrict: [{ to: 'Viewer' }])
+<% } -%>
+      as select * from CV_SALES
+    ;
+
     function topSales
 <% if(authorization){ -%>
       @(restrict: [{ to: 'Viewer' }])
