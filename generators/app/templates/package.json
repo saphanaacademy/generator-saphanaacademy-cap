@@ -24,7 +24,7 @@
 <% } -%>
 <% if(multiTenant){ -%>
     "@sap/cds-mtx": "^1",
-    "@sap/hdi-deploy": "^3",
+    "@sap/hdi-deploy": "^4",
     "@sap/instance-manager": "^2",
     "cfenv": "^1",
 <% } -%>
@@ -118,15 +118,22 @@
         },
         "[development]": {
           "kind": "sql"
-        }
+        },
+        "model": [
+          "db",
+          "srv"
+        ]
 <% if(multiTenant){ -%>
         ,
-        "multiTenant": true,
         "vcap": {
           "label": "service-manager"
         }
 <% } -%>
       }
+<% } -%>
+<% if(multiTenant){ -%>
+      ,
+      "multitenancy": true
 <% } -%>
 <% if(apiS4HCSO){ -%>
 <% if(authentication || hana || schemaName !== ''){ -%>
@@ -206,6 +213,11 @@
 <% if(multiTenant){ -%>
     ,
     "mtx": {
+      "api": {
+        "provisioning": true,
+        "metadata": true,
+        "model": true
+      },
       "element-prefix": [
         "Z_",
         "ZZ_"
@@ -215,11 +227,9 @@
         "sap.",
         "<%= projectName %>."
       ],
-<% if(hana){ -%>
       "entity-whitelist": [
         "<%= projectName %>.db.Sales"
       ],
-<% } -%>
       "service-whitelist": [
         "CatalogService"
       ]

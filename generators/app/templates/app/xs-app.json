@@ -70,8 +70,19 @@
             "destination": "srv"
         }
 <% } -%>
+<% if(multiTenant){ -%>
+        ,
+        {
+            "source": "^/extend/(.*)",
+            "target": "$1",
+<% if(authentication){ -%>
+            "authenticationType": "none",
+<% } -%>
+            "destination": "srv"
+        }
+<% } -%>
 <% if(ui){ -%>
-<% if(hana || api || schemaName !== ''){ -%>
+<% if(hana || api || schemaName !== '' || multiTenant){ -%>
         ,
 <% } -%>
         {

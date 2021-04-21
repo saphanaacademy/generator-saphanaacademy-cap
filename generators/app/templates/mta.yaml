@@ -371,6 +371,7 @@ resources:
         appName: <%= projectName %>
         displayName: '<%= displayName %>'
         description: '<%= description %>'
+        category: '<%= category %>'
         appUrls:
 <% if(customDomain !== ""){ -%>
           onSubscription: https://<%= projectName %>-srv.<%= customDomain %>/mtx/v1/provisioning/tenant/{tenantId}

@@ -16,7 +16,7 @@ module.exports = class extends Generator {
           }
           return "Please only use alphanumeric characters for the project name.";
         },
-        default: "app",
+        default: "app"
       },
       {
         type: "confirm",
@@ -28,13 +28,13 @@ module.exports = class extends Generator {
         type: "input",
         name: "displayName",
         message: "What is the display name of your app?",
-        default: "App",
+        default: "App"
       },
       {
         type: "input",
         name: "description",
         message: "What is the description of your app?",
-        default: "Business Application",
+        default: "Business Application"
       },
       {
         type: "input",
@@ -96,21 +96,21 @@ module.exports = class extends Generator {
         name: "apiLoB",
         message: "Which external API would you like to use?",
         choices: ["SAP S/4HANA Cloud Sales Order (A2X)", "SAP S/4HANA Cloud Business Partner (A2X)", "SAP SuccessFactors Recruiting"],
-        default: ["SAP S/4HANA Cloud Sales Order (A2X)"],
+        default: ["SAP S/4HANA Cloud Sales Order (A2X)"]
       },
       {
         when: response => response.api === true && response.apiLoB.includes("SAP SuccessFactors Recruiting"),
         type: "input",
         name: "systemName",
         message: "What is the System Name for SAP SuccessFactors?",
-        default: "",
+        default: ""
       },
       {
         when: response => response.api === true,
         type: "input",
         name: "APIKey",
         message: "What is your API Key for SAP API Business Hub?",
-        default: "",
+        default: ""
       },
       {
         type: "confirm",
@@ -171,21 +171,28 @@ module.exports = class extends Generator {
           }
           return "Please only use alphanumeric characters for the custom domain.";
         },
-        default: "",
+        default: ""
       },
       {
-        when: response => response.authentication === true && response.schemaName === "" && response.html5repo === false,
+        when: response => response.hana === true && response.authentication === true && response.schemaName === "" && response.html5repo === false,
         type: "confirm",
         name: "multiTenant",
         message: "Would you like to create a SaaS multitenant app?",
         default: false
       },
       {
+        when: response => response.multiTenant === true,
+        type: "input",
+        name: "category",
+        message: "What is the category of your app?",
+        default: "SaaS Multitenant Apps"
+      },
+      {
         when: response => response.multiTenant === true && response.customDomain === "",
         type: "confirm",
         name: "routes",
         message: "Would you like to include creation/deletion of tenant routes on subscribe/unsubscribe (via the CF API)?",
-        default: true,
+        default: true
       },
       {
         type: "confirm",
@@ -204,7 +211,7 @@ module.exports = class extends Generator {
           }
           return "Please specify exactly three segments and only use alphanumeric characters for the messaging namespace.";
         },
-        default: "company/technology/events",
+        default: "company/technology/events"
       },
       {
         when: response => response.em === true && (response.apiLoB.includes("SAP S/4HANA Cloud Sales Order (A2X)") || response.apiLoB.includes("SAP S/4HANA Cloud Business Partner (A2X)")),
@@ -217,7 +224,7 @@ module.exports = class extends Generator {
           }
           return "Please use between 1 and 4 alphanumeric characters for the emClientID.";
         },
-        default: "",
+        default: ""
       },
       {
         type: "confirm",
@@ -251,6 +258,7 @@ module.exports = class extends Generator {
       }
       if (answers.hana === false) {
         answers.hanaNative = false;
+        answers.multiTenant = false;
       }
       if (answers.api === false) {
         answers.apiLoB = [];
@@ -285,6 +293,7 @@ module.exports = class extends Generator {
         answers.managedAppRouter = false;
       }
       if (answers.multiTenant === false) {
+        answers.category = "";
         answers.routes = false;
       }
       if (answers.em === false) {
