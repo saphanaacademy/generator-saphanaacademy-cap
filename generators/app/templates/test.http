@@ -91,6 +91,32 @@ Authorization: Basic joe:
 ###
 <% } -%>
 <% } -%>
+<% if(apiARIBPO){ -%>
+GET http://localhost:4004/catalog/PurchaseOrders?$filter=supplierANID%20eq%20%27AN02000000283%27&$top=3
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
+<% if(apiFGAP){ -%>
+GET http://localhost:4004/catalog/Approvals
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+GET http://localhost:4004/catalog/RejectReasons?$filter=ModuleID%20eq%20%2740%27
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
+<% if(apiNeoWs){ -%>
+GET http://localhost:4004/catalog/Asteroids
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
 <% if((hana || api) && authentication){ -%>
 GET http://localhost:4004/catalog/userInfo()
 <% if(authentication){ -%>
@@ -191,6 +217,32 @@ Authorization: Basic joe:
 <% } -%>
 ###
 <% } -%>
+<% } -%>
+<% if(apiARIBPO){ -%>
+GET http://localhost:4004/v2/catalog/PurchaseOrders?$filter=supplierANID%20eq%20%27AN02000000283%27&$top=3
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
+<% if(apiFGAP){ -%>
+GET http://localhost:4004/v2/catalog/Approvals
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+GET http://localhost:4004/v2/catalog/RejectReasons?$filter=ModuleID%20eq%20%2740%27
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
+<% if(apiNeoWs){ -%>
+GET http://localhost:4004/v2/catalog/Asteroids
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
 <% } -%>
 <% if((hana || api) && authentication){ -%>
 GET http://localhost:4004/v2/catalog/userInfo()

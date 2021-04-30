@@ -44,6 +44,16 @@
     <a href="<%= srvPath %>catalog/CandidatesLog">Candidates Log</a><br />
 <% } -%>
 <% } -%>
+<% if(apiARIBPO){ -%>
+    <a href="<%= srvPath %>catalog/PurchaseOrders?$filter=supplierANID%20eq%20%27AN02000000283%27&$top=3">Purchase Orders</a><br />
+<% } -%>
+<% if(apiFGAP){ -%>
+    <a href="<%= srvPath %>catalog/Approvals">Approvals</a><br />
+    <a href="<%= srvPath %>catalog/RejectReasons?$filter=ModuleID%20eq%20%2740%27">Approvals - Reject Reasons</a><br />
+<% } -%>
+<% if(apiNeoWs){ -%>
+    <a href="<%= srvPath %>catalog/Asteroids">Near Earth Objects</a><br />
+<% } -%>
 <% if((hana || api) && authentication){ -%>
     <a href="<%= srvPath %>catalog/userInfo()">User Info</a><br />
 <% } -%>
@@ -81,6 +91,16 @@
 <% if(em){ -%>
     <a href="<%= srvPath %>v2/catalog/CandidatesLog">Candidates Log</a><br />
 <% } -%>
+<% } -%>
+<% if(apiARIBPO){ -%>
+    <a href="<%= srvPath %>v2/catalog/PurchaseOrders?$filter=supplierANID%20eq%20%27AN02000000283%27&$top=3">Purchase Orders</a><br />
+<% } -%>
+<% if(apiFGAP){ -%>
+    <a href="<%= srvPath %>v2/catalog/Approvals">Approvals</a><br />
+    <a href="<%= srvPath %>v2/catalog/RejectReasons?$filter=ModuleID%20eq%20%2740%27">Approvals - Reject Reasons</a><br />
+<% } -%>
+<% if(apiNeoWs){ -%>
+    <a href="<%= srvPath %>v2/catalog/Asteroids">Near Earth Objects</a><br />
 <% } -%>
 <% if((hana || api) && authentication){ -%>
     <a href="<%= srvPath %>v2/catalog/userInfo()">User Info</a><br />

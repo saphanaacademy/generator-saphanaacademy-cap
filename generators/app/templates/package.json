@@ -45,6 +45,9 @@
     "start": "npx cds run"
   },
   "cds": {
+    "odata": {
+      "flavor": "x4"
+    },
     "requires": {
 <% if(authentication){ -%>
       "uaa": {
@@ -189,8 +192,62 @@
         }
       }
 <% } -%>
-<% if(em){ -%>
+<% if(apiARIBPO){ -%>
 <% if(authentication || hana || schemaName !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC){ -%>
+      ,
+<% } -%>
+      "ARIBA_NETWORK_PURCHASE_ORDERS": {
+        "kind": "rest",
+        "impl": "srv/external/AribaNetworkPurchaseOrders.js",
+        "credentials": {
+          "[production]": {
+            "destination": "<%= projectName %>-ARIBA_NETWORK_PURCHASE_ORDERS",
+            "path": "ariba/api/purchase-orders/v1/sandbox"
+          },
+          "[development]": {
+            "url": "https://sandbox.api.sap.com/ariba/api/purchase-orders/v1/sandbox"
+          }
+        }
+      }
+<% } -%>
+<% if(apiFGAP){ -%>
+  <% if(authentication || hana || schemaName !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiARIBPO){ -%>
+      ,
+<% } -%>
+      "FieldglassApprovals": {
+        "kind": "rest",
+        "impl": "srv/external/FieldglassApprovals.js",
+        "credentials": {
+          "[production]": {
+            "destination": "<%= projectName %>-fieldglass",
+            "path": "fieldglass/api/v1"
+          },
+          "[development]": {
+            "url": "https://sandbox.api.sap.com/fieldglass/api/v1"
+          }
+        }
+      }
+<% } -%>
+<% if(apiNeoWs){ -%>
+<% if(authentication || hana || schemaName !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiARIBPO || apiFGAP){ -%>
+      ,
+<% } -%>
+      "NearEarthObjectWebService": {
+        "kind": "rest",
+        "impl": "srv/external/NearEarthObjectWebService.js",
+        "credentials": {
+          "[production]": {
+            "destination": "<%= projectName %>-NASA",
+            "path": "neo/rest/v1"
+          },
+          "[development]": {
+            "url": "https://api.nasa.gov/neo/rest/v1"
+          }
+        }
+      }
+<% } -%>
+<% if(em){ -%>
+<% if(authentication || hana || schemaName !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiARIBPO || apiNeoWs){ -%>
       ,
 <% } -%>
       "messaging": {

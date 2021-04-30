@@ -18,6 +18,15 @@ module.exports = cds.service.impl(async function () {
 <% if(apiSFSFRC){ -%>
     const sfrcm = await cds.connect.to('RCMCandidate');
 <% } -%>
+<% if(apiARIBPO){ -%>
+    const aribapo = await cds.connect.to('ARIBA_NETWORK_PURCHASE_ORDERS');
+<% } -%>
+<% if(apiFGAP){ -%>
+    const fgap = await cds.connect.to('FieldglassApprovals');
+<% } -%>
+<% if(apiNeoWs){ -%>
+    const NeoWs = await cds.connect.to('NearEarthObjectWebService');
+<% } -%>
 <% if(em){ -%>
     const em = await cds.connect.to('messaging'); 
 <% if(!multiTenant && hana){ -%>
@@ -57,8 +66,27 @@ module.exports = cds.service.impl(async function () {
 <% if(em){ -%>
             ,
             CandidatesLog
- <% } -%>
- <% } -%>
+<% } -%>
+<% } -%>
+<% if(apiARIBPO){ -%>
+<% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC){ -%>
+            ,
+<% } -%>
+            PurchaseOrders
+<% } -%>
+<% if(apiFGAP){ -%>
+<% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiARIBPO){ -%>
+            ,
+<% } -%>
+            Approvals,
+            RejectReasons
+<% } -%>
+<% if(apiNeoWs){ -%>
+<% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiARIBPO || apiFGAP){ -%>
+            ,
+<% } -%>
+            Asteroids
+<% } -%>
           } = this.entities;
 
 <% if(hana){ -%>
@@ -353,6 +381,7 @@ module.exports = cds.service.impl(async function () {
             req.reject(err);
         }
     });
+
 <% if(hana){ -%>
     this.on('largestOrder', Sales, async (req) => {
         try {
@@ -413,6 +442,55 @@ module.exports = cds.service.impl(async function () {
             req.reject(err);
         }
     });
+<% } -%>
+
+<% if(apiARIBPO){ -%>
+    this.on('READ', PurchaseOrders, async (req) => {
+    try {
+        const tx = aribapo.transaction(req);
+        return await tx.send({
+            query: req.query,
+            headers: {
+                'Application-Interface-Key': process.env.ApplicationInterfaceKey,
+                'APIKey': process.env.APIKey,
+                'X-ARIBA-NETWORK-ID': process.env.AribaNetworkId
+            }
+        })
+    } catch (err) {
+        req.reject(err);
+    }
+});
+<% } -%>
+
+<% if(apiFGAP){ -%>
+    this.on('READ', [Approvals, RejectReasons], async (req) => {
+        try {
+            const tx = fgap.transaction(req);
+            return await tx.send({
+                query: req.query,
+                headers: {
+                    'Application-Interface-Key': process.env.ApplicationInterfaceKey,
+                    'APIKey': process.env.APIKey,
+                    'x-ApplicationKey': process.env.FieldglassApplicationKey
+                }
+            })
+        } catch (err) {
+            req.reject(err);
+        }
+    });
+<% } -%>
+
+<% if(apiNeoWs){ -%>
+    this.on('READ', Asteroids, async (req) => {
+    try {
+        const tx = NeoWs.transaction(req);
+        return await tx.send({
+            query: req.query
+        })
+    } catch (err) {
+        req.reject(err);
+    }
+});
 <% } -%>
 
 <% if(authentication){ -%>

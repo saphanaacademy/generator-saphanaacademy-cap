@@ -59,6 +59,15 @@ modules:
       BusinessPartnerCountry: US
       BusinessPartnerRole: FLCU01
 <% } -%>
+<% if(apiARIBPO){ -%>
+      AribaNetworkId: <%= AribaNetworkId %>
+<% } -%>
+<% if(apiFGAP){ -%>
+      FieldglassApplicationKey: <%= FieldglassApplicationKey %>
+<% } -%>
+<% if(apiNeoWs){ -%>
+      APIKeyNASA: <%= APIKeyNASA %>
+<% } -%>
 <% } -%>
     requires:
 <% if(authentication || api){ -%>
@@ -280,6 +289,33 @@ resources:
                 Authentication: NoAuthentication
                 HTML5.DynamicDestination: true
 <% } -%>
+<% if(apiARIBPO){ -%>
+              - Name: <%= projectName %>-ARIBA_NETWORK_PURCHASE_ORDERS
+                Description: Ariba Network Purchase Orders
+                URL: https://sandbox.api.sap.com
+                Type: HTTP
+                ProxyType: Internet
+                Authentication: NoAuthentication
+                HTML5.DynamicDestination: true
+<% } -%>
+<% if(apiFGAP){ -%>
+              - Name: <%= projectName %>-fieldglass
+                Description: SAP Fieldglass Approvals
+                URL: https://sandbox.api.sap.com
+                Type: HTTP
+                ProxyType: Internet
+                Authentication: NoAuthentication
+                HTML5.DynamicDestination: true
+<% } -%>
+<% if(apiNeoWs){ -%>
+              - Name: <%= projectName %>-NASA
+                Description: NASA APIs
+                URL: https://api.nasa.gov
+                Type: HTTP
+                ProxyType: Internet
+                Authentication: NoAuthentication
+                HTML5.DynamicDestination: true
+<% } -%>
 <% if(html5repo){ -%>
               - Name: <%= projectName %>-srv
                 Description: <%= displayName %> - Server Module
@@ -321,7 +357,7 @@ resources:
       service: sap-successfactors-extensibility
       service-plan: api-access
       config:
-        systemName: <%= systemName %>
+        systemName: <%= SFSystemName %>
 <% } -%>
 
 <% if(em){ -%>

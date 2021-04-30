@@ -18,6 +18,18 @@ using { API_BUSINESS_PARTNER } from './external/API_BUSINESS_PARTNER.csn';
 using { RCMCandidate } from './external/RCMCandidate.csn';
 <% } -%>
 
+<% if(apiARIBPO){ -%>
+using { AribaNetworkPurchaseOrders } from './external/AribaNetworkPurchaseOrders.csn';
+<% } -%>
+
+<% if(apiFGAP){ -%>
+using { FieldglassApprovals } from './external/FieldglassApprovals.csn';
+<% } -%>
+
+<% if(apiNeoWs){ -%>
+using { NearEarthObjectWebService } from './external/NearEarthObjectWebService.csn';
+<% } -%>
+
 service CatalogService @(path : '/catalog')
 <% if(authentication){ -%>
 @(requires: 'authenticated-user')
@@ -161,6 +173,40 @@ service CatalogService @(path : '/catalog')
       as select * from db.CandidatesLog
     ;
 <% } -%>
+<% } -%>
+
+<% if(apiARIBPO){ -%>
+    @readonly
+    entity PurchaseOrders
+<% if(authorization){ -%>
+      @(restrict: [{ to: 'Viewer' }])
+<% } -%>
+      as projection on AribaNetworkPurchaseOrders.Orders;
+<% } -%>
+
+<% if(apiFGAP){ -%>
+    @readonly
+    entity Approvals
+<% if(authorization){ -%>
+      @(restrict: [{ to: 'Viewer' }])
+<% } -%>
+      as projection on FieldglassApprovals.Approvals;
+
+    @readonly
+    entity RejectReasons
+<% if(authorization){ -%>
+      @(restrict: [{ to: 'Viewer' }])
+<% } -%>
+      as projection on FieldglassApprovals.RejectReasons;
+<% } -%>
+
+<% if(apiNeoWs){ -%>
+    @readonly
+    entity Asteroids
+<% if(authorization){ -%>
+      @(restrict: [{ to: 'Viewer' }])
+<% } -%>
+      as projection on NearEarthObjectWebService.Feed;
 <% } -%>
 
 <% if(authentication){ -%>

@@ -1,0 +1,75 @@
+{
+    "definitions": {
+        "NearEarthObjectWebService.estimated_diameter_min_max": {
+            "kind": "type",
+            "elements": {
+                "estimated_diameter_min": {
+                    "type": "cds.Decimal"
+                },
+                "estimated_diameter_max": {
+                    "type": "cds.Decimal"
+                }
+            }
+        },
+        "NearEarthObjectWebService.estimated_diameter": {
+            "kind": "type",
+            "elements": {
+                "meters": {
+                    "type": "NearEarthObjectWebService.estimated_diameter_min_max"
+                },
+                "feet": {
+                    "type": "NearEarthObjectWebService.estimated_diameter_min_max"
+                }
+            }
+        },
+        "NearEarthObjectWebService.close_approach_items": {
+            "kind": "type",
+            "elements": {
+                "orbiting_body": {
+                    "type": "cds.String"
+                },
+                "close_approach_date": {
+                    "type": "cds.String"
+                },
+                "epoch_date_close_approach": {
+                    "type": "cds.Integer64"
+                }
+            }
+        },
+        "NearEarthObjectWebService.close_approach_data": {
+            "kind": "type",
+            "items": {
+                "type": "NearEarthObjectWebService.close_approach_items"
+            }
+        },
+        "NearEarthObjectWebService.Feed": {
+            "kind": "entity",
+            "elements": {
+                "id": {
+                    "type": "cds.String"
+                },
+                "name": {
+                    "type": "cds.String"
+                },
+                "nasa_jpl_url": {
+                    "type": "cds.String"
+                },
+                "absolute_magnitude_h": {
+                    "type": "cds.Decimal"
+                },
+                "is_potentially_hazardous_asteroid": {
+                    "type": "cds.Boolean"
+                },
+                "is_sentry_object": {
+                    "type": "cds.Boolean"
+                },
+                "estimated_diameter": {
+                    "type": "NearEarthObjectWebService.estimated_diameter"
+                },
+                "close_approach_data": {
+                    "type": "NearEarthObjectWebService.close_approach_data"
+                }
+            }
+        }
+    }
+}

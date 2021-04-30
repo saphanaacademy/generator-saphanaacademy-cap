@@ -1,0 +1,83 @@
+{
+    "definitions": {
+        "FieldglassApprovals.Attributes": {
+            "kind": "type",
+            "elements": {
+                "ref": {
+                    "type": "cds.String"
+                },
+                "uom": {
+                    "type": "cds.String"
+                },
+                "name": {
+                    "type": "cds.String"
+                },
+                "amount": {
+                    "type": "cds.String"
+                }
+            }
+        },
+        "FieldglassApprovals.Approvals": {
+            "kind": "entity",
+            "elements": {
+                "ModuleID": {
+                    "type": "cds.String"
+                },
+                "ModuleName": {
+                    "type": "cds.String"
+                },
+                "ID": {
+                    "type": "cds.String"
+                },
+                "Attributes": {
+                    "type": "FieldglassApprovals.Attributes"
+                },
+                "Status": {
+                    "type": "cds.String"
+                },
+                "Details": {
+                    "type": "cds.String"
+                }
+            }
+        },
+        "FieldglassApprovals.RejectReasonAttributesOthers": {
+            "kind": "type",
+            "elements": {
+                "description": {
+                    "type": "cds.String"
+                }
+            }
+        },
+        "FieldglassApprovals.RejectReasonAttributes": {
+            "kind": "type",
+            "elements": {
+                "others": {
+                    "type": "FieldglassApprovals.RejectReasonAttributesOthers"
+                }
+            }
+        },
+        "FieldglassApprovals.RejectReasons": {
+            "kind": "entity",
+            "elements": {
+                "ModuleID": {
+                    "type": "cds.String"
+                },
+                "ModuleName": {
+                    "type": "cds.String"
+                },
+                "ID": {
+                    "type": "cds.String"
+                },
+                "Attributes": {
+                    "type": "FieldglassApprovals.RejectReasonAttributes"
+                },
+                "Status": {
+                    "type": "cds.String"
+                },
+                "Details": {
+                    "type": "cds.String"
+                }
+            }
+        }
+    }
+}

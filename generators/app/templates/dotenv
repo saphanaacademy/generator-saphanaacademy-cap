@@ -4,3 +4,12 @@ APIKey=<%= APIKey %>
 BusinessPartnerCountry=US
 BusinessPartnerRole=FLCU01
 <% } -%>
+<% if(apiARIBPO){ -%>
+AribaNetworkId=<%= AribaNetworkId %>
+<% } -%>
+<% if(apiFGAP){ -%>
+FieldglassApplicationKey=<%= FieldglassApplicationKey %>
+<% } -%>
+<% if(apiNeoWs){ -%>
+APIKeyNASA=<%= APIKeyNASA %>
+<% } -%>

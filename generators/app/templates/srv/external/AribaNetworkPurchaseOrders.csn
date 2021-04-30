@@ -1,0 +1,86 @@
+{
+    "definitions": {
+        "AribaNetworkPurchaseOrders.POAmount": {
+            "kind": "type",
+            "elements": {
+                "amount": {
+                    "type": "cds.Double"
+                },
+                "currencyCode": {
+                    "type": "cds.String"
+                },
+                "approx": {
+                    "type": "cds.Double"
+                },
+                "conversionDate": {
+                    "type": "cds.String"
+                }
+            }
+        },
+        "AribaNetworkPurchaseOrders.Orders": {
+            "kind": "entity",
+            "elements": {
+                "documentNumber": {
+                    "type": "cds.String"
+                },
+                "supplierANID": {
+                    "type": "cds.String"
+                },
+                "supplierName": {
+                    "type": "cds.String"
+                },
+                "customerANID": {
+                    "type": "cds.String"
+                },
+                "customerName": {
+                    "type": "cds.String"
+                },
+                "poAmount": {
+                    "type": "AribaNetworkPurchaseOrders.POAmount"
+                },
+                "created": {
+                    "type": "cds.String"
+                },
+                "orderDate": {
+                    "type": "cds.String"
+                },
+                "status": {
+                    "type": "cds.String"
+                },
+                "documentStatus": {
+                    "type": "cds.String"
+                },
+                "dashboardStatus": {
+                    "type": "cds.String"
+                },
+                "numberOfInvoices": {
+                    "type": "cds.Integer"
+                },
+                "invoicedAmount": {
+                    "type": "AribaNetworkPurchaseOrders.POAmount"
+                },
+                "revision": {
+                    "type": "cds.String"
+                },
+                "isRelease": {
+                    "type": "cds.String"
+                },
+                "settlement": {
+                    "type": "cds.String"
+                },
+                "balance": {
+                    "type": "AribaNetworkPurchaseOrders.POAmount"
+                },
+                "blanket": {
+                    "type": "cds.Boolean"
+                },
+                "poClosed": {
+                    "type": "cds.Boolean"
+                },
+                "schedulingAgreement": {
+                    "type": "cds.Boolean"
+                }
+            }
+        }
+    }
+}
