@@ -1,14 +1,20 @@
+<% if (APIKeyHubSandbox !== ""){ -%>
 ApplicationInterfaceKey=saptest0
-APIKey=<%= APIKey %>
+APIKeyHubSandbox=<%= APIKeyHubSandbox %>
+<% } -%>
 <% if(em && !multiTenant && apiS4HCBP){ -%>
 BusinessPartnerCountry=US
 BusinessPartnerRole=FLCU01
 <% } -%>
 <% if(apiARIBPO){ -%>
 AribaNetworkId=<%= AribaNetworkId %>
+APIKeyAriba=<%= APIKeyHubSandbox %>
 <% } -%>
 <% if(apiFGAP){ -%>
-FieldglassApplicationKey=<%= FieldglassApplicationKey %>
+APIKeyFieldglass=<%= APIKeyFieldglass %>
+<% } -%>
+<% if(apiHERE){ -%>
+APIKeyHERE=<%= APIKeyHERE %>
 <% } -%>
 <% if(apiNeoWs){ -%>
 APIKeyNASA=<%= APIKeyNASA %>

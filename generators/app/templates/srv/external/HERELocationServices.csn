@@ -1,0 +1,83 @@
+{
+    "definitions": {
+        "HERELocationServices.Address": {
+            "kind": "type",
+            "elements": {
+                "label": {
+                    "type": "cds.String"
+                },
+                "countryCode": {
+                    "type": "cds.String"
+                },
+                "countryName": {
+                    "type": "cds.String"
+                }
+            }
+        },
+        "HERELocationServices.Position": {
+            "kind": "type",
+            "elements": {
+                "lat": {
+                    "type": "cds.Decimal"
+                },
+                "lng": {
+                    "type": "cds.Decimal"
+                }
+            }
+        },
+        "HERELocationServices.MapView": {
+            "kind": "type",
+            "elements": {
+                "west": {
+                    "type": "cds.Decimal"
+                },
+                "south": {
+                    "type": "cds.Decimal"
+                },
+                "east": {
+                    "type": "cds.Decimal"
+                },
+                "north": {
+                    "type": "cds.Decimal"
+                }
+            }
+        },
+        "HERELocationServices.Scoring": {
+            "kind": "type",
+            "elements": {
+                "queryScore": {
+                    "type": "cds.Decimal"
+                }
+            }
+        },
+        "HERELocationServices.Geocodes": {
+            "kind": "entity",
+            "elements": {
+                "title": {
+                    "type": "cds.String"
+                },
+                "id": {
+                    "type": "cds.String"
+                },
+                "resultType": {
+                    "type": "cds.String"
+                },
+                "administrativeAreaType": {
+                    "type": "cds.String"
+                },
+                "address": {
+                    "type": "HERELocationServices.Address"
+                },
+                "position": {
+                    "type": "HERELocationServices.Position"
+                },
+                "mapView": {
+                    "type": "HERELocationServices.MapView"
+                },
+                "scoring": {
+                    "type": "HERELocationServices.Scoring"
+                }
+            }
+        }
+    }
+}

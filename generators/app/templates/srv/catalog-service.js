@@ -24,6 +24,9 @@ module.exports = cds.service.impl(async function () {
 <% if(apiFGAP){ -%>
     const fgap = await cds.connect.to('FieldglassApprovals');
 <% } -%>
+<% if(apiHERE){ -%>
+    const HERE = await cds.connect.to('HERELocationServices');
+<% } -%>
 <% if(apiNeoWs){ -%>
     const NeoWs = await cds.connect.to('NearEarthObjectWebService');
 <% } -%>
@@ -81,8 +84,14 @@ module.exports = cds.service.impl(async function () {
             Approvals,
             RejectReasons
 <% } -%>
-<% if(apiNeoWs){ -%>
+<% if(apiHERE){ -%>
 <% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiARIBPO || apiFGAP){ -%>
+            ,
+<% } -%>
+            Geocodes
+<% } -%>
+<% if(apiNeoWs){ -%>
+<% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiARIBPO || apiFGAP || apiHERE){ -%>
             ,
 <% } -%>
             Asteroids
@@ -145,7 +154,7 @@ module.exports = cds.service.impl(async function () {
                 query: cql,
                 headers: {
                     'Application-Interface-Key': process.env.ApplicationInterfaceKey,
-                    'APIKey': process.env.APIKey
+                    'APIKey': process.env.APIKeyHubSandbox
                 }
             });
             await db.tx(msg).run (
@@ -208,7 +217,7 @@ module.exports = cds.service.impl(async function () {
                 )
                 .withCustomHeaders({
                     'Application-Interface-Key': process.env.ApplicationInterfaceKey,
-                    'APIKey': process.env.APIKey
+                    'APIKey': process.env.APIKeyHubSandbox
                 })
                 .execute({ 
                     destinationName: cds.env.requires.API_BUSINESS_PARTNER.credentials.destination
@@ -374,7 +383,7 @@ module.exports = cds.service.impl(async function () {
                 query: req.query,
                 headers: {
                     'Application-Interface-Key': process.env.ApplicationInterfaceKey,
-                    'APIKey': process.env.APIKey
+                    'APIKey': process.env.APIKeyHubSandbox
                 }
             })
         } catch (err) {
@@ -395,7 +404,7 @@ module.exports = cds.service.impl(async function () {
                 query: cql,
                 headers: {
                     'Application-Interface-Key': process.env.ApplicationInterfaceKey,
-                    'APIKey': process.env.APIKey
+                    'APIKey': process.env.APIKeyHubSandbox
                 }
             });
             if (res2) {
@@ -418,7 +427,7 @@ module.exports = cds.service.impl(async function () {
                 query: req.query,
                 headers: {
                     'Application-Interface-Key': process.env.ApplicationInterfaceKey,
-                    'APIKey': process.env.APIKey
+                    'APIKey': process.env.APIKeyHubSandbox
                 }
             })
         } catch (err) {
@@ -435,7 +444,7 @@ module.exports = cds.service.impl(async function () {
                 query: req.query,
                 headers: {
                     'Application-Interface-Key': process.env.ApplicationInterfaceKey,
-                    'APIKey': process.env.APIKey
+                    'APIKey': process.env.APIKeyHubSandbox
                 }
             })
         } catch (err) {
@@ -452,7 +461,7 @@ module.exports = cds.service.impl(async function () {
             query: req.query,
             headers: {
                 'Application-Interface-Key': process.env.ApplicationInterfaceKey,
-                'APIKey': process.env.APIKey,
+                'APIKey': process.env.APIKeyAriba,
                 'X-ARIBA-NETWORK-ID': process.env.AribaNetworkId
             }
         })
@@ -470,14 +479,56 @@ module.exports = cds.service.impl(async function () {
                 query: req.query,
                 headers: {
                     'Application-Interface-Key': process.env.ApplicationInterfaceKey,
-                    'APIKey': process.env.APIKey,
-                    'x-ApplicationKey': process.env.FieldglassApplicationKey
+                    'APIKey': process.env.APIKeyHubSandbox,
+                    'x-ApplicationKey': process.env.APIKeyFieldglass
                 }
             })
         } catch (err) {
             req.reject(err);
         }
     });
+<% } -%>
+
+<% if(apiHERE){ -%>
+    this.on('READ', Geocodes, async (req) => {
+    try {
+        const tx = HERE.transaction(req);
+        return await tx.send({
+            query: req.query
+        })
+    } catch (err) {
+        req.reject(err);
+    }
+});
+
+<% if(hana){ -%>
+    this.on('geocode', Sales, async (req) => {
+        try {
+            const tx1 = cds.tx(req);
+            const ID = req.params[0];
+            debug('Geocode ID:', ID);
+            const res1 = await tx1.read(Sales)
+                .where({ ID: { '=': ID } })
+                ;
+            let results = {};
+            results.region = res1[0].region;
+            results.country = res1[0].country;
+            results.amount = res1[0].amount;
+            let cql = SELECT.one(Geocodes).where({ title: results.country });
+            const tx2 = HERE.transaction(req);
+            const res2 = await tx2.send({
+                query: cql
+            });
+            results.countryCode = res2[0].address.countryCode;
+            results.position = {};
+            results.position.lat = res2[0].position.lat;
+            results.position.lng = res2[0].position.lng;
+            return results;
+        } catch (err) {
+            req.reject(err);
+        }
+    });
+<% } -%>
 <% } -%>
 
 <% if(apiNeoWs){ -%>

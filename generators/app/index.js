@@ -95,7 +95,7 @@ module.exports = class extends Generator {
         type: "checkbox",
         name: "apiLoB",
         message: "Which external API would you like to use?",
-        choices: ["SAP S/4HANA Cloud Sales Order (A2X)", "SAP S/4HANA Cloud Business Partner (A2X)", "SAP SuccessFactors Recruiting", "Ariba Network Purchase Orders", "SAP Fieldglass Approvals", "Near Earth Object Web Service"],
+        choices: ["SAP S/4HANA Cloud Sales Order (A2X)", "SAP S/4HANA Cloud Business Partner (A2X)", "SAP SuccessFactors Recruiting", "SAP Ariba Network Purchase Orders", "SAP Fieldglass Approvals", "HERE Location Services", "NASA Near Earth Object Web Service"],
         default: ["SAP S/4HANA Cloud Sales Order (A2X)"]
       },
       {
@@ -106,31 +106,45 @@ module.exports = class extends Generator {
         default: ""
       },
       {
-        when: response => response.api === true && response.apiLoB.includes("Ariba Network Purchase Orders"),
+        when: response => response.api === true && response.apiLoB.includes("SAP Ariba Network Purchase Orders"),
         type: "input",
         name: "AribaNetworkId",
         message: "What is your Ariba Network Id (ANID)?",
         default: "AN02000000280"
       },
       {
+        when: response => response.api === true && response.apiLoB.includes("SAP Ariba Network Purchase Orders"),
+        type: "input",
+        name: "APIKeyAriba",
+        message: "What is your application-specific Ariba API Key?",
+        default: ""
+      },
+      {
         when: response => response.api === true && response.apiLoB.includes("SAP Fieldglass Approvals"),
         type: "input",
-        name: "FieldglassApplicationKey",
+        name: "APIKeyFieldglass",
         message: "What is your company-specific key provided by SAP Fieldglass for API access?",
         default: ""
       },
       {
-        when: response => response.api === true && response.apiLoB.includes("Near Earth Object Web Service"),
+        when: response => response.api === true && response.apiLoB.includes("HERE Location Services"),
+        type: "input",
+        name: "APIKeyHERE",
+        message: "What is your HERE Location Services API Key?",
+        default: ""
+      },
+      {
+        when: response => response.api === true && response.apiLoB.includes("NASA Near Earth Object Web Service"),
         type: "input",
         name: "APIKeyNASA",
         message: "What is your NASA API Key?",
         default: "DEMO_KEY"
       },
       {
-        when: response => response.api === true && !response.apiLoB.includes("Near Earth Object Web Service"),
+        when: response => response.api === true && (response.apiLoB.includes("SAP S/4HANA Cloud Sales Order (A2X)") || response.apiLoB.includes("SAP S/4HANA Cloud Business Partner (A2X)") || response.apiLoB.includes("SAP SuccessFactors Recruiting") || response.apiLoB.includes("SAP Ariba Network Purchase Orders") || response.apiLoB.includes("SAP Fieldglass Approvals")),
         type: "input",
-        name: "APIKey",
-        message: "What is your API Key for SAP API Business Hub?",
+        name: "APIKeyHubSandbox",
+        message: "What is your API Key for the SAP API Business Hub sandbox?",
         default: ""
       },
       {
@@ -283,31 +297,39 @@ module.exports = class extends Generator {
       }
       if (answers.api === false) {
         answers.apiLoB = [];
-        answers.APIKey = "";
+        answers.APIKeyHubSandbox = "";
         answers.SFSystemName = "";
         answers.AribaNetworkId = "";
+        answers.APIKeyAriba = "";
+        answers.APIKeyFieldglass = "";
+        answers.APIKeyHERE = "";
         answers.APIKeyNASA = "";
       }
       answers.apiS4HCSO = answers.apiLoB.includes("SAP S/4HANA Cloud Sales Order (A2X)");
       answers.apiS4HCBP = answers.apiLoB.includes("SAP S/4HANA Cloud Business Partner (A2X)");
       answers.apiSFSFRC = answers.apiLoB.includes("SAP SuccessFactors Recruiting");
-      answers.apiARIBPO = answers.apiLoB.includes("Ariba Network Purchase Orders");
+      answers.apiARIBPO = answers.apiLoB.includes("SAP Ariba Network Purchase Orders");
       answers.apiFGAP = answers.apiLoB.includes("SAP Fieldglass Approvals");
-      answers.apiNeoWs = answers.apiLoB.includes("Near Earth Object Web Service");
+      answers.apiHERE = answers.apiLoB.includes("HERE Location Services");
+      answers.apiNeoWs = answers.apiLoB.includes("NASA Near Earth Object Web Service");
+      if (answers.api && !(answers.apiS4HCSO || answers.apiS4HCBP || answers.apiSFSFRC || answers.apiARIBPO || answers.apiFGAP)) {
+        answers.APIKeyHubSandbox = "";
+      }
       if (answers.apiSFSFRC === false) {
         answers.SFSystemName = "";
       }
       if (answers.apiARIBPO === false) {
         answers.AribaNetworkId = "";
+        answers.APIKeyAriba = "";
       }
       if (answers.apiFGAP === false) {
-        answers.FieldglassApplicationKey = "";
+        answers.APIKeyFieldglass = "";
+      }
+      if (answers.apiHERE === false) {
+        answers.APIKeyHERE = "";
       }
       if (answers.apiNeoWs === false) {
         answers.APIKeyNASA = "";
-      }
-      if (answers.api && answers.apiS4HCSO === false && answers.apiS4HCBP === false && answers.apiSFSFRC === false && answers.apiARIBPO === false && answers.apiFGAP === false) {
-        answers.APIKey = "";
       }
       if (answers.authentication === false) {
         answers.authorization = false;
@@ -414,34 +436,36 @@ module.exports = class extends Generator {
                               if (!((file.substring(0, 25) === 'srv/external/RCMCandidate' || file.includes('map.html')) && answers.get('apiSFSFRC') === false)) {
                                 if (!((file.substring(0, 25) === 'srv/external/AribaNetwork') && answers.get('apiARIBPO') === false)) {
                                   if (!((file.substring(0, 23) === 'srv/external/Fieldglass') && answers.get('apiFGAP') === false)) {
-                                    if (!((file.substring(0, 38) === 'srv/external/NearEarthObjectWebService') && answers.get('apiNeoWs') === false)) {
-                                      if (!((file.substring(0, 15) === 'app/xs-app.json' || file.substring(0, 16) === 'app/package.json') && (answers.get('managedAppRouter') === true || (answers.get('authentication') === false && answers.get('ui') === false)))) {
-                                        if (!((file.substring(0, 13) === 'app/resources' || file.includes('i18n') || file.includes('index.cds')) && answers.get('ui') === false)) {
-                                          if (!((file.substring(0, 19) === 'app/resources/fiori' || file.includes('i18n') || file.includes('index.cds')) && answers.get('hana') === false)) {
-                                            if (!((file.substring(0, 31) === 'app/resources/fiori/xs-app.json' || file.substring(0, 32) === 'app/resources/fiori/package.json') && answers.get('html5repo') === false)) {
-                                              if (!((file.substring(0, 31) === 'app/resources/html5/xs-app.json' || file.substring(0, 32) === 'app/resources/html5/package.json' || file.substring(0, 33) === 'app/resources/html5/manifest.json') && answers.get('html5repo') === false)) {
-                                                if (!(file.substring(0, 2) === 'db' && answers.get('hana') === false && answers.get('schemaName') === "")) {
-                                                  if (!((file.substring(0, 17) === 'db/data-model.cds' || file.substring(0, 7) === 'db/data') && answers.get('hana') === false)) {
-                                                    if (!((file.substring(0, 36) === 'db/data/_PROJECT_NAME_.db.Conditions' || file.substring(0, 34) === 'db/data/_PROJECT_NAME_.db.Customer' || file.substring(0, 32) === 'db/data/_PROJECT_NAME_.db.Status') && (answers.get('apiS4HCBP') === false || answers.get('em') === false))) {
-                                                      if (!(file.substring(0, 7) === 'db/src/' && answers.get('hanaNative') === false && answers.get('schemaName') === "")) {
-                                                        if (!(file.substring(0, 20) === 'db/src/_SCHEMA_NAME_' && answers.get('schemaName') === "")) {
-                                                          if (!((file.substring(0, 10) === 'db/src/SP_' || file.substring(0, 10) === 'db/src/TT_' || file.substring(0, 10) === 'db/src/CV_') && answers.get('hanaNative') === false)) {
-                                                            const sOrigin = this.templatePath(file);
-                                                            let fileDest = file;
-                                                            if (fileDest.includes('_PROJECT_NAME_')) {
-                                                              fileDest = 'db/data/' + answers.get('projectName') + '.db-' + fileDest.split(".", 3)[2] + '.csv';
+                                    if (!((file.substring(0, 38) === 'srv/external/HERELocationServices') && answers.get('apiHERE') === false)) {
+                                      if (!((file.substring(0, 38) === 'srv/external/NearEarthObjectWebService') && answers.get('apiNeoWs') === false)) {
+                                        if (!((file.substring(0, 15) === 'app/xs-app.json' || file.substring(0, 16) === 'app/package.json') && (answers.get('managedAppRouter') === true || (answers.get('authentication') === false && answers.get('ui') === false)))) {
+                                          if (!((file.substring(0, 13) === 'app/resources' || file.includes('i18n') || file.includes('index.cds')) && answers.get('ui') === false)) {
+                                            if (!((file.substring(0, 19) === 'app/resources/fiori' || file.includes('i18n') || file.includes('index.cds')) && answers.get('hana') === false)) {
+                                              if (!((file.substring(0, 31) === 'app/resources/fiori/xs-app.json' || file.substring(0, 32) === 'app/resources/fiori/package.json') && answers.get('html5repo') === false)) {
+                                                if (!((file.substring(0, 31) === 'app/resources/html5/xs-app.json' || file.substring(0, 32) === 'app/resources/html5/package.json' || file.substring(0, 33) === 'app/resources/html5/manifest.json') && answers.get('html5repo') === false)) {
+                                                  if (!(file.substring(0, 2) === 'db' && answers.get('hana') === false && answers.get('schemaName') === "")) {
+                                                    if (!((file.substring(0, 17) === 'db/data-model.cds' || file.substring(0, 7) === 'db/data') && answers.get('hana') === false)) {
+                                                      if (!((file.substring(0, 36) === 'db/data/_PROJECT_NAME_.db.Conditions' || file.substring(0, 34) === 'db/data/_PROJECT_NAME_.db.Customer' || file.substring(0, 32) === 'db/data/_PROJECT_NAME_.db.Status') && (answers.get('apiS4HCBP') === false || answers.get('em') === false))) {
+                                                        if (!(file.substring(0, 7) === 'db/src/' && answers.get('hanaNative') === false && answers.get('schemaName') === "")) {
+                                                          if (!(file.substring(0, 20) === 'db/src/_SCHEMA_NAME_' && answers.get('schemaName') === "")) {
+                                                            if (!((file.substring(0, 10) === 'db/src/SP_' || file.substring(0, 10) === 'db/src/TT_' || file.substring(0, 10) === 'db/src/CV_') && answers.get('hanaNative') === false)) {
+                                                              const sOrigin = this.templatePath(file);
+                                                              let fileDest = file;
+                                                              if (fileDest.includes('_PROJECT_NAME_')) {
+                                                                fileDest = 'db/data/' + answers.get('projectName') + '.db-' + fileDest.split(".", 3)[2] + '.csv';
+                                                              }
+                                                              if (fileDest.includes('_SCHEMA_NAME_')) {
+                                                                fileDest = 'db/src/' + answers.get('schemaName') + '.' + fileDest.split(".", 3)[1];
+                                                              }
+                                                              if (fileDest === 'dotenv') {
+                                                                fileDest = '.env';
+                                                              }
+                                                              if (fileDest === 'dotgitignore') {
+                                                                fileDest = '.gitignore';
+                                                              }
+                                                              const sTarget = this.destinationPath(fileDest);
+                                                              this.fs.copyTpl(sOrigin, sTarget, this.config.getAll());
                                                             }
-                                                            if (fileDest.includes('_SCHEMA_NAME_')) {
-                                                              fileDest = 'db/src/' + answers.get('schemaName') + '.' + fileDest.split(".", 3)[1];
-                                                            }
-                                                            if (fileDest === 'dotenv') {
-                                                              fileDest = '.env';
-                                                            }
-                                                            if (fileDest === 'dotgitignore') {
-                                                              fileDest = '.gitignore';
-                                                            }
-                                                            const sTarget = this.destinationPath(fileDest);
-                                                            this.fs.copyTpl(sOrigin, sTarget, this.config.getAll());
                                                           }
                                                         }
                                                       }
@@ -765,7 +789,13 @@ module.exports = class extends Generator {
 
     answers.delete('hanaUser');
     answers.delete('hanaPassword');
-    answers.delete('APIKey');
+    answers.delete('APIKeyHubSandbox');
+    answers.delete('SFSystemName');
+    answers.delete('AribaNetworkId');
+    answers.delete('APIKeyAriba');
+    answers.delete('APIKeyFieldglass');
+    answers.delete('APIKeyHERE');
+    answers.delete('APIKeyNASA');
 
   }
 

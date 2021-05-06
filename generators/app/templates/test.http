@@ -92,7 +92,7 @@ Authorization: Basic joe:
 <% } -%>
 <% } -%>
 <% if(apiARIBPO){ -%>
-GET http://localhost:4004/catalog/PurchaseOrders?$filter=supplierANID%20eq%20%27AN02000000283%27&$top=3
+GET http://localhost:4004/catalog/PurchaseOrders?$top=3
 <% if(authentication){ -%>
 Authorization: Basic joe:
 <% } -%>
@@ -109,6 +109,20 @@ GET http://localhost:4004/catalog/RejectReasons?$filter=ModuleID%20eq%20%2740%27
 Authorization: Basic joe:
 <% } -%>
 ###
+<% } -%>
+<% if(apiHERE){ -%>
+GET http://localhost:4004/catalog/Geocodes?$filter=title%20eq%20%27France%27
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% if(hana){ -%>
+GET http://localhost:4004/catalog/Sales(1)/CatalogService.geocode()
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
 <% } -%>
 <% if(apiNeoWs){ -%>
 GET http://localhost:4004/catalog/Asteroids
@@ -219,7 +233,7 @@ Authorization: Basic joe:
 <% } -%>
 <% } -%>
 <% if(apiARIBPO){ -%>
-GET http://localhost:4004/v2/catalog/PurchaseOrders?$filter=supplierANID%20eq%20%27AN02000000283%27&$top=3
+GET http://localhost:4004/v2/catalog/PurchaseOrders?$top=3
 <% if(authentication){ -%>
 Authorization: Basic joe:
 <% } -%>
@@ -236,6 +250,20 @@ GET http://localhost:4004/v2/catalog/RejectReasons?$filter=ModuleID%20eq%20%2740
 Authorization: Basic joe:
 <% } -%>
 ###
+<% } -%>
+<% if(apiHERE){ -%>
+GET http://localhost:4004/v2/catalog/Geocodes?$filter=title%20eq%20%27France%27
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% if(hana){ -%>
+GET http://localhost:4004/v2/catalog/Sales_geocode?ID=1
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
 <% } -%>
 <% if(apiNeoWs){ -%>
 GET http://localhost:4004/v2/catalog/Asteroids

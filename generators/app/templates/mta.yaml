@@ -53,17 +53,23 @@ modules:
 <% } -%>
 <% if(api){ -%>
     properties:
+<% if (APIKeyHubSandbox !== ""){ -%>
       ApplicationInterfaceKey: saptest0
-      APIKey: <%= APIKey %>
+      APIKeyHubSandbox: <%= APIKeyHubSandbox %>
+<% } -%>
 <% if(em && !multiTenant && apiS4HCBP){ -%>
       BusinessPartnerCountry: US
       BusinessPartnerRole: FLCU01
 <% } -%>
 <% if(apiARIBPO){ -%>
       AribaNetworkId: <%= AribaNetworkId %>
+      APIKeyAriba: <%= APIKeyAriba %>
 <% } -%>
 <% if(apiFGAP){ -%>
-      FieldglassApplicationKey: <%= FieldglassApplicationKey %>
+      APIKeyFieldglass: <%= APIKeyFieldglass %>
+<% } -%>
+<% if(apiHERE){ -%>
+      APIKeyHERE: <%= APIKeyHERE %>
 <% } -%>
 <% if(apiNeoWs){ -%>
       APIKeyNASA: <%= APIKeyNASA %>
@@ -290,25 +296,40 @@ resources:
                 HTML5.DynamicDestination: true
 <% } -%>
 <% if(apiARIBPO){ -%>
-              - Name: <%= projectName %>-ARIBA_NETWORK_PURCHASE_ORDERS
-                Description: Ariba Network Purchase Orders
-                URL: https://sandbox.api.sap.com
+              - Name: <%= projectName %>-ariba-api
+                Description: SAP Ariba
+                URL: https://openapi.ariba.com
                 Type: HTTP
                 ProxyType: Internet
-                Authentication: NoAuthentication
+                Authentication: OAuth2ClientCredentials
+                tokenServiceURL: https://api.ariba.com/v2/oauth/token
+                #clientId: 
+                #clientSecret: 
                 HTML5.DynamicDestination: true
 <% } -%>
 <% if(apiFGAP){ -%>
-              - Name: <%= projectName %>-fieldglass
-                Description: SAP Fieldglass Approvals
-                URL: https://sandbox.api.sap.com
+              - Name: <%= projectName %>-fieldglass-api
+                Description: SAP Fieldglass
+                URL: https://www.fieldglass.net
+                Type: HTTP
+                ProxyType: Internet
+                Authentication: OAuth2ClientCredentials
+                tokenServiceURL: https://www.fieldglass.net/api/oauth2/v2.0/token
+                #clientId: 
+                #clientSecret: 
+                HTML5.DynamicDestination: true
+<% } -%>
+<% if(apiHERE){ -%>
+              - Name: <%= projectName %>-HERE-api
+                Description: HERE Location Services
+                URL: https://geocode.search.hereapi.com
                 Type: HTTP
                 ProxyType: Internet
                 Authentication: NoAuthentication
                 HTML5.DynamicDestination: true
 <% } -%>
 <% if(apiNeoWs){ -%>
-              - Name: <%= projectName %>-NASA
+              - Name: <%= projectName %>-NASA-api
                 Description: NASA APIs
                 URL: https://api.nasa.gov
                 Type: HTTP

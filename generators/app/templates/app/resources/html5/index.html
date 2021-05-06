@@ -45,11 +45,17 @@
 <% } -%>
 <% } -%>
 <% if(apiARIBPO){ -%>
-    <a href="<%= srvPath %>catalog/PurchaseOrders?$filter=supplierANID%20eq%20%27AN02000000283%27&$top=3">Purchase Orders</a><br />
+    <a href="<%= srvPath %>catalog/PurchaseOrders?$top=3">Purchase Orders</a><br />
 <% } -%>
 <% if(apiFGAP){ -%>
     <a href="<%= srvPath %>catalog/Approvals">Approvals</a><br />
     <a href="<%= srvPath %>catalog/RejectReasons?$filter=ModuleID%20eq%20%2740%27">Approvals - Reject Reasons</a><br />
+<% } -%>
+<% if(apiHERE){ -%>
+    <a href="<%= srvPath %>catalog/Geocodes?$filter=title%20eq%20%27France%27">Geocodes</a><br />
+<% if(hana){ -%>
+    <a href="<%= srvPath %>catalog/Sales(1)/CatalogService.geocode()">Geocode Sales</a><br />
+<% } -%>
 <% } -%>
 <% if(apiNeoWs){ -%>
     <a href="<%= srvPath %>catalog/Asteroids">Near Earth Objects</a><br />
@@ -93,11 +99,17 @@
 <% } -%>
 <% } -%>
 <% if(apiARIBPO){ -%>
-    <a href="<%= srvPath %>v2/catalog/PurchaseOrders?$filter=supplierANID%20eq%20%27AN02000000283%27&$top=3">Purchase Orders</a><br />
+    <a href="<%= srvPath %>v2/catalog/PurchaseOrders?$top=3">Purchase Orders</a><br />
 <% } -%>
 <% if(apiFGAP){ -%>
     <a href="<%= srvPath %>v2/catalog/Approvals">Approvals</a><br />
     <a href="<%= srvPath %>v2/catalog/RejectReasons?$filter=ModuleID%20eq%20%2740%27">Approvals - Reject Reasons</a><br />
+<% } -%>
+<% if(apiHERE){ -%>
+    <a href="<%= srvPath %>v2/catalog/Geocodes?$filter=title%20eq%20%27France%27">Geocodes</a><br />
+<% if(hana){ -%>
+    <a href="<%= srvPath %>v2/catalog/Sales_geocode?ID=1">Geocode Sales</a><br />
+<% } -%>
 <% } -%>
 <% if(apiNeoWs){ -%>
     <a href="<%= srvPath %>v2/catalog/Asteroids">Near Earth Objects</a><br />

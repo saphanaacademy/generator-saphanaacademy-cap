@@ -26,6 +26,10 @@ using { AribaNetworkPurchaseOrders } from './external/AribaNetworkPurchaseOrders
 using { FieldglassApprovals } from './external/FieldglassApprovals.csn';
 <% } -%>
 
+<% if(apiHERE){ -%>
+using { HERELocationServices } from './external/HERELocationServices.csn';
+<% } -%>
+
 <% if(apiNeoWs){ -%>
 using { NearEarthObjectWebService } from './external/NearEarthObjectWebService.csn';
 <% } -%>
@@ -36,6 +40,10 @@ service CatalogService @(path : '/catalog')
 <% } -%>
 {
 <% if(hana){ -%>
+<% if(apiHERE){ -%>
+    type geocodePosition { lat: Decimal; lng: Decimal; };
+    type geocodeSales { region: String; country: String; amount: Integer; countryCode: String; position: geocodePosition; };
+<% } -%>
     entity Sales
 <% if(authorization){ -%>
       @(restrict: [{ grant: ['READ'],
@@ -56,6 +64,12 @@ service CatalogService @(path : '/catalog')
         @(restrict: [{ to: 'Viewer' }])
 <% } -%>
         function largestOrder() returns String;
+<% } -%>
+<% if(apiHERE){ -%>
+<% if(authorization){ -%>
+        @(restrict: [{ to: 'Viewer' }])
+<% } -%>
+        function geocode() returns geocodeSales;
 <% } -%>
 <% if(authorization){ -%>
         @(restrict: [{ to: 'Admin' }])
@@ -198,6 +212,15 @@ service CatalogService @(path : '/catalog')
       @(restrict: [{ to: 'Viewer' }])
 <% } -%>
       as projection on FieldglassApprovals.RejectReasons;
+<% } -%>
+
+<% if(apiHERE){ -%>
+    @readonly
+    entity Geocodes
+<% if(authorization){ -%>
+      @(restrict: [{ to: 'Viewer' }])
+<% } -%>
+      as projection on HERELocationServices.Geocodes;
 <% } -%>
 
 <% if(apiNeoWs){ -%>

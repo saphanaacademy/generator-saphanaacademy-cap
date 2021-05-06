@@ -201,8 +201,8 @@
         "impl": "srv/external/AribaNetworkPurchaseOrders.js",
         "credentials": {
           "[production]": {
-            "destination": "<%= projectName %>-ARIBA_NETWORK_PURCHASE_ORDERS",
-            "path": "ariba/api/purchase-orders/v1/sandbox"
+            "destination": "<%= projectName %>-ariba-api",
+            "path": "api/purchase-orders/v1/prod"
           },
           "[development]": {
             "url": "https://sandbox.api.sap.com/ariba/api/purchase-orders/v1/sandbox"
@@ -211,7 +211,7 @@
       }
 <% } -%>
 <% if(apiFGAP){ -%>
-  <% if(authentication || hana || schemaName !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiARIBPO){ -%>
+<% if(authentication || hana || schemaName !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiARIBPO){ -%>
       ,
 <% } -%>
       "FieldglassApprovals": {
@@ -219,8 +219,8 @@
         "impl": "srv/external/FieldglassApprovals.js",
         "credentials": {
           "[production]": {
-            "destination": "<%= projectName %>-fieldglass",
-            "path": "fieldglass/api/v1"
+            "destination": "<%= projectName %>-fieldglass-api",
+            "path": "/api/v1"
           },
           "[development]": {
             "url": "https://sandbox.api.sap.com/fieldglass/api/v1"
@@ -228,8 +228,26 @@
         }
       }
 <% } -%>
-<% if(apiNeoWs){ -%>
+<% if(apiHERE){ -%>
 <% if(authentication || hana || schemaName !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiARIBPO || apiFGAP){ -%>
+        ,
+<% } -%>
+        "HERELocationServices": {
+          "kind": "rest",
+          "impl": "srv/external/HERELocationServices.js",
+          "credentials": {
+            "[production]": {
+              "destination": "<%= projectName %>-HERE-api",
+              "path": "v1"
+            },
+            "[development]": {
+              "url": "https://geocode.search.hereapi.com/v1"
+            }
+          }
+        }
+<% } -%>
+<% if(apiNeoWs){ -%>
+<% if(authentication || hana || schemaName !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiARIBPO || apiFGAP || apiHERE){ -%>
       ,
 <% } -%>
       "NearEarthObjectWebService": {
@@ -237,7 +255,7 @@
         "impl": "srv/external/NearEarthObjectWebService.js",
         "credentials": {
           "[production]": {
-            "destination": "<%= projectName %>-NASA",
+            "destination": "<%= projectName %>-NASA-api",
             "path": "neo/rest/v1"
           },
           "[development]": {
