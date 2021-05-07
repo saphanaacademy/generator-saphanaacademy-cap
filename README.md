@@ -1,5 +1,5 @@
 # generator-saphanaacademy-cap [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
-> Yeoman Generator to jump-start SAP Cloud Business Applications
+> Yeoman Generator to jump-start Full-Stack Cloud Applications
 
 ## Installation
 
@@ -32,6 +32,10 @@ yo saphanaacademy-cap
 ```
 
 ![SAP Business Application Studio](demo.gif)
+
+## Video Tutorials
+
+For hands-on video tutorials click [here](https://www.youtube.com/playlist?list=PLkzo92owKnVwQ-0oT78691fqvHrYXd5oN).
 
 ## Getting To Know Yeoman
 

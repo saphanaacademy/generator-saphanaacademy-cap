@@ -1,14 +1,14 @@
 {
   "name": "generator-saphanaacademy-cap",
   "displayName": "SAP HANA Academy CAP",
-  "description": "Yeoman Generator to jump-start SAP Cloud Business Applications",
-  "version": "0.0.20",
+  "description": "Yeoman Generator to jump-start Full-Stack Cloud Applications",
+  "version": "0.0.21",
   "license": "SEE LICENSE IN LICENSE",
   "homepage": "https://www.youtube.com/playlist?list=PLkzo92owKnVwQ-0oT78691fqvHrYXd5oN",
   "author": {
     "name": "SAP HANA Academy",
     "email": "hanaacademy@sap.com",
-    "url": "https://www.youtube.com/saphanaacademy"
+    "url": "https://www.youtube.com/playlist?list=PLkzo92owKnVwQ-0oT78691fqvHrYXd5oN"
   },
   "files": [
     "generators",

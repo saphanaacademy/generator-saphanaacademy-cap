@@ -95,7 +95,7 @@ module.exports = class extends Generator {
         type: "checkbox",
         name: "apiLoB",
         message: "Which external API would you like to use?",
-        choices: ["SAP S/4HANA Cloud Sales Order (A2X)", "SAP S/4HANA Cloud Business Partner (A2X)", "SAP SuccessFactors Recruiting", "SAP Ariba Network Purchase Orders", "SAP Fieldglass Approvals", "HERE Location Services", "NASA Near Earth Object Web Service"],
+        choices: ["SAP S/4HANA Cloud Sales Order (A2X)", "SAP S/4HANA Cloud Business Partner (A2X)", "SAP SuccessFactors Recruiting", "SAP Ariba Network Purchase Orders", "SAP Fieldglass Approvals", "SAP Graph Workforce", "HERE Location Services", "NASA Near Earth Object Web Service"],
         default: ["SAP S/4HANA Cloud Sales Order (A2X)"]
       },
       {
@@ -127,6 +127,13 @@ module.exports = class extends Generator {
         default: ""
       },
       {
+        when: response => response.api === true && response.apiLoB.includes("SAP Graph Workforce"),
+        type: "input",
+        name: "APIKeyGraph",
+        message: "What is your access token for SAP Graph API sandbox? Leave blank to use a read-only public access token.",
+        default: ""
+      },
+      {
         when: response => response.api === true && response.apiLoB.includes("HERE Location Services"),
         type: "input",
         name: "APIKeyHERE",
@@ -137,8 +144,8 @@ module.exports = class extends Generator {
         when: response => response.api === true && response.apiLoB.includes("NASA Near Earth Object Web Service"),
         type: "input",
         name: "APIKeyNASA",
-        message: "What is your NASA API Key?",
-        default: "DEMO_KEY"
+        message: "What is your NASA API Key? Leave blank for demo key.",
+        default: ""
       },
       {
         when: response => response.api === true && (response.apiLoB.includes("SAP S/4HANA Cloud Sales Order (A2X)") || response.apiLoB.includes("SAP S/4HANA Cloud Business Partner (A2X)") || response.apiLoB.includes("SAP SuccessFactors Recruiting") || response.apiLoB.includes("SAP Ariba Network Purchase Orders") || response.apiLoB.includes("SAP Fieldglass Approvals")),
@@ -302,6 +309,7 @@ module.exports = class extends Generator {
         answers.AribaNetworkId = "";
         answers.APIKeyAriba = "";
         answers.APIKeyFieldglass = "";
+        answers.APIKeyGraph = "";
         answers.APIKeyHERE = "";
         answers.APIKeyNASA = "";
       }
@@ -310,10 +318,17 @@ module.exports = class extends Generator {
       answers.apiSFSFRC = answers.apiLoB.includes("SAP SuccessFactors Recruiting");
       answers.apiARIBPO = answers.apiLoB.includes("SAP Ariba Network Purchase Orders");
       answers.apiFGAP = answers.apiLoB.includes("SAP Fieldglass Approvals");
+      answers.apiGRAPH = answers.apiLoB.includes("SAP Graph Workforce");
       answers.apiHERE = answers.apiLoB.includes("HERE Location Services");
       answers.apiNeoWs = answers.apiLoB.includes("NASA Near Earth Object Web Service");
-      if (answers.api && !(answers.apiS4HCSO || answers.apiS4HCBP || answers.apiSFSFRC || answers.apiARIBPO || answers.apiFGAP)) {
-        answers.APIKeyHubSandbox = "";
+      answers.apiSAP = false;
+      if (answers.api) {
+        if (answers.apiS4HCSO || answers.apiS4HCBP || answers.apiSFSFRC || answers.apiARIBPO || answers.apiFGAP || answers.apiGRAPH) {
+          answers.apiSAP = true;
+        }
+        if (!(answers.apiS4HCSO || answers.apiS4HCBP || answers.apiSFSFRC || answers.apiARIBPO || answers.apiFGAP)) {
+          answers.APIKeyHubSandbox = "";
+        }
       }
       if (answers.apiSFSFRC === false) {
         answers.SFSystemName = "";
@@ -325,11 +340,18 @@ module.exports = class extends Generator {
       if (answers.apiFGAP === false) {
         answers.APIKeyFieldglass = "";
       }
+      if (answers.apiGRAPH === false) {
+        answers.APIKeyGraph = "";
+      } else if (answers.APIKeyGraph === "") {
+        answers.APIKeyGraph = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiIiLCJ6aWQiOiJlMjYzMTNkZi0yNDgzLTRjNWItOTg5Yi03ZWQwOGJmMjk3YzMiLCJhdWQiOiJkZW1vLmFwaS5ncmFwaC5zYXAiLCJleHAiOjQ2ODg2MDkyMjEsImlhdCI6MTYwMzg3ODE0MiwiaXNzIjoiZGVtby5hcGkuZ3JhcGguc2FwIiwic3ViIjoiZGVtb0BncmFwaC5zYXAifQ.1nJljCX2HTUv9swW4a7HgYhxQGfH_DBTRqHrw66Xwv_oPC8bEFo5LpVqXCUrGCuCBLVr-1vrUhBKlfvZD9lg7D3z2Xc70PrmKcUEufa0m6my61QUprYuwMmN89yzsnQSUVwIikm4Po6Xo_cfWOXVDzr0WCjGaG_PAnikHMWFHhHbGpc3X1u-ATFw7Rq0oiulXWfavWBEKKB1zFxQ91dC1T103X4sYk3A2fk-dII8zL2XZ1CeOTi4_ntAYjJ5mm71jN0CwTrUWsLGOGe3aevcIw2QLqH44z96ZRy43LdOr8FzHaATwpd-i9FwQ7HlH8ZDqfHu-6FxBpiI29tT5CfwIQ";
+      }
       if (answers.apiHERE === false) {
         answers.APIKeyHERE = "";
       }
       if (answers.apiNeoWs === false) {
         answers.APIKeyNASA = "";
+      } else if (answers.APIKeyNASA === "") {
+        answers.APIKeyNASA = "DEMO_KEY";
       }
       if (answers.authentication === false) {
         answers.authorization = false;
@@ -794,6 +816,7 @@ module.exports = class extends Generator {
     answers.delete('AribaNetworkId');
     answers.delete('APIKeyAriba');
     answers.delete('APIKeyFieldglass');
+    answers.delete('APIKeyGraph');
     answers.delete('APIKeyHERE');
     answers.delete('APIKeyNASA');
 

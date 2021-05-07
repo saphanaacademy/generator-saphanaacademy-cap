@@ -1,5 +1,7 @@
-<% if (APIKeyHubSandbox !== ""){ -%>
+<% if (apiSAP){ -%>
 ApplicationInterfaceKey=saptest0
+<% } -%>
+<% if (APIKeyHubSandbox !== ""){ -%>
 APIKeyHubSandbox=<%= APIKeyHubSandbox %>
 <% } -%>
 <% if(em && !multiTenant && apiS4HCBP){ -%>
@@ -12,6 +14,9 @@ APIKeyAriba=<%= APIKeyHubSandbox %>
 <% } -%>
 <% if(apiFGAP){ -%>
 APIKeyFieldglass=<%= APIKeyFieldglass %>
+<% } -%>
+<% if(apiGRAPH){ -%>
+APIKeyGraph=<%= APIKeyGraph %>
 <% } -%>
 <% if(apiHERE){ -%>
 APIKeyHERE=<%= APIKeyHERE %>

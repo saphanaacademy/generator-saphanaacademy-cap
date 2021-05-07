@@ -53,8 +53,10 @@ modules:
 <% } -%>
 <% if(api){ -%>
     properties:
-<% if (APIKeyHubSandbox !== ""){ -%>
+<% if (apiSAP){ -%>
       ApplicationInterfaceKey: saptest0
+<% } -%>
+<% if (APIKeyHubSandbox !== ""){ -%>
       APIKeyHubSandbox: <%= APIKeyHubSandbox %>
 <% } -%>
 <% if(em && !multiTenant && apiS4HCBP){ -%>
@@ -67,6 +69,9 @@ modules:
 <% } -%>
 <% if(apiFGAP){ -%>
       APIKeyFieldglass: <%= APIKeyFieldglass %>
+<% } -%>
+<% if(apiGRAPH){ -%>
+      APIKeyGraph: <%= APIKeyGraph %>
 <% } -%>
 <% if(apiHERE){ -%>
       APIKeyHERE: <%= APIKeyHERE %>
@@ -317,6 +322,15 @@ resources:
                 tokenServiceURL: https://www.fieldglass.net/api/oauth2/v2.0/token
                 #clientId: 
                 #clientSecret: 
+                HTML5.DynamicDestination: true
+<% } -%>
+<% if(apiGRAPH){ -%>
+              - Name: <%= projectName %>-graph-api
+                Description: SAP Graph
+                URL: https://sandbox.graph.sap
+                Type: HTTP
+                ProxyType: Internet
+                Authentication: NoAuthentication
                 HTML5.DynamicDestination: true
 <% } -%>
 <% if(apiHERE){ -%>

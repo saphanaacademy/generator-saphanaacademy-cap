@@ -17,6 +17,9 @@
     "@sap/cloud-sdk-vdm-business-partner-service": "^1.24",
 <% } -%>
 <% } -%>
+<% if(apiGRAPH){ -%>
+    "@sap/odm": "^2",
+<% } -%>
 <% if(authentication){ -%>
     "@sap/xsenv": "^3",
     "@sap/xssec": "^3",
@@ -45,9 +48,11 @@
     "start": "npx cds run"
   },
   "cds": {
+<% if(apiGRAPH){ -%>
     "odata": {
       "flavor": "x4"
     },
+<% } -%>
     "requires": {
 <% if(authentication){ -%>
       "uaa": {
@@ -228,26 +233,43 @@
         }
       }
 <% } -%>
-<% if(apiHERE){ -%>
+<% if(apiGRAPH){ -%>
 <% if(authentication || hana || schemaName !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiARIBPO || apiFGAP){ -%>
-        ,
+      ,
 <% } -%>
-        "HERELocationServices": {
-          "kind": "rest",
-          "impl": "srv/external/HERELocationServices.js",
-          "credentials": {
-            "[production]": {
-              "destination": "<%= projectName %>-HERE-api",
-              "path": "v1"
-            },
-            "[development]": {
-              "url": "https://geocode.search.hereapi.com/v1"
-            }
+      "GraphWorkforce": {
+        "kind": "odata",
+        "credentials": {
+          "[production]": {
+            "destination": "<%= projectName %>-graph-api",
+            "path": "api/beta/sap.odm.workforce"
+          },
+          "[development]": {
+            "url": "https://sandbox.graph.sap/api/beta/sap.odm.workforce"
           }
         }
+      }
+<% } -%>
+<% if(apiHERE){ -%>
+<% if(authentication || hana || schemaName !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiARIBPO || apiFGAP || apiGRAPH){ -%>
+      ,
+<% } -%>
+      "HERELocationServices": {
+        "kind": "rest",
+        "impl": "srv/external/HERELocationServices.js",
+        "credentials": {
+          "[production]": {
+            "destination": "<%= projectName %>-HERE-api",
+            "path": "v1"
+          },
+          "[development]": {
+            "url": "https://geocode.search.hereapi.com/v1"
+          }
+        }
+      }
 <% } -%>
 <% if(apiNeoWs){ -%>
-<% if(authentication || hana || schemaName !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiARIBPO || apiFGAP || apiHERE){ -%>
+<% if(authentication || hana || schemaName !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiARIBPO || apiFGAP || apiGRAPH || apiHERE){ -%>
       ,
 <% } -%>
       "NearEarthObjectWebService": {
@@ -265,7 +287,7 @@
       }
 <% } -%>
 <% if(em){ -%>
-<% if(authentication || hana || schemaName !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiARIBPO || apiNeoWs){ -%>
+<% if(authentication || hana || schemaName !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiARIBPO || apiFGAP || apiGRAPH || apiHERE || apiNeoWs){ -%>
       ,
 <% } -%>
       "messaging": {

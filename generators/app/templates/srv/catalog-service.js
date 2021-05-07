@@ -24,6 +24,9 @@ module.exports = cds.service.impl(async function () {
 <% if(apiFGAP){ -%>
     const fgap = await cds.connect.to('FieldglassApprovals');
 <% } -%>
+<% if(apiGRAPH){ -%>
+    const graph = await cds.connect.to('GraphWorkforce');
+<% } -%>
 <% if(apiHERE){ -%>
     const HERE = await cds.connect.to('HERELocationServices');
 <% } -%>
@@ -84,14 +87,20 @@ module.exports = cds.service.impl(async function () {
             Approvals,
             RejectReasons
 <% } -%>
-<% if(apiHERE){ -%>
+<% if(apiGRAPH){ -%>
 <% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiARIBPO || apiFGAP){ -%>
+            ,
+<% } -%>
+            WorkforcePersons
+<% } -%>
+<% if(apiHERE){ -%>
+<% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiARIBPO || apiFGAP || apiFGRAPH){ -%>
             ,
 <% } -%>
             Geocodes
 <% } -%>
 <% if(apiNeoWs){ -%>
-<% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiARIBPO || apiFGAP || apiHERE){ -%>
+<% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiARIBPO || apiFGAP || apiFGRAPH || apiHERE){ -%>
             ,
 <% } -%>
             Asteroids
@@ -481,6 +490,23 @@ module.exports = cds.service.impl(async function () {
                     'Application-Interface-Key': process.env.ApplicationInterfaceKey,
                     'APIKey': process.env.APIKeyHubSandbox,
                     'x-ApplicationKey': process.env.APIKeyFieldglass
+                }
+            })
+        } catch (err) {
+            req.reject(err);
+        }
+    });
+<% } -%>
+
+<% if(apiGRAPH){ -%>
+    this.on('READ', WorkforcePersons, async (req) => {
+        try {
+            const tx = graph.transaction(req);
+            return await tx.send({
+                query: req.query,
+                headers: {
+                    'Application-Interface-Key': process.env.ApplicationInterfaceKey,
+                    Authorization: 'Bearer ' + process.env.APIKeyGraph
                 }
             })
         } catch (err) {

@@ -26,6 +26,10 @@ using { AribaNetworkPurchaseOrders } from './external/AribaNetworkPurchaseOrders
 using { FieldglassApprovals } from './external/FieldglassApprovals.csn';
 <% } -%>
 
+<% if(apiGRAPH){ -%>
+using { sap.odm.workforce as ODMworkforce } from '@sap/odm/dist/workforce/WorkforcePerson';
+<% } -%>
+
 <% if(apiHERE){ -%>
 using { HERELocationServices } from './external/HERELocationServices.csn';
 <% } -%>
@@ -212,6 +216,15 @@ service CatalogService @(path : '/catalog')
       @(restrict: [{ to: 'Viewer' }])
 <% } -%>
       as projection on FieldglassApprovals.RejectReasons;
+<% } -%>
+
+<% if(apiGRAPH){ -%>
+    @readonly
+    entity WorkforcePersons
+<% if(authorization){ -%>
+      @(restrict: [{ to: 'Viewer' }])
+<% } -%>
+      as projection on ODMworkforce.WorkforcePerson;
 <% } -%>
 
 <% if(apiHERE){ -%>

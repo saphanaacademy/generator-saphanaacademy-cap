@@ -51,6 +51,9 @@
     <a href="<%= srvPath %>catalog/Approvals">Approvals</a><br />
     <a href="<%= srvPath %>catalog/RejectReasons?$filter=ModuleID%20eq%20%2740%27">Approvals - Reject Reasons</a><br />
 <% } -%>
+<% if(apiGRAPH){ -%>
+    <a href="<%= srvPath %>catalog/WorkforcePersons?$top=1">Workforce Persons</a><br />
+<% } -%>
 <% if(apiHERE){ -%>
     <a href="<%= srvPath %>catalog/Geocodes?$filter=title%20eq%20%27France%27">Geocodes</a><br />
 <% if(hana){ -%>
@@ -104,6 +107,9 @@
 <% if(apiFGAP){ -%>
     <a href="<%= srvPath %>v2/catalog/Approvals">Approvals</a><br />
     <a href="<%= srvPath %>v2/catalog/RejectReasons?$filter=ModuleID%20eq%20%2740%27">Approvals - Reject Reasons</a><br />
+<% } -%>
+<% if(apiGRAPH){ -%>
+    <a href="<%= srvPath %>v2/catalog/WorkforcePersons?$top=1">Workforce Persons</a><br />
 <% } -%>
 <% if(apiHERE){ -%>
     <a href="<%= srvPath %>v2/catalog/Geocodes?$filter=title%20eq%20%27France%27">Geocodes</a><br />
