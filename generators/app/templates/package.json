@@ -2,6 +2,9 @@
   "name": "<%= projectName %>",
   "version": "0.0.1",
   "description": "<%= description %>",
+  "engines": {
+    "node": "14.x.x"
+  },
   "dependencies": {
     "@sap/cds": "^5",
     "@sap/audit-logging": "^3",
@@ -20,10 +23,16 @@
 <% if(apiGRAPH){ -%>
     "@sap/odm": "^2",
 <% } -%>
-<% if(authentication){ -%>
+<% if(authentication || credStore !== ""){ -%>
     "@sap/xsenv": "^3",
+<% } -%>
+<% if(authentication){ -%>
     "@sap/xssec": "^3",
     "passport": "^0.4.1",
+<% } -%>
+<% if(credStore !== ""){ -%>
+    "node-fetch": "^2.6.1",
+    "node-jose": "^2",
 <% } -%>
 <% if(multiTenant){ -%>
     "@sap/cds-mtx": "^1",
@@ -42,7 +51,7 @@
     "express": "^4"
   },
   "devDependencies": {
-    "sqlite3": "5.0.0"
+    "sqlite3": "^5"
   },
   "scripts": {
     "start": "npx cds run"

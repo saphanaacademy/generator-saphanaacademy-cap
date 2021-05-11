@@ -52,16 +52,20 @@ modules:
       domain: <%= customDomain %>
 <% } -%>
 <% if(api){ -%>
-    properties:
-<% if (apiSAP){ -%>
-      ApplicationInterfaceKey: saptest0
-<% } -%>
-<% if (APIKeyHubSandbox !== ""){ -%>
-      APIKeyHubSandbox: <%= APIKeyHubSandbox %>
-<% } -%>
 <% if(em && !multiTenant && apiS4HCBP){ -%>
+    properties:
       BusinessPartnerCountry: US
       BusinessPartnerRole: FLCU01
+<% } -%>
+<% if(credStore === ""){ -%>
+<% if (!(em && !multiTenant && apiS4HCBP)){ -%>
+    properties:
+<% } -%>
+<% if(apiSAP){ -%>
+      ApplicationInterfaceKey: <%= ApplicationInterfaceKey %>
+<% } -%>
+<% if(APIKeyHubSandbox !== ""){ -%>
+      APIKeyHubSandbox: <%= APIKeyHubSandbox %>
 <% } -%>
 <% if(apiARIBPO){ -%>
       AribaNetworkId: <%= AribaNetworkId %>
@@ -78,6 +82,7 @@ modules:
 <% } -%>
 <% if(apiNeoWs){ -%>
       APIKeyNASA: <%= APIKeyNASA %>
+<% } -%>
 <% } -%>
 <% } -%>
     requires:
@@ -98,6 +103,9 @@ modules:
       - name: <%= projectName %>-sm
 <% } else if (hana || schemaName !== ''){ -%>
       - name: <%= projectName %>-db
+<% } -%>
+<% if(credStore !== ""){ -%>
+      - name: <%= credStore %>
 <% } -%>
     provides:
       - name: srv-api
@@ -479,4 +487,13 @@ resources:
     parameters:
       service: application-logs
       service-plan: lite
+<% } -%>
+
+<% if(credStore !== ""){ -%>
+  # ----------------- CREDENTIAL STORE SERVICE -----------------
+  - name: <%= credStore %>
+  # ------------------------------------------------------------
+    type: org.cloudfoundry.existing-service
+    parameters:
+      service-name: <%= credStore %>
 <% } -%>

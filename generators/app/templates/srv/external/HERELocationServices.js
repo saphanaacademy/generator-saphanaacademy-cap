@@ -1,3 +1,7 @@
+<% if(credStore !== ''){ -%>
+const credStore = require('./../lib/credStore');
+<% } -%>
+
 class HERELocationServices extends cds.RemoteService {
     async init() {
 
@@ -5,9 +9,9 @@ class HERELocationServices extends cds.RemoteService {
 
         this.reject(['CREATE', 'UPDATE', 'DELETE'], '*');
 
-        this.before('READ', Geocodes, (req) => {
+        this.before('READ', Geocodes, async (req) => {
             try {
-                let query = 'GET /geocode?apiKey=' + process.env.APIKeyHERE;
+                let query = 'GET /geocode?apiKey=' + <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'APIKeyHERE')<% } else { -%>process.env.APIKeyHERE<% } -%>;
                 let select = req.query.SELECT;
                 let hasFilter = false;
                 if (select.where) {

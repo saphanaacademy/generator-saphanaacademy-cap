@@ -2,6 +2,7 @@
 const Generator = require("yeoman-generator");
 const path = require("path");
 const glob = require("glob");
+const credStore = require('./credStore');
 
 module.exports = class extends Generator {
   prompting() {
@@ -144,7 +145,7 @@ module.exports = class extends Generator {
         when: response => response.api === true && response.apiLoB.includes("NASA Near Earth Object Web Service"),
         type: "input",
         name: "APIKeyNASA",
-        message: "What is your NASA API Key? Leave blank for demo key.",
+        message: "What is your NASA API Key? Leave blank to use a public demo key.",
         default: ""
       },
       {
@@ -281,6 +282,19 @@ module.exports = class extends Generator {
         default: false
       },
       {
+        when: response => response.api === true || (response.multiTenant === true && response.routes === true),
+        type: "input",
+        name: "credStore",
+        message: "What is the name of your SAP Credential Store service instance? Leave blank to use environment variables.",
+        validate: (s) => {
+          if (/^[a-zA-Z0-9_-]*$/g.test(s)) {
+            return true;
+          }
+          return "Please only use alphanumeric characters for the SAP Credential Store service instance name.";
+        },
+        default: ""
+      },
+      {
         type: "confirm",
         name: "buildDeploy",
         message: "Would you like to build and deploy the project immediately?",
@@ -312,6 +326,7 @@ module.exports = class extends Generator {
         answers.APIKeyGraph = "";
         answers.APIKeyHERE = "";
         answers.APIKeyNASA = "";
+        answers.credStore = "";
       }
       answers.apiS4HCSO = answers.apiLoB.includes("SAP S/4HANA Cloud Sales Order (A2X)");
       answers.apiS4HCBP = answers.apiLoB.includes("SAP S/4HANA Cloud Business Partner (A2X)");
@@ -353,6 +368,7 @@ module.exports = class extends Generator {
       } else if (answers.APIKeyNASA === "") {
         answers.APIKeyNASA = "DEMO_KEY";
       }
+      answers.ApplicationInterfaceKey = "saptest0";
       if (answers.authentication === false) {
         answers.authorization = false;
         answers.multiTenant = false;
@@ -388,11 +404,15 @@ module.exports = class extends Generator {
       if (answers.customDomain !== "") {
         answers.routes = false;
       }
+      if (!(answers.api === true || (answers.multiTenant === true && answers.routes === true))) {
+        answers.credStore = "";
+      }
+      answers.credStoreNS = answers.projectName;
       this.config.set(answers);
     });
   }
 
-  writing() {
+  async writing() {
     var answers = this.config;
     if (answers.get('schemaName') !== "") {
       // when schema name is lowercase sometimes we need to specify it in uppercase!
@@ -414,9 +434,9 @@ module.exports = class extends Generator {
       answers.set('cfspace', 'space');
       answers.set('cfapi', 'https://api.cf.region.hana.ondemand.com');
       // try to identify the targeted api, org & space
-      const res = this.spawnCommandSync('cf', ['target'], { stdio: 'pipe' });
-      const stdout = res.stdout.toString('utf8');
-      var field_strings = stdout.split(/[\r\n]*---[\r\n]*/);
+      const resTarget = this.spawnCommandSync('cf', ['target'], { stdio: 'pipe' });
+      const stdoutTarget = resTarget.stdout.toString('utf8');
+      var field_strings = stdoutTarget.split(/[\r\n]*---[\r\n]*/);
       for (var i = 0; i < field_strings.length; i++) {
         if (field_strings[i] == '') {
           continue;
@@ -433,6 +453,58 @@ module.exports = class extends Generator {
           }
         }
       }
+    }
+    var credsBinding;
+    if (answers.get('credStore') !== "") {
+      this.log("Configuring SAP Credential Service: Start");
+      this.log("Checking whether the service instance exists...");
+      let resCreds = this.spawnCommandSync('cf', ['service', answers.get('credStore'), '--guid'], { stdio: 'pipe' });
+      if (resCreds.status) {
+        this.log("Service instance does not exist. Will try to create it. Checking available service plans...");
+        resCreds = this.spawnCommandSync('cf', ['marketplace', '-e', 'credStore'], { stdio: 'pipe' });
+        let credsPlans = resCreds.stdout.toString('utf8');
+        // best guess typically trial or standard - for other plans create the service instance before running the generator
+        let credsPlan = '';
+        if (credsPlans.search('standard') >= 0) {
+          credsPlan = 'standard';
+        } else if (credsPlans.search('trial') >= 0) {
+          credsPlan = 'trial';
+        }
+        this.log("Creating service instance...", answers.get('credStore'), credsPlan);
+        resCreds = this.spawnCommandSync('cf', ['create-service', 'credStore', credsPlan, answers.get('credStore')], { stdio: 'pipe' });
+        if (resCreds.status) {
+          this.log("Unable to create service instance:", resCreds.stdout.toString('utf8'));
+        }
+      }
+      this.log("Creating service key...");
+      const credsSK = 'sha-cap';
+      resCreds = this.spawnCommandSync('cf', ['create-service-key', answers.get('credStore'), credsSK], { stdio: 'pipe' });
+      if (resCreds.status) {
+        this.log("Unable to create service key:", resCreds.stdout.toString('utf8'));
+      }
+      this.log("Reading service key...");
+      resCreds = this.spawnCommandSync('cf', ['service-key', answers.get('credStore'), credsSK], { stdio: 'pipe' });
+      if (resCreds.status) {
+        this.log("Unable to read service key:", resCreds.stdout.toString('utf8'));
+      }
+      credsBinding = resCreds.stdout.toString('utf8');
+      credsBinding = JSON.parse(credsBinding.substring(credsBinding.indexOf('{')));
+      this.log("Writing credentials...");
+      const credsNS = answers.get('credStoreNS');
+      if (answers.get('apiSAP')) resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'ApplicationInterfaceKey', answers.get('ApplicationInterfaceKey'));
+      if (answers.get('APIKeyHubSandbox') !== '') resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'APIKeyHubSandbox', answers.get('APIKeyHubSandbox'));
+      if (answers.get('apiARIBPO')) {
+        resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'AribaNetworkId', answers.get('AribaNetworkId'));
+        resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'APIKeyAriba', answers.get('APIKeyAriba'));
+      }
+      if (answers.get('apiFGAP')) resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'APIKeyFieldglass', answers.get('APIKeyFieldglass'));
+      if (answers.get('apiGRAPH')) resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'APIKeyGraph', answers.get('APIKeyGraph'));
+      if (answers.get('apiHERE')) resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'APIKeyHERE', answers.get('APIKeyHERE'));
+      if (answers.get('apiNeoWs')) resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'APIKeyNASA', answers.get('APIKeyNASA'));
+      if (answers.get('routes')) {
+        resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'CFAPI', '<password>', '<email>');
+      }
+      this.log("Configuring SAP Credential Service: End");
     }
 
     // scaffold the project
@@ -451,42 +523,44 @@ module.exports = class extends Generator {
                 if (!((file === 'Jenkinsfile' || file.substring(0, 9) === '.pipeline') && answers.get('cicd') === false)) {
                   if (!(file.substring(0, 3) === 'tpl' && (answers.get('hana') === false || answers.get('multiTenant') === false))) {
                     if (!(file.substring(0, 19) === 'srv/catalog-service' && answers.get('hana') === false && answers.get('api') === false)) {
-                      if (!(file === 'srv/provisioning.js' && answers.get('multiTenant') === false)) {
-                        if (!(file === 'srv/server.js' && answers.get('v2support') === false && answers.get('multiTenant') === false)) {
-                          if (!(file.substring(0, 32) === 'srv/external/API_SALES_ORDER_SRV' && answers.get('apiS4HCSO') === false)) {
-                            if (!(file.substring(0, 33) === 'srv/external/API_BUSINESS_PARTNER' && answers.get('apiS4HCBP') === false)) {
-                              if (!((file.substring(0, 25) === 'srv/external/RCMCandidate' || file.includes('map.html')) && answers.get('apiSFSFRC') === false)) {
-                                if (!((file.substring(0, 25) === 'srv/external/AribaNetwork') && answers.get('apiARIBPO') === false)) {
-                                  if (!((file.substring(0, 23) === 'srv/external/Fieldglass') && answers.get('apiFGAP') === false)) {
-                                    if (!((file.substring(0, 33) === 'srv/external/HERELocationServices') && answers.get('apiHERE') === false)) {
-                                      if (!((file.substring(0, 38) === 'srv/external/NearEarthObjectWebService') && answers.get('apiNeoWs') === false)) {
-                                        if (!((file.substring(0, 15) === 'app/xs-app.json' || file.substring(0, 16) === 'app/package.json') && (answers.get('managedAppRouter') === true || (answers.get('authentication') === false && answers.get('ui') === false)))) {
-                                          if (!((file.substring(0, 13) === 'app/resources' || file.includes('i18n') || file.includes('index.cds')) && answers.get('ui') === false)) {
-                                            if (!((file.substring(0, 19) === 'app/resources/fiori' || file.includes('i18n') || file.includes('index.cds')) && answers.get('hana') === false)) {
-                                              if (!((file.substring(0, 31) === 'app/resources/fiori/xs-app.json' || file.substring(0, 32) === 'app/resources/fiori/package.json') && answers.get('html5repo') === false)) {
-                                                if (!((file.substring(0, 31) === 'app/resources/html5/xs-app.json' || file.substring(0, 32) === 'app/resources/html5/package.json' || file.substring(0, 33) === 'app/resources/html5/manifest.json') && answers.get('html5repo') === false)) {
-                                                  if (!(file.substring(0, 2) === 'db' && answers.get('hana') === false && answers.get('schemaName') === "")) {
-                                                    if (!((file.substring(0, 17) === 'db/data-model.cds' || file.substring(0, 7) === 'db/data') && answers.get('hana') === false)) {
-                                                      if (!((file.substring(0, 36) === 'db/data/_PROJECT_NAME_.db.Conditions' || file.substring(0, 34) === 'db/data/_PROJECT_NAME_.db.Customer' || file.substring(0, 32) === 'db/data/_PROJECT_NAME_.db.Status') && (answers.get('apiS4HCBP') === false || answers.get('em') === false))) {
-                                                        if (!(file.substring(0, 7) === 'db/src/' && answers.get('hanaNative') === false && answers.get('schemaName') === "")) {
-                                                          if (!(file.substring(0, 20) === 'db/src/_SCHEMA_NAME_' && answers.get('schemaName') === "")) {
-                                                            if (!((file.substring(0, 10) === 'db/src/SP_' || file.substring(0, 10) === 'db/src/TT_' || file.substring(0, 10) === 'db/src/CV_') && answers.get('hanaNative') === false)) {
-                                                              const sOrigin = this.templatePath(file);
-                                                              let fileDest = file;
-                                                              if (fileDest.includes('_PROJECT_NAME_')) {
-                                                                fileDest = 'db/data/' + answers.get('projectName') + '.db-' + fileDest.split(".", 3)[2] + '.csv';
+                      if (!(file === 'srv/lib/credStore.js' && answers.get('credStore') === '')) {
+                        if (!(file === 'srv/provisioning.js' && answers.get('multiTenant') === false)) {
+                          if (!(file === 'srv/server.js' && answers.get('v2support') === false && answers.get('multiTenant') === false)) {
+                            if (!(file.substring(0, 32) === 'srv/external/API_SALES_ORDER_SRV' && answers.get('apiS4HCSO') === false)) {
+                              if (!(file.substring(0, 33) === 'srv/external/API_BUSINESS_PARTNER' && answers.get('apiS4HCBP') === false)) {
+                                if (!((file.substring(0, 25) === 'srv/external/RCMCandidate' || file.includes('map.html')) && answers.get('apiSFSFRC') === false)) {
+                                  if (!((file.substring(0, 25) === 'srv/external/AribaNetwork') && answers.get('apiARIBPO') === false)) {
+                                    if (!((file.substring(0, 23) === 'srv/external/Fieldglass') && answers.get('apiFGAP') === false)) {
+                                      if (!((file.substring(0, 33) === 'srv/external/HERELocationServices') && answers.get('apiHERE') === false)) {
+                                        if (!((file.substring(0, 38) === 'srv/external/NearEarthObjectWebService') && answers.get('apiNeoWs') === false)) {
+                                          if (!((file.substring(0, 15) === 'app/xs-app.json' || file.substring(0, 16) === 'app/package.json') && (answers.get('managedAppRouter') === true || (answers.get('authentication') === false && answers.get('ui') === false)))) {
+                                            if (!((file.substring(0, 13) === 'app/resources' || file.includes('i18n') || file.includes('index.cds')) && answers.get('ui') === false)) {
+                                              if (!((file.substring(0, 19) === 'app/resources/fiori' || file.includes('i18n') || file.includes('index.cds')) && answers.get('hana') === false)) {
+                                                if (!((file.substring(0, 31) === 'app/resources/fiori/xs-app.json' || file.substring(0, 32) === 'app/resources/fiori/package.json') && answers.get('html5repo') === false)) {
+                                                  if (!((file.substring(0, 31) === 'app/resources/html5/xs-app.json' || file.substring(0, 32) === 'app/resources/html5/package.json' || file.substring(0, 33) === 'app/resources/html5/manifest.json') && answers.get('html5repo') === false)) {
+                                                    if (!(file.substring(0, 2) === 'db' && answers.get('hana') === false && answers.get('schemaName') === "")) {
+                                                      if (!((file.substring(0, 17) === 'db/data-model.cds' || file.substring(0, 7) === 'db/data') && answers.get('hana') === false)) {
+                                                        if (!((file.substring(0, 36) === 'db/data/_PROJECT_NAME_.db.Conditions' || file.substring(0, 34) === 'db/data/_PROJECT_NAME_.db.Customer' || file.substring(0, 32) === 'db/data/_PROJECT_NAME_.db.Status') && (answers.get('apiS4HCBP') === false || answers.get('em') === false))) {
+                                                          if (!(file.substring(0, 7) === 'db/src/' && answers.get('hanaNative') === false && answers.get('schemaName') === "")) {
+                                                            if (!(file.substring(0, 20) === 'db/src/_SCHEMA_NAME_' && answers.get('schemaName') === "")) {
+                                                              if (!((file.substring(0, 10) === 'db/src/SP_' || file.substring(0, 10) === 'db/src/TT_' || file.substring(0, 10) === 'db/src/CV_') && answers.get('hanaNative') === false)) {
+                                                                const sOrigin = this.templatePath(file);
+                                                                let fileDest = file;
+                                                                if (fileDest.includes('_PROJECT_NAME_')) {
+                                                                  fileDest = 'db/data/' + answers.get('projectName') + '.db-' + fileDest.split(".", 3)[2] + '.csv';
+                                                                }
+                                                                if (fileDest.includes('_SCHEMA_NAME_')) {
+                                                                  fileDest = 'db/src/' + answers.get('schemaName') + '.' + fileDest.split(".", 3)[1];
+                                                                }
+                                                                if (fileDest === 'dotenv') {
+                                                                  fileDest = '.env';
+                                                                }
+                                                                if (fileDest === 'dotgitignore') {
+                                                                  fileDest = '.gitignore';
+                                                                }
+                                                                const sTarget = this.destinationPath(fileDest);
+                                                                this.fs.copyTpl(sOrigin, sTarget, this.config.getAll());
                                                               }
-                                                              if (fileDest.includes('_SCHEMA_NAME_')) {
-                                                                fileDest = 'db/src/' + answers.get('schemaName') + '.' + fileDest.split(".", 3)[1];
-                                                              }
-                                                              if (fileDest === 'dotenv') {
-                                                                fileDest = '.env';
-                                                              }
-                                                              if (fileDest === 'dotgitignore') {
-                                                                fileDest = '.gitignore';
-                                                              }
-                                                              const sTarget = this.destinationPath(fileDest);
-                                                              this.fs.copyTpl(sOrigin, sTarget, this.config.getAll());
                                                             }
                                                           }
                                                         }
@@ -516,9 +590,36 @@ module.exports = class extends Generator {
         }
       });
 
+    var fs = this.fs;
+    var destinationRoot = this.destinationRoot();
+
+    if (answers.get('credStore') !== "") {
+      let dotenv = fs.read(destinationRoot + "/.env");
+      let VCAPServices = {
+          "credstore": [
+            {
+              "binding_guid": "",
+              "binding_name": null,
+              "credentials": credsBinding,
+              "instance_guid": "",
+              "instance_name": answers.get('credStore'),
+              "label": "credstore",
+              "name": answers.get('credStore'),
+              "plan": "",
+              "tags": [
+                "credstore",
+                "securestore",
+                "keystore",
+                "credentials"
+              ]
+            }
+          ]
+        };
+      dotenv += "VCAP_SERVICES=" + JSON.stringify(VCAPServices);
+      fs.write(destinationRoot + "/.env", dotenv);
+    }
+
     if (answers.get('schemaName') !== "") {
-      var fs = this.fs;
-      var destinationRoot = this.destinationRoot();
       var prefix = answers.get('projectName') + '_' + answers.get('schemaName');
       var thisgen = this;
 
@@ -535,15 +636,15 @@ module.exports = class extends Generator {
       let connection = hana.createConnection();
       connection.connect(connOptions, function (err) {
         if (err) {
-          return console.error(err);
+          return this.error(err);
         }
         let sql = "SELECT 'T' AS object_type, table_name as object_name FROM tables WHERE schema_name='" + schemaNameAdjustedCase + "' AND is_system_table='FALSE' AND is_temporary='FALSE' UNION SELECT 'V' AS object_type, view_name as object_name FROM views WHERE schema_name='" + schemaNameAdjustedCase + "'";
         connection.exec(sql, function (err, resObjects) {
           if (err) {
-            return console.error(err);
+            return this.error(err);
           }
           if (resObjects.length < 1) {
-            return console.error("No tables or views found in schema " + answers.get('schemaName'));
+            return this.error("No tables or views found in schema " + answers.get('schemaName'));
           }
 
           // create synonyms
@@ -570,7 +671,7 @@ module.exports = class extends Generator {
           sql += ") ORDER BY object_name, position";
           connection.exec(sql, function (err, resColumns) {
             if (err) {
-              return console.error(err);
+              return this.error(err);
             }
 
             // create hdbview for each object
@@ -602,7 +703,7 @@ module.exports = class extends Generator {
             sql += ") ORDER BY table_name, position";
             connection.exec(sql, function (err, resConstraints) {
               if (err) {
-                return console.error(err);
+                return this.error(err);
               }
 
               // create facade entity for each view
@@ -770,27 +871,27 @@ module.exports = class extends Generator {
               if (answers.get('schemaUPS') === true) {
                 connection.exec(sql1, function (err, result) {
                   if (err) {
-                    return console.error(err);
+                    return this.error(err);
                   }
                   connection.exec(sql2, function (err, result) {
                     if (err) {
-                      return console.error(err);
+                      return this.error(err);
                     }
                     connection.exec(sql3, function (err, result) {
                       if (err) {
-                        return console.error(err);
+                        return this.error(err);
                       }
                       connection.exec(sql4, function (err, result) {
                         if (err) {
-                          return console.error(err);
+                          return this.error(err);
                         }
                         connection.exec(sql5, function (err, result) {
                           if (err) {
-                            return console.error(err);
+                            return this.error(err);
                           }
                           connection.exec(sql6, function (err, result) {
                             if (err) {
-                              return console.error(err);
+                              return this.error(err);
                             }
                             connection.disconnect(function (err) {
                               done(err);
@@ -819,6 +920,7 @@ module.exports = class extends Generator {
     answers.delete('APIKeyGraph');
     answers.delete('APIKeyHERE');
     answers.delete('APIKeyNASA');
+    answers.delete('ApplicationInterfaceKey');
 
   }
 
@@ -849,10 +951,14 @@ module.exports = class extends Generator {
     }
     if (this.config.get('routes')) {
       let projectName = this.config.get('projectName');
-      this.log("Important: The CF API is being used so please be sure to issue the following CF CLI commands after deployment:");
-      this.log("  cf set-env " + projectName + "-srv cf_api_user '<email>'");
-      this.log("  cf set-env " + projectName + "-srv cf_api_password '<password>'");
-      this.log("  cf restage " + projectName + "-srv");
+      if (this.config.get('credStore') !== '') {
+        this.log("Important: The CF API is being used so please be sure to set CFAPI in the SAP Credential Store service instance!");
+      } else {
+        this.log("Important: The CF API is being used so please be sure to issue the following CF CLI commands after deployment to set credentials:");
+        this.log("  cf set-env " + projectName + "-srv CFAPIUser '<email>'");
+        this.log("  cf set-env " + projectName + "-srv CFAPIPassword '<password>'");
+        this.log("  cf restage " + projectName + "-srv");
+      }
     }
     if (this.config.get('multiTenant') && this.config.get('api')) {
       this.log("Don't forget to configure the destination for each subscriber.");

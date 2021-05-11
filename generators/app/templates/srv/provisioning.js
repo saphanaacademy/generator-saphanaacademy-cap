@@ -1,3 +1,6 @@
+<% if(credStore !== ''){ -%>
+const credStore = require('./lib/credStore');
+<% } -%>
 const cfenv = require('cfenv');
 const appEnv = cfenv.getAppEnv();
 const xsenv = require('@sap/xsenv');
@@ -22,12 +25,16 @@ async function getCFInfo(appname) {
         let res = await axios(options);
         try {
             // get access token
+<% if(credStore !== ''){ -%>
+            let creds1 = await credStore.readCredential('<%= credStoreNS %>', 'password', 'CFAPI');
+<% } -%>
             let options1 = {
                 method: 'POST',
                 url: res.data.authorization_endpoint + '/oauth/token?grant_type=password',
                 data: qs.stringify({
-                    username: process.env.cf_api_user,
-                    password: process.env.cf_api_password
+                    username: <% if(credStore !== ''){ -%>creds1.username<% } else { -%>process.env.CFAPIUser<% } -%>,
+                    password: <% if(credStore !== ''){ -%>creds1.value<% } else { -%>process.env.CFAPIPassword<% } -%>
+
                 }),
                 headers: {
                     'Authorization': 'Basic ' + Buffer.from('cf:').toString('base64'),

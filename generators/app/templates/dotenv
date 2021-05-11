@@ -1,12 +1,13 @@
-<% if (apiSAP){ -%>
-ApplicationInterfaceKey=saptest0
-<% } -%>
-<% if (APIKeyHubSandbox !== ""){ -%>
-APIKeyHubSandbox=<%= APIKeyHubSandbox %>
-<% } -%>
 <% if(em && !multiTenant && apiS4HCBP){ -%>
 BusinessPartnerCountry=US
 BusinessPartnerRole=FLCU01
+<% } -%>
+<% if(credStore === ""){ -%>
+<% if (apiSAP){ -%>
+ApplicationInterfaceKey=<%= ApplicationInterfaceKey %>
+<% } -%>
+<% if (APIKeyHubSandbox !== ""){ -%>
+APIKeyHubSandbox=<%= APIKeyHubSandbox %>
 <% } -%>
 <% if(apiARIBPO){ -%>
 AribaNetworkId=<%= AribaNetworkId %>
@@ -23,4 +24,5 @@ APIKeyHERE=<%= APIKeyHERE %>
 <% } -%>
 <% if(apiNeoWs){ -%>
 APIKeyNASA=<%= APIKeyNASA %>
+<% } -%>
 <% } -%>
