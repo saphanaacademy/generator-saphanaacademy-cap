@@ -97,13 +97,13 @@ module.exports = cds.service.impl(async function () {
             WorkforcePersons
 <% } -%>
 <% if(apiHERE){ -%>
-<% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiARIBPO || apiFGAP || apiFGRAPH){ -%>
+<% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiARIBPO || apiFGAP || apiGRAPH){ -%>
             ,
 <% } -%>
             Geocodes
 <% } -%>
 <% if(apiNeoWs){ -%>
-<% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiARIBPO || apiFGAP || apiFGRAPH || apiHERE){ -%>
+<% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiARIBPO || apiFGAP || apiGRAPH || apiHERE){ -%>
             ,
 <% } -%>
             Asteroids

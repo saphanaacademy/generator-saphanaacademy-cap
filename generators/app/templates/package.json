@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "<%= description %>",
   "engines": {
-    "node": "14.x.x"
+    "node": ">= 12.18.0"
   },
   "dependencies": {
     "@sap/cds": "^5",

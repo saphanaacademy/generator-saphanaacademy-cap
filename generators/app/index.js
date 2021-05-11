@@ -95,7 +95,7 @@ module.exports = class extends Generator {
         when: response => response.api === true,
         type: "checkbox",
         name: "apiLoB",
-        message: "Which external API would you like to use?",
+        message: "Which external API(s) would you like to use?",
         choices: ["SAP S/4HANA Cloud Sales Order (A2X)", "SAP S/4HANA Cloud Business Partner (A2X)", "SAP SuccessFactors Recruiting", "SAP Ariba Network Purchase Orders", "SAP Fieldglass Approvals", "SAP Graph Workforce", "HERE Location Services", "NASA Near Earth Object Web Service"],
         default: ["SAP S/4HANA Cloud Sales Order (A2X)"]
       },
@@ -115,44 +115,50 @@ module.exports = class extends Generator {
       },
       {
         when: response => response.api === true && response.apiLoB.includes("SAP Ariba Network Purchase Orders"),
-        type: "input",
+        type: "password",
         name: "APIKeyAriba",
         message: "What is your application-specific Ariba API Key?",
+        mask: "*",
         default: ""
       },
       {
         when: response => response.api === true && response.apiLoB.includes("SAP Fieldglass Approvals"),
-        type: "input",
+        type: "password",
         name: "APIKeyFieldglass",
         message: "What is your company-specific key provided by SAP Fieldglass for API access?",
+        mask: "*",
         default: ""
       },
       {
         when: response => response.api === true && response.apiLoB.includes("SAP Graph Workforce"),
-        type: "input",
+        type: "password",
         name: "APIKeyGraph",
         message: "What is your access token for SAP Graph API sandbox? Leave blank to use a read-only public access token.",
+        mask: "*",
         default: ""
       },
       {
         when: response => response.api === true && response.apiLoB.includes("HERE Location Services"),
-        type: "input",
+        type: "password",
         name: "APIKeyHERE",
         message: "What is your HERE Location Services API Key?",
+        mask: "*",
         default: ""
       },
       {
         when: response => response.api === true && response.apiLoB.includes("NASA Near Earth Object Web Service"),
-        type: "input",
+        type: "password",
         name: "APIKeyNASA",
         message: "What is your NASA API Key? Leave blank to use a public demo key.",
+        mask: "*",
         default: ""
       },
       {
         when: response => response.api === true && (response.apiLoB.includes("SAP S/4HANA Cloud Sales Order (A2X)") || response.apiLoB.includes("SAP S/4HANA Cloud Business Partner (A2X)") || response.apiLoB.includes("SAP SuccessFactors Recruiting") || response.apiLoB.includes("SAP Ariba Network Purchase Orders") || response.apiLoB.includes("SAP Fieldglass Approvals")),
-        type: "input",
+        type: "password",
         name: "APIKeyHubSandbox",
         message: "What is your API Key for the SAP API Business Hub sandbox?",
+        mask: "*",
         default: ""
       },
       {
@@ -285,7 +291,7 @@ module.exports = class extends Generator {
         when: response => response.api === true || (response.multiTenant === true && response.routes === true),
         type: "input",
         name: "credStore",
-        message: "What is the name of your SAP Credential Store service instance? Leave blank to use environment variables.",
+        message: "What is the name of your SAP Credential Store service instance? Leave blank to use environment variables instead.",
         validate: (s) => {
           if (/^[a-zA-Z0-9_-]*$/g.test(s)) {
             return true;
