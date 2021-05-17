@@ -1,0 +1,14 @@
+{
+    "<%= hanaTargetHDI %>": {
+        "object_owner": {
+            "container_roles": [
+                "<%= hanaTargetHDI.toUpperCase().replace(/-/g, '_') %>_EXTERNAL_ACCESS_G#"
+            ]
+        },
+        "application_user": {
+            "container_roles": [
+                "<%= hanaTargetHDI.toUpperCase().replace(/-/g, '_') %>_EXTERNAL_ACCESS"
+            ]
+        }
+    }
+}

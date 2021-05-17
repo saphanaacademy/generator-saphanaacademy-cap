@@ -1,0 +1,14 @@
+{
+    "role": {
+        "name": "<%= projectName.toUpperCase() %>_DB_EXTERNAL_ACCESS_G#",
+        "object_privileges": [
+            {
+                "name": "<%= projectName.toUpperCase() %>_DB_WIDGETS",
+                "type": "TABLE",
+                "privileges_with_grant_option": [
+                    "SELECT"
+                ]
+            }
+        ]
+    }
+}

@@ -47,8 +47,14 @@ module.exports = cds.service.impl(async function () {
 <% if(hana){ -%>
             Sales
 <% } -%>
-<% if(apiS4HCSO){ -%>
+<% if(hanaTargetHDI !== ""){ -%>
 <% if(hana){ -%>
+        ,
+<% } -%>
+            Widgets
+<% } -%>
+<% if(apiS4HCSO){ -%>
+<% if(hana || hanaTargetHDI !== ""){ -%>
             ,
 <% } -%>
             SalesOrders
@@ -58,7 +64,7 @@ module.exports = cds.service.impl(async function () {
 <% } -%>
 <% } -%>
 <% if(apiS4HCBP){ -%>
-<% if(hana || apiS4HCSO){ -%>
+<% if(hana || hanaTargetHDI !== "" || apiS4HCSO){ -%>
             ,
 <% } -%>
             BusinessPartners
@@ -68,7 +74,7 @@ module.exports = cds.service.impl(async function () {
 <% } -%>
 <% } -%>
 <% if(apiSFSFRC){ -%>
-<% if(hana || apiS4HCBP || apiS4HCSO){ -%>
+<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO){ -%>
             ,
 <% } -%>
             Candidates
@@ -78,32 +84,32 @@ module.exports = cds.service.impl(async function () {
 <% } -%>
 <% } -%>
 <% if(apiARIBPO){ -%>
-<% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC){ -%>
+<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC){ -%>
             ,
 <% } -%>
             PurchaseOrders
 <% } -%>
 <% if(apiFGAP){ -%>
-<% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiARIBPO){ -%>
+<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiARIBPO){ -%>
             ,
 <% } -%>
             Approvals,
             RejectReasons
 <% } -%>
 <% if(apiGRAPH){ -%>
-<% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiARIBPO || apiFGAP){ -%>
+<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiARIBPO || apiFGAP){ -%>
             ,
 <% } -%>
             WorkforcePersons
 <% } -%>
 <% if(apiHERE){ -%>
-<% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiARIBPO || apiFGAP || apiGRAPH){ -%>
+<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiARIBPO || apiFGAP || apiGRAPH){ -%>
             ,
 <% } -%>
             Geocodes
 <% } -%>
 <% if(apiNeoWs){ -%>
-<% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiARIBPO || apiFGAP || apiGRAPH || apiHERE){ -%>
+<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiARIBPO || apiFGAP || apiGRAPH || apiHERE){ -%>
             ,
 <% } -%>
             Asteroids

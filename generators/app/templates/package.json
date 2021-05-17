@@ -3,19 +3,19 @@
   "version": "0.0.1",
   "description": "<%= description %>",
   "engines": {
-    "node": ">= 12.18.0"
+    "node": "14.x"
   },
   "dependencies": {
     "@sap/cds": "^5",
-    "@sap/audit-logging": "^3",
-<% if(hana || schemaName !== ''){ -%>
+    "@sap/audit-logging": "^5",
+<% if(hana || schemaName !== '' || hanaTargetHDI !== ''){ -%>
     "@sap/hana-client": "^2",
 <% } -%>
 <% if(v2support){ -%>
     "@sap/cds-odata-v2-adapter-proxy": "^1",
 <% } -%>
 <% if(em){ -%>
-    "@sap/xb-msg-amqp-v100": "^0.9.48",
+    "@sap/xb-msg-amqp-v100": "^0.9.51",
 <% if(apiS4HCBP){ -%>
     "@sap/cloud-sdk-vdm-business-partner-service": "^1.24",
 <% } -%>
@@ -35,9 +35,9 @@
     "node-jose": "^2",
 <% } -%>
 <% if(multiTenant){ -%>
-    "@sap/cds-mtx": "^1",
+    "@sap/cds-mtx": "^2",
     "@sap/hdi-deploy": "^4",
-    "@sap/instance-manager": "^2",
+    "@sap/instance-manager": "^3",
     "cfenv": "^1",
 <% } -%>
 <% if(routes){ -%>
@@ -125,7 +125,7 @@
         }
       }
 <% } -%>
-<% if(hana || schemaName !== ''){ -%>
+<% if(hana || schemaName !== '' || hanaTargetHDI !== ''){ -%>
 <% if(authentication){ -%>
       ,
 <% } -%>
@@ -153,7 +153,7 @@
       "multitenancy": true
 <% } -%>
 <% if(apiS4HCSO){ -%>
-<% if(authentication || hana || schemaName !== ''){ -%>
+<% if(authentication || hana || schemaName !== '' || hanaTargetHDI !== ''){ -%>
       ,
 <% } -%>
       "API_SALES_ORDER_SRV": {
@@ -171,7 +171,7 @@
       }
 <% } -%>
 <% if(apiS4HCBP){ -%>
-<% if(authentication || hana || schemaName !== '' || apiS4HCSO){ -%>
+<% if(authentication || hana || schemaName !== '' || hanaTargetHDI !== '' || apiS4HCSO){ -%>
       ,
 <% } -%>
       "API_BUSINESS_PARTNER": {
@@ -189,7 +189,7 @@
       }
 <% } -%>
 <% if(apiSFSFRC){ -%>
-<% if(authentication || hana || schemaName !== '' || apiS4HCSO || apiS4HCBP){ -%>
+<% if(authentication || hana || schemaName !== '' || hanaTargetHDI !== '' || apiS4HCSO || apiS4HCBP){ -%>
       ,
 <% } -%>
       "RCMCandidate": {
@@ -207,7 +207,7 @@
       }
 <% } -%>
 <% if(apiARIBPO){ -%>
-<% if(authentication || hana || schemaName !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC){ -%>
+<% if(authentication || hana || schemaName !== '' || hanaTargetHDI !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC){ -%>
       ,
 <% } -%>
       "ARIBA_NETWORK_PURCHASE_ORDERS": {
@@ -225,7 +225,7 @@
       }
 <% } -%>
 <% if(apiFGAP){ -%>
-<% if(authentication || hana || schemaName !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiARIBPO){ -%>
+<% if(authentication || hana || schemaName !== '' || hanaTargetHDI !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiARIBPO){ -%>
       ,
 <% } -%>
       "FieldglassApprovals": {
@@ -243,7 +243,7 @@
       }
 <% } -%>
 <% if(apiGRAPH){ -%>
-<% if(authentication || hana || schemaName !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiARIBPO || apiFGAP){ -%>
+<% if(authentication || hana || schemaName !== '' || hanaTargetHDI !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiARIBPO || apiFGAP){ -%>
       ,
 <% } -%>
       "GraphWorkforce": {
@@ -260,7 +260,7 @@
       }
 <% } -%>
 <% if(apiHERE){ -%>
-<% if(authentication || hana || schemaName !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiARIBPO || apiFGAP || apiGRAPH){ -%>
+<% if(authentication || hana || schemaName !== '' || hanaTargetHDI !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiARIBPO || apiFGAP || apiGRAPH){ -%>
       ,
 <% } -%>
       "HERELocationServices": {
@@ -278,7 +278,7 @@
       }
 <% } -%>
 <% if(apiNeoWs){ -%>
-<% if(authentication || hana || schemaName !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiARIBPO || apiFGAP || apiGRAPH || apiHERE){ -%>
+<% if(authentication || hana || schemaName !== '' || hanaTargetHDI !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiARIBPO || apiFGAP || apiGRAPH || apiHERE){ -%>
       ,
 <% } -%>
       "NearEarthObjectWebService": {
@@ -296,7 +296,7 @@
       }
 <% } -%>
 <% if(em){ -%>
-<% if(authentication || hana || schemaName !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiARIBPO || apiFGAP || apiGRAPH || apiHERE || apiNeoWs){ -%>
+<% if(authentication || hana || schemaName !== '' || hanaTargetHDI !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiARIBPO || apiFGAP || apiGRAPH || apiHERE || apiNeoWs){ -%>
       ,
 <% } -%>
       "messaging": {
@@ -341,7 +341,7 @@
       ]
     }
 <% } -%>
-<% if(hana || schemaName !== ''){ -%>
+<% if(hana || schemaName !== '' || hanaTargetHDI !== ''){ -%>
     ,
     "hana": {
       "deploy-format": "hdbtable"

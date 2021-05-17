@@ -13,7 +13,7 @@ build-parameters:
         - npx -p @sap/cds-dk cds build --production
 
 modules:
-<% if((hana || schemaName !== '') && !multiTenant){ -%>
+<% if((hana || schemaName !== '' || hanaTargetHDI !== '') && !multiTenant){ -%>
   # ---------------- DATABASE DEPLOYER MODULE ------------------
   - name: <%= projectName %>-db-deployer
   # ------------------------------------------------------------
@@ -26,6 +26,10 @@ modules:
 <% if(customDomain !== ""){ -%>
       domain: <%= customDomain %>
 <% } -%>
+<% if(hanaTargetHDI !== ""){ -%>
+    properties:
+      TARGET_CONTAINER: <%= projectName %>-db
+<% } -%>
     requires:
 <% if(authentication || api){ -%>
       - name: <%= projectName %>-uaa
@@ -33,6 +37,9 @@ modules:
       - name: <%= projectName %>-db
 <% if(schemaName !== ""){ -%>
       - name: <%= projectName %>-db-<%= schemaName %>
+<% } -%>
+<% if(hanaTargetHDI !== ""){ -%>
+      - name: <%= hanaTargetHDI %>
 <% } -%>
 <% } -%>
 
@@ -101,8 +108,11 @@ modules:
 <% if(multiTenant){ -%>
       - name: <%= projectName %>-registry
       - name: <%= projectName %>-sm
-<% } else if (hana || schemaName !== ''){ -%>
+<% } else if (hana || schemaName !== '' || hanaTargetHDI !== ''){ -%>
       - name: <%= projectName %>-db
+<% } -%>
+<% if(hanaTargetHDI !== ""){ -%>
+      - name: <%= hanaTargetHDI %>
 <% } -%>
 <% if(credStore !== ""){ -%>
       - name: <%= credStore %>
@@ -414,7 +424,7 @@ resources:
       path: ./em.json
 <% } -%>
 
-<% if((hana || schemaName !== '') && !multiTenant){ -%>
+<% if((hana || schemaName !== '' || hanaTargetHDI !== '') && !multiTenant){ -%>
   # ------------------- HDI CONTAINER SERVICE ------------------
   - name: <%= projectName %>-db
   # ------------------------------------------------------------
@@ -433,6 +443,15 @@ resources:
     parameters:
       service-name: <%= projectName %>-db-<%= schemaName %>
 <% } -%>
+<% } -%>
+
+<% if(hanaTargetHDI !== ""){ -%>
+  # -------------- EXISTING HDI CONTAINER SERVICE --------------
+  - name: <%= hanaTargetHDI %>
+  # ------------------------------------------------------------
+    type: org.cloudfoundry.existing-service
+    parameters:
+      service-name: <%= hanaTargetHDI %>
 <% } -%>
 
 <% if(multiTenant){ -%>

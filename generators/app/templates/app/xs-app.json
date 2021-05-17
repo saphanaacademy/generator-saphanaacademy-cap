@@ -17,7 +17,7 @@
     "authenticationMethod": "none",
 <% } -%>
     "routes": [
-<% if(hana || api){ -%>
+<% if(hana || hanaTargetHDI !== "" || api){ -%>
         {
             "source": "^/catalog/(.*)$",
 <% if(authentication){ -%>
@@ -82,7 +82,7 @@
         }
 <% } -%>
 <% if(ui){ -%>
-<% if(hana || api || schemaName !== '' || multiTenant){ -%>
+<% if(hana || hanaTargetHDI !== "" || api || schemaName !== '' || multiTenant){ -%>
         ,
 <% } -%>
         {

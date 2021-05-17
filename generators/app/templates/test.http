@@ -1,4 +1,4 @@
-<% if(hana || api){ -%>
+<% if(hana || hanaTargetHDI !== "" || api){ -%>
 GET http://localhost:4004/catalog
 <% if(authentication){ -%>
 Authorization: Basic joe:
@@ -37,6 +37,13 @@ Authorization: Basic joe:
 <% } -%>
 ###
 GET http://localhost:4004/catalog/VSales
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
+<% if(hanaTargetHDI !== ""){ -%>
+GET http://localhost:4004/catalog/Widgets
 <% if(authentication){ -%>
 Authorization: Basic joe:
 <% } -%>
@@ -138,7 +145,7 @@ Authorization: Basic joe:
 <% } -%>
 ###
 <% } -%>
-<% if((hana || api) && authentication){ -%>
+<% if((hana || hanaTargetHDI !== "" || api) && authentication){ -%>
 GET http://localhost:4004/catalog/userInfo()
 <% if(authentication){ -%>
 Authorization: Basic joe:
@@ -146,7 +153,7 @@ Authorization: Basic joe:
 ###
 <% } -%>
 <% if(v2support){ -%>
-<% if(hana || api){ -%>
+<% if(hana || hanaTargetHDI !== "" || api){ -%>
 GET http://localhost:4004/v2/catalog
 <% if(authentication){ -%>
 Authorization: Basic joe:
@@ -185,6 +192,13 @@ Authorization: Basic joe:
 <% } -%>
 ###
 GET http://localhost:4004/v2/catalog/VSales
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
+<% if(hanaTargetHDI !== ""){ -%>
+GET http://localhost:4004/v2/catalog/Widgets
 <% if(authentication){ -%>
 Authorization: Basic joe:
 <% } -%>
@@ -286,7 +300,7 @@ Authorization: Basic joe:
 <% } -%>
 ###
 <% } -%>
-<% if((hana || api) && authentication){ -%>
+<% if((hana || hanaTargetHDI !== "" || api) && authentication){ -%>
 GET http://localhost:4004/v2/catalog/userInfo()
 <% if(authentication){ -%>
 Authorization: Basic joe:

@@ -1,9 +1,10 @@
-<% if(hanaNative){ -%>
+<% if(hanaNative || hanaTargetHDI !== ""){ -%>
 context <%= projectName %>.db {
 <% } else { -%>
 namespace <%= projectName %>.db;
 <% } -%>
 
+<% if(hana){ -%>
 entity Sales {
   key ID       : Integer;
       region   : String(100);
@@ -12,6 +13,15 @@ entity Sales {
       amount   : Integer;
       comments : String(100);
 };
+<% } -%>
+
+<% if(hanaExternalHDI){ -%>
+entity Widgets {
+  key ID    : Integer;
+      code  : String(10);
+      stock : Integer;
+};
+<% } -%>
 
 <% if(em){ -%>
 using { cuid, managed } from '@sap/cds/common';
@@ -61,13 +71,24 @@ entity CandidatesLog : cuid, managed {
 <% } -%>
 <% } -%>
 
-<% if(hanaNative){ -%>
+<% if(hanaNative || hanaTargetHDI !== ""){ -%>
 }
 
+<% if(hanaNative){ -%>
 @cds.persistence.exists
 @cds.persistence.calcview
 entity CV_SALES {
-key REGION  : String(100);
-    AMOUNT  : Integer;
+  key REGION  : String(100);
+      AMOUNT  : Integer;
 }
+<% } -%>
+
+<% if(hanaTargetHDI !== ""){ -%>
+@cds.persistence.exists
+entity <%= hanaTargetHDI.toUpperCase().replace(/-/g, '_') %>_WIDGETS {
+  key ID    : Integer;
+      code  : String(10);
+      stock : Integer;
+}
+<% } -%>
 <% } -%>

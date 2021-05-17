@@ -6,7 +6,7 @@
     "authenticationMethod": "none",
 <% } -%>
     "routes": [
-<% if(hana || api){ -%>
+<% if(hana || hanaTargetHDI !== "" || api){ -%>
         {
             "source": "^/catalog/(.*)$",
             "csrfProtection": false,
@@ -63,7 +63,7 @@
             "destination": "<%= projectName %>-srv"
         }
 <% } -%>
-<% if(hana || api || schemaName !== ''){ -%>
+<% if(hana || hanaTargetHDI !== "" || api || schemaName !== ''){ -%>
         ,
 <% } -%>
         {
