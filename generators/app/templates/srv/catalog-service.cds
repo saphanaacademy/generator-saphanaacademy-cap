@@ -260,11 +260,11 @@ service CatalogService @(path : '/catalog')
 <% } -%>
 
 <% if(authentication){ -%>
-    type userRoles { identified: Boolean; authenticated: Boolean; <% if(authorization){ -%>Viewer: Boolean; Admin: Boolean; <% } -%><% if(multiTenant){ -%>Callback: Boolean; ExtendCDS: Boolean; ExtendCDSdelete: Boolean; <% } -%>};
+    type userScopes { identified: Boolean; authenticated: Boolean; <% if(authorization){ -%>Viewer: Boolean; Admin: Boolean; <% } -%><% if(multiTenant){ -%>ExtendCDS: Boolean; ExtendCDSdelete: Boolean;<% } -%>};
 <% if(attributes){ -%>
     type userAttrs { Region: many String; };
 <% } -%>
-    type user { user: String; locale: String; <% if(multiTenant){ -%>tenant: String; <% } -%>roles: userRoles; <% if(attributes){ -%>attrs: userAttrs; <% } -%>};
+    type user { user: String; locale: String; <% if(multiTenant){ -%>tenant: String; <% } -%>scopes: userScopes; <% if(attributes){ -%>attrs: userAttrs; <% } -%>};
     function userInfo() returns user;
 <% } -%>
 };

@@ -5,6 +5,7 @@
     "scopes": [
         {
             "name": "$XSAPPNAME.Callback",
+            "description": "SaaS Provisioning",
             "grant-as-authority-to-apps": [
                 "$XSAPPNAME(application,sap-provisioning,tenant-onboarding)"
             ]
@@ -143,12 +144,14 @@
 <% if(authorization || multiTenant){ -%>
     ]
 <% } -%>
-<% if(customDomain !== ""){ -%>
     ,
     "oauth2-configuration": {
+        "token-validity": 3600
+<% if(customDomain !== ""){ -%>
+        ,
         "redirect-uris": [
             "http*://*.<%= customDomain %>/**"
         ]
-    }
 <% } -%>
+    }
 }

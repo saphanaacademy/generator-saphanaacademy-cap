@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "<%= description %>",
   "engines": {
-    "node": "14.x"
+    "node": "12.x"
   },
   "dependencies": {
     "@sap/cds": "^5",
@@ -35,7 +35,7 @@
     "node-jose": "^2",
 <% } -%>
 <% if(multiTenant){ -%>
-    "@sap/cds-mtx": "^2",
+    "@sap/cds-mtx": "^1",
     "@sap/hdi-deploy": "^4",
     "@sap/instance-manager": "^3",
     "cfenv": "^1",

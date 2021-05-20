@@ -594,18 +594,17 @@ module.exports = cds.service.impl(async function () {
         if (req.user.hasOwnProperty('locale')) {
             results.locale = req.user.locale;
         }
-        results.roles = {};
-        results.roles.identified = req.user.is('identified-user');
-        results.roles.authenticated = req.user.is('authenticated-user');
+        results.scopes = {};
+        results.scopes.identified = req.user.is('identified-user');
+        results.scopes.authenticated = req.user.is('authenticated-user');
 <% if(authorization){ -%>
-        results.roles.Viewer = req.user.is('Viewer');
-        results.roles.Admin = req.user.is('Admin');
+        results.scopes.Viewer = req.user.is('Viewer');
+        results.scopes.Admin = req.user.is('Admin');
 <% } -%>
 <% if(multiTenant){ -%>
         results.tenant = req.user.tenant;
-        results.roles.Callback = req.user.is('Callback');
-        results.roles.ExtendCDS = req.user.is('ExtendCDS');
-        results.roles.ExtendCDSdelete = req.user.is('ExtendCDSdelete');
+        results.scopes.ExtendCDS = req.user.is('ExtendCDS');
+        results.scopes.ExtendCDSdelete = req.user.is('ExtendCDSdelete');
 <% } -%>
 <% if(attributes){ -%>
         results.attrs = {};

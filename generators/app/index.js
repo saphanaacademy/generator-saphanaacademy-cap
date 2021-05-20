@@ -12,7 +12,7 @@ module.exports = class extends Generator {
         name: "projectName",
         message: "What project name would you like?",
         validate: (s) => {
-          if (/^[a-zA-Z0-9_-]*$/g.test(s)) {
+          if (/^[a-zA-Z0-9_]*$/g.test(s)) {
             return true;
           }
           return "Please only use alphanumeric characters for the project name.";
@@ -547,7 +547,7 @@ module.exports = class extends Generator {
                   if (!(file.substring(0, 3) === 'tpl' && (answers.get('hana') === false || answers.get('multiTenant') === false))) {
                     if (!(file.substring(0, 19) === 'srv/catalog-service' && answers.get('hana') === false && answers.get('hanaTargetHDI') === "" && answers.get('api') === false)) {
                       if (!(file === 'srv/lib/credStore.js' && answers.get('credStore') === '')) {
-                        if (!(file === 'srv/provisioning.js' && answers.get('multiTenant') === false)) {
+                        if (!((file === 'srv/provisioning.js' || file === 'app/custom.js') && answers.get('multiTenant') === false)) {
                           if (!(file === 'srv/server.js' && answers.get('v2support') === false && answers.get('multiTenant') === false)) {
                             if (!(file.substring(0, 32) === 'srv/external/API_SALES_ORDER_SRV' && answers.get('apiS4HCSO') === false)) {
                               if (!(file.substring(0, 33) === 'srv/external/API_BUSINESS_PARTNER' && answers.get('apiS4HCBP') === false)) {
@@ -586,7 +586,6 @@ module.exports = class extends Generator {
                                                                         fileDest = 'db/src/' + answers.get('schemaName') + '.' + fileDest.split(".", 3)[1];
                                                                       }
                                                                       if (fileDest.includes('_TARGET_HDI_')) {
-                                                                        console.log(fileDest, fileDest.substring(0, 7));
                                                                         fileDest = fileDest.substring(0, 7) + answers.get('hanaTargetHDI').toUpperCase().replace(/-/g, '_') + '.' + fileDest.split(".", 3)[1];
                                                                       }
                                                                       if (fileDest === 'dotenv') {

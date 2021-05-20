@@ -1,14 +1,17 @@
+const debug = require('debug')('srv:provisioning');
 <% if(credStore !== ''){ -%>
 const credStore = require('./lib/credStore');
 <% } -%>
 const cfenv = require('cfenv');
 const appEnv = cfenv.getAppEnv();
 const xsenv = require('@sap/xsenv');
+xsenv.loadEnv();
 const services = xsenv.getServices({
     registry: { tag: 'SaaS' }
-    <% if(api){ -%>
-    , dest: { tag: 'destination' }
-    <% } -%>
+<% if(api){ -%>
+    ,
+    dest: { tag: 'destination' }
+<% } -%>
 });
 
 <% if(routes){ -%>
@@ -69,19 +72,19 @@ async function getCFInfo(appname) {
                     };
                     return results;
                 } catch (err) {
-                    console.log(err.stack);
+                    debug(err.stack);
                     return err.message;
                 }
             } catch (err) {
-                console.log(err.stack);
+                debug(err.stack);
                 return err.message;
             }
         } catch (err) {
-            console.log(err.stack);
+            debug(err.stack);
             return err.message;
         }
     } catch (err) {
-        console.log(err.stack);
+        debug(err.stack);
         return err.message;
     }
 };
@@ -133,19 +136,19 @@ async function createRoute(tenantHost, appname) {
                         }
                     };
                     let res2 = await axios(options2);
-                    console.log('Route created for ' + tenantHost);
+                    debug('Route created for ' + tenantHost);
                     return res2.data;
                 } catch (err) {
-                    console.log(err.stack);
+                    debug(err.stack);
                     return err.message;
                 }
             } catch (err) {
-                console.log(err.stack);
+                debug(err.stack);
                 return err.message;
             }
         },
         function (err) {
-            console.log(err.stack);
+            debug(err.stack);
             return err.message;
         });
 };
@@ -174,24 +177,24 @@ async function deleteRoute(tenantHost, appname) {
                             }
                         };
                         let res2 = await axios(options2);
-                        console.log('Route deleted for ' + tenantHost);
+                        debug('Route deleted for ' + tenantHost);
                         return res2.data;
                     } catch (err) {
-                        console.log(err.stack);
+                        debug(err.stack);
                         return err.message;
                     }
                 } else {
                     let errmsg = { 'error': 'Route not found' };
-                    console.log(errmsg);
+                    debug(errmsg);
                     return errmsg;
                 }
             } catch (err) {
-                console.log(err.stack);
+                debug(err.stack);
                 return err.message;
             }
         },
         function (err) {
-            console.log(err.stack);
+            debug(err.stack);
             return err.message;
         });
 };
@@ -207,16 +210,16 @@ module.exports = (service) => {
             let tenantHost = req.data.subscribedSubdomain + '-' + appEnv.app.space_name.toLowerCase().replace(/_/g, '-') + '-' + services.registry.appName.toLowerCase().replace(/_/g, '-');
 <% } -%>
             let tenantURL = 'https:\/\/' + tenantHost + /\.(.*)/gm.exec(appEnv.app.application_uris[0])[0];
-            console.log('Subscribe: ', req.data.subscribedSubdomain, req.data.subscribedTenantId, tenantHost);
+            debug('Subscribe: ', req.data.subscribedSubdomain, req.data.subscribedTenantId, tenantHost);
             await next();
 <% if(routes){ -%>
             createRoute(tenantHost, services.registry.appName).then(
                 function (res2) {
-                    console.log('Subscribe - Create Route: ', req.data.subscribedTenantId, tenantHost, tenantURL);
+                    debug('Subscribe - Create Route: ', req.data.subscribedTenantId, tenantHost, tenantURL);
                     return tenantURL;
                 },
                 function (err) {
-                    console.log(err.stack);
+                    debug(err.stack);
                     return '';
                 });
 <% } -%>
@@ -229,22 +232,23 @@ module.exports = (service) => {
     });
 
     service.on('DELETE', 'tenant', async (req, next) => {
+
         if (req.user.is('Callback')) {
 <% if(customDomain !== ""){ -%>
             let tenantHost = req.data.subscribedSubdomain;
 <% } else { -%>
             let tenantHost = req.data.subscribedSubdomain + '-' + appEnv.app.space_name.toLowerCase().replace(/_/g, '-') + '-' + services.registry.appName.toLowerCase().replace(/_/g, '-');
 <% } -%>
-            console.log('Unsubscribe: ', req.data.subscribedSubdomain, req.data.subscribedTenantId, tenantHost);
+            debug('Unsubscribe: ', req.data.subscribedSubdomain, req.data.subscribedTenantId, tenantHost);
             await next();
 <% if(routes){ -%>
             deleteRoute(tenantHost, services.registry.appName).then(
                 async function (res2) {
-                    console.log('Unsubscribe - Delete Route: ', req.data.subscribedTenantId);
+                    debug('Unsubscribe - Delete Route: ', req.data.subscribedTenantId);
                     return req.data.subscribedTenantId;
                 },
                 function (err) {
-                    console.log(err.stack);
+                    debug(err.stack);
                     return '';
                 });
 <% } -%>
@@ -261,7 +265,7 @@ module.exports = (service) => {
         let dependencies = [{
             'xsappname': services.dest.xsappname
         }];
-        console.log('Dependencies: ', dependencies);
+        debug('Dependencies: ', dependencies);
         return dependencies;
     });
 <% } -%>
