@@ -236,7 +236,7 @@ module.exports = class extends Generator {
         default: ""
       },
       {
-        when: response => response.hana === true && response.authentication === true && response.schemaName === ""  && response.hanaTargetHDI === "" && response.html5repo === false,
+        when: response => response.hana === true && response.authentication === true && response.schemaName === "" && response.hanaTargetHDI === "" && response.html5repo === false,
         type: "confirm",
         name: "multiTenant",
         message: "Would you like to create a SaaS multitenant app?",
@@ -563,39 +563,41 @@ module.exports = class extends Generator {
                                                   if (!((file.substring(0, 31) === 'app/resources/html5/xs-app.json' || file.substring(0, 32) === 'app/resources/html5/package.json' || file.substring(0, 33) === 'app/resources/html5/manifest.json') && answers.get('html5repo') === false)) {
                                                     if (!(file.substring(0, 2) === 'db' && answers.get('hana') === false && answers.get('schemaName') === "" && answers.get('hanaTargetHDI') === "")) {
                                                       if (!((file.substring(0, 17) === 'db/data-model.cds' || file.substring(0, 7) === 'db/data') && (answers.get('hana') === false && answers.get('hanaTargetHDI') === ""))) {
-                                                        if (!((file.substring(0, 39) === 'db/src/_PROJECT_NAME_DB_EXTERNAL_ACCESS') && answers.get('hanaExternalHDI') === false)) {
-                                                          if (!(file.substring(0, 33) === 'db/data/_PROJECT_NAME_.db.Widgets' && answers.get('hanaExternalHDI') === false)) {
-                                                            if (!((file.substring(0, 36) === 'db/data/_PROJECT_NAME_.db.Conditions' || file.substring(0, 34) === 'db/data/_PROJECT_NAME_.db.Customer' || file.substring(0, 32) === 'db/data/_PROJECT_NAME_.db.Status') && (answers.get('apiS4HCBP') === false || answers.get('em') === false))) {
-                                                              if (!(file.substring(0, 7) === 'db/src/' && answers.get('hanaNative') === false && answers.get('hanaExternalHDI') === false && answers.get('hanaTargetHDI') === "" && answers.get('schemaName') === "")) {
-                                                                if (!((file.substring(0, 7) === 'db/cfg/' || file.substring(0, 19) === 'db/src/_TARGET_HDI_') && answers.get('hanaTargetHDI') === "")) {
-                                                                  if (!(file.substring(0, 20) === 'db/src/_SCHEMA_NAME_' && answers.get('schemaName') === "")) {
-                                                                    if (!((file.substring(0, 10) === 'db/src/SP_' || file.substring(0, 10) === 'db/src/TT_' || file.substring(0, 10) === 'db/src/CV_') && answers.get('hanaNative') === false)) {
-                                                                      const sOrigin = this.templatePath(file);
-                                                                      let fileDest = file;
-                                                                      if (fileDest.includes('_PROJECT_NAME_.db')) {
-                                                                        fileDest = 'db/data/' + answers.get('projectName') + '.db-' + fileDest.split(".", 3)[2] + '.csv';
-                                                                      }
-                                                                      if (fileDest.includes('_PROJECT_NAME_DB_EXTERNAL_ACCESS')) {
-                                                                        let tempDest = 'db/src/' + answers.get('projectName').toUpperCase() + '_DB_EXTERNAL_ACCESS';
-                                                                        if (fileDest.includes('EXTERNAL_ACCESS_G')) {
-                                                                          tempDest += '_G';
+                                                        if (!(file.substring(0, 31) === 'db/data/_PROJECT_NAME_.db.Sales' && answers.get('hana') === false)) {
+                                                          if (!((file.substring(0, 39) === 'db/src/_PROJECT_NAME_DB_EXTERNAL_ACCESS') && answers.get('hanaExternalHDI') === false)) {
+                                                            if (!(file.substring(0, 33) === 'db/data/_PROJECT_NAME_.db.Widgets' && answers.get('hanaExternalHDI') === false)) {
+                                                              if (!((file.substring(0, 36) === 'db/data/_PROJECT_NAME_.db.Conditions' || file.substring(0, 34) === 'db/data/_PROJECT_NAME_.db.Customer' || file.substring(0, 32) === 'db/data/_PROJECT_NAME_.db.Status') && (answers.get('apiS4HCBP') === false || answers.get('em') === false))) {
+                                                                if (!(file.substring(0, 7) === 'db/src/' && answers.get('hanaNative') === false && answers.get('hanaExternalHDI') === false && answers.get('hanaTargetHDI') === "" && answers.get('schemaName') === "")) {
+                                                                  if (!((file.substring(0, 7) === 'db/cfg/' || file.substring(0, 19) === 'db/src/_TARGET_HDI_') && answers.get('hanaTargetHDI') === "")) {
+                                                                    if (!(file.substring(0, 20) === 'db/src/_SCHEMA_NAME_' && answers.get('schemaName') === "")) {
+                                                                      if (!((file.substring(0, 10) === 'db/src/SP_' || file.substring(0, 10) === 'db/src/TT_' || file.substring(0, 10) === 'db/src/CV_') && answers.get('hanaNative') === false)) {
+                                                                        const sOrigin = this.templatePath(file);
+                                                                        let fileDest = file;
+                                                                        if (fileDest.includes('_PROJECT_NAME_.db')) {
+                                                                          fileDest = 'db/data/' + answers.get('projectName') + '.db-' + fileDest.split(".", 3)[2] + '.csv';
                                                                         }
-                                                                        fileDest = tempDest + '.' + fileDest.split(".", 3)[1];
+                                                                        if (fileDest.includes('_PROJECT_NAME_DB_EXTERNAL_ACCESS')) {
+                                                                          let tempDest = 'db/src/' + answers.get('projectName').toUpperCase() + '_DB_EXTERNAL_ACCESS';
+                                                                          if (fileDest.includes('EXTERNAL_ACCESS_G')) {
+                                                                            tempDest += '_G';
+                                                                          }
+                                                                          fileDest = tempDest + '.' + fileDest.split(".", 3)[1];
+                                                                        }
+                                                                        if (fileDest.includes('_SCHEMA_NAME_')) {
+                                                                          fileDest = 'db/src/' + answers.get('schemaName') + '.' + fileDest.split(".", 3)[1];
+                                                                        }
+                                                                        if (fileDest.includes('_TARGET_HDI_')) {
+                                                                          fileDest = fileDest.substring(0, 7) + answers.get('hanaTargetHDI').toUpperCase().replace(/-/g, '_') + '.' + fileDest.split(".", 3)[1];
+                                                                        }
+                                                                        if (fileDest === 'dotenv') {
+                                                                          fileDest = '.env';
+                                                                        }
+                                                                        if (fileDest === 'dotgitignore') {
+                                                                          fileDest = '.gitignore';
+                                                                        }
+                                                                        const sTarget = this.destinationPath(fileDest);
+                                                                        this.fs.copyTpl(sOrigin, sTarget, this.config.getAll());
                                                                       }
-                                                                      if (fileDest.includes('_SCHEMA_NAME_')) {
-                                                                        fileDest = 'db/src/' + answers.get('schemaName') + '.' + fileDest.split(".", 3)[1];
-                                                                      }
-                                                                      if (fileDest.includes('_TARGET_HDI_')) {
-                                                                        fileDest = fileDest.substring(0, 7) + answers.get('hanaTargetHDI').toUpperCase().replace(/-/g, '_') + '.' + fileDest.split(".", 3)[1];
-                                                                      }
-                                                                      if (fileDest === 'dotenv') {
-                                                                        fileDest = '.env';
-                                                                      }
-                                                                      if (fileDest === 'dotgitignore') {
-                                                                        fileDest = '.gitignore';
-                                                                      }
-                                                                      const sTarget = this.destinationPath(fileDest);
-                                                                      this.fs.copyTpl(sOrigin, sTarget, this.config.getAll());
                                                                     }
                                                                   }
                                                                 }
