@@ -203,61 +203,48 @@ async function deleteRoute(tenantHost, appname) {
 module.exports = (service) => {
 
     service.on('UPDATE', 'tenant', async (req, next) => {
-        if (req.user.is('Callback')) {
 <% if(customDomain !== ""){ -%>
-            let tenantHost = req.data.subscribedSubdomain;
+        let tenantHost = req.data.subscribedSubdomain;
 <% } else { -%>
-            let tenantHost = req.data.subscribedSubdomain + '-' + appEnv.app.space_name.toLowerCase().replace(/_/g, '-') + '-' + services.registry.appName.toLowerCase().replace(/_/g, '-');
+        let tenantHost = req.data.subscribedSubdomain + '-' + appEnv.app.space_name.toLowerCase().replace(/_/g, '-') + '-' + services.registry.appName.toLowerCase().replace(/_/g, '-');
 <% } -%>
-            let tenantURL = 'https:\/\/' + tenantHost + /\.(.*)/gm.exec(appEnv.app.application_uris[0])[0];
-            debug('Subscribe: ', req.data.subscribedSubdomain, req.data.subscribedTenantId, tenantHost);
-            await next();
+        let tenantURL = 'https:\/\/' + tenantHost + /\.(.*)/gm.exec(appEnv.app.application_uris[0])[0];
+        debug('Subscribe: ', req.data.subscribedSubdomain, req.data.subscribedTenantId, tenantHost);
+        await next();
 <% if(routes){ -%>
-            createRoute(tenantHost, services.registry.appName).then(
-                function (res2) {
-                    debug('Subscribe - Create Route: ', req.data.subscribedTenantId, tenantHost, tenantURL);
-                    return tenantURL;
-                },
-                function (err) {
-                    debug(err.stack);
-                    return '';
-                });
+        createRoute(tenantHost, services.registry.appName).then(
+            function (res2) {
+                debug('Subscribe - Create Route: ', req.data.subscribedTenantId, tenantHost, tenantURL);
+                return tenantURL;
+            },
+            function (err) {
+                debug(err.stack);
+                return '';
+            });
 <% } -%>
-            return tenantURL;
-        } else {
-            const e = new Error('Forbidden');
-            e.code = 403;
-            return req.reject(e);
-        }
+        return tenantURL;
     });
 
     service.on('DELETE', 'tenant', async (req, next) => {
-
-        if (req.user.is('Callback')) {
 <% if(customDomain !== ""){ -%>
-            let tenantHost = req.data.subscribedSubdomain;
+        let tenantHost = req.data.subscribedSubdomain;
 <% } else { -%>
-            let tenantHost = req.data.subscribedSubdomain + '-' + appEnv.app.space_name.toLowerCase().replace(/_/g, '-') + '-' + services.registry.appName.toLowerCase().replace(/_/g, '-');
+        let tenantHost = req.data.subscribedSubdomain + '-' + appEnv.app.space_name.toLowerCase().replace(/_/g, '-') + '-' + services.registry.appName.toLowerCase().replace(/_/g, '-');
 <% } -%>
-            debug('Unsubscribe: ', req.data.subscribedSubdomain, req.data.subscribedTenantId, tenantHost);
-            await next();
+        debug('Unsubscribe: ', req.data.subscribedSubdomain, req.data.subscribedTenantId, tenantHost);
+        await next();
 <% if(routes){ -%>
-            deleteRoute(tenantHost, services.registry.appName).then(
-                async function (res2) {
-                    debug('Unsubscribe - Delete Route: ', req.data.subscribedTenantId);
-                    return req.data.subscribedTenantId;
-                },
-                function (err) {
-                    debug(err.stack);
-                    return '';
-                });
+        deleteRoute(tenantHost, services.registry.appName).then(
+            async function (res2) {
+                debug('Unsubscribe - Delete Route: ', req.data.subscribedTenantId);
+                return req.data.subscribedTenantId;
+            },
+            function (err) {
+                debug(err.stack);
+                return '';
+            });
 <% } -%>
-            return req.data.subscribedTenantId;
-        } else {
-            const e = new Error('Forbidden');
-            e.code = 403;
-            return req.reject(e);
-        }
+        return req.data.subscribedTenantId;
     });
 
 <% if(api){ -%>

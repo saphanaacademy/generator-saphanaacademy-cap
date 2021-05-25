@@ -35,9 +35,7 @@
     "node-jose": "^2",
 <% } -%>
 <% if(multiTenant){ -%>
-    "@sap/cds-mtx": "^1",
-    "@sap/hdi-deploy": "^4",
-    "@sap/instance-manager": "^3",
+    "@sap/cds-mtx": "^2",
     "cfenv": "^1",
 <% } -%>
 <% if(routes){ -%>
@@ -328,16 +326,18 @@
         "Z_",
         "ZZ_"
       ],
-      "namespace-blacklist": [
+      "namespace-blocklist": [
         "com.sap.",
         "sap.",
         "<%= projectName %>."
       ],
-      "entity-whitelist": [
-        "<%= projectName %>.db.Sales"
-      ],
-      "service-whitelist": [
-        "CatalogService"
+      "extension-allowlist": [
+        {
+          "for": ["<%= projectName %>.db.Sales"]
+        },
+        {
+          "for": ["CatalogService"]
+        }
       ]
     }
 <% } -%>

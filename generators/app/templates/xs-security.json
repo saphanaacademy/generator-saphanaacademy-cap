@@ -4,11 +4,15 @@
     "tenant-mode": "shared",
     "scopes": [
         {
-            "name": "$XSAPPNAME.Callback",
+            "name": "$XSAPPNAME.mtcallback",
             "description": "SaaS Provisioning",
             "grant-as-authority-to-apps": [
                 "$XSAPPNAME(application,sap-provisioning,tenant-onboarding)"
             ]
+        },
+        {
+            "name": "$XSAPPNAME.mtdeployment",
+            "description": "SaaS Model Upgrade"
         },
 <% } else { -%>
     "tenant-mode": "dedicated",
@@ -142,6 +146,12 @@
         }
 <% } -%>
 <% if(authorization || multiTenant){ -%>
+    ]
+<% } -%>
+<% if(multiTenant){ -%>
+    ,
+    "authorities": [
+        "$XSAPPNAME.mtdeployment"
     ]
 <% } -%>
     ,
