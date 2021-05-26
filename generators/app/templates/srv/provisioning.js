@@ -136,7 +136,7 @@ async function createRoute(tenantHost, appname) {
                         }
                     };
                     let res2 = await axios(options2);
-                    debug('Route created for ' + tenantHost);
+                    console.log('Route created for ' + tenantHost);
                     return res2.data;
                 } catch (err) {
                     debug(err.stack);
@@ -177,7 +177,7 @@ async function deleteRoute(tenantHost, appname) {
                             }
                         };
                         let res2 = await axios(options2);
-                        debug('Route deleted for ' + tenantHost);
+                        console.log('Route deleted for ' + tenantHost);
                         return res2.data;
                     } catch (err) {
                         debug(err.stack);
@@ -209,12 +209,12 @@ module.exports = (service) => {
         let tenantHost = req.data.subscribedSubdomain + '-' + appEnv.app.space_name.toLowerCase().replace(/_/g, '-') + '-' + services.registry.appName.toLowerCase().replace(/_/g, '-');
 <% } -%>
         let tenantURL = 'https:\/\/' + tenantHost + /\.(.*)/gm.exec(appEnv.app.application_uris[0])[0];
-        debug('Subscribe: ', req.data.subscribedSubdomain, req.data.subscribedTenantId, tenantHost);
+        console.log('Subscribe: ', req.data.subscribedSubdomain, req.data.subscribedTenantId, tenantHost);
         await next();
 <% if(routes){ -%>
         createRoute(tenantHost, services.registry.appName).then(
             function (res2) {
-                debug('Subscribe - Create Route: ', req.data.subscribedTenantId, tenantHost, tenantURL);
+                console.log('Subscribe: - Create Route: ', req.data.subscribedTenantId, tenantHost, tenantURL);
                 return tenantURL;
             },
             function (err) {
@@ -231,12 +231,12 @@ module.exports = (service) => {
 <% } else { -%>
         let tenantHost = req.data.subscribedSubdomain + '-' + appEnv.app.space_name.toLowerCase().replace(/_/g, '-') + '-' + services.registry.appName.toLowerCase().replace(/_/g, '-');
 <% } -%>
-        debug('Unsubscribe: ', req.data.subscribedSubdomain, req.data.subscribedTenantId, tenantHost);
+        console.log('Unsubscribe: ', req.data.subscribedSubdomain, req.data.subscribedTenantId, tenantHost);
         await next();
 <% if(routes){ -%>
         deleteRoute(tenantHost, services.registry.appName).then(
             async function (res2) {
-                debug('Unsubscribe - Delete Route: ', req.data.subscribedTenantId);
+                console.log('Unsubscribe: - Delete Route: ', req.data.subscribedTenantId);
                 return req.data.subscribedTenantId;
             },
             function (err) {
@@ -252,7 +252,7 @@ module.exports = (service) => {
         let dependencies = [{
             'xsappname': services.dest.xsappname
         }];
-        debug('Dependencies: ', dependencies);
+        console.log('Dependencies: ', dependencies);
         return dependencies;
     });
 <% } -%>

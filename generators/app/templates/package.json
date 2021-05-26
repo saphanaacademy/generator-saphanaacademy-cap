@@ -336,7 +336,8 @@
           "for": ["<%= projectName %>.db.Sales"]
         },
         {
-          "for": ["CatalogService"]
+          "for": ["CatalogService"],
+          "kind": "service"
         }
       ]
     }
