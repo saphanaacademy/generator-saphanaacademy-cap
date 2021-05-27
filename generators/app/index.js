@@ -254,7 +254,7 @@ module.exports = class extends Generator {
         type: "confirm",
         name: "routes",
         message: "Would you like to include creation/deletion of tenant routes on subscribe/unsubscribe (via the CF API)?",
-        default: true
+        default: false
       },
       {
         type: "confirm",
