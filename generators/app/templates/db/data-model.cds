@@ -1,3 +1,10 @@
+<% if(em){ -%>
+using { cuid, managed } from '@sap/cds/common';
+<% if(apiS4HCBP){ -%>
+using { sap.common.CodeList } from '@sap/cds/common';
+<% } -%>
+<% } -%>
+
 <% if(hanaNative || hanaTargetHDI !== ""){ -%>
 context <%= projectName %>.db {
 <% } else { -%>
@@ -24,7 +31,6 @@ entity Widgets {
 <% } -%>
 
 <% if(em){ -%>
-using { cuid, managed } from '@sap/cds/common';
 
 <% if(apiS4HCSO){ -%>
 entity SalesOrdersLog : cuid, managed {
@@ -34,8 +40,6 @@ entity SalesOrdersLog : cuid, managed {
 <% } -%>
 
 <% if(apiS4HCBP){ -%>
-using { sap.common.CodeList } from '@sap/cds/common';
-
 entity CustomerProcesses : cuid {
       customerName       : String;
       customerId         : String;

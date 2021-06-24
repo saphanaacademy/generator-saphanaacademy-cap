@@ -109,7 +109,7 @@ module.exports = class extends Generator {
         type: "checkbox",
         name: "apiLoB",
         message: "Which external API(s) would you like to use?",
-        choices: ["SAP S/4HANA Cloud Sales Order (A2X)", "SAP S/4HANA Cloud Business Partner (A2X)", "SAP SuccessFactors Recruiting", "SAP Ariba Network Purchase Orders", "SAP Fieldglass Approvals", "SAP Graph Workforce", "HERE Location Services", "NASA Near Earth Object Web Service"],
+        choices: ["SAP S/4HANA Cloud Sales Order (A2X)", "SAP S/4HANA Cloud Business Partner (A2X)", "SAP SuccessFactors Recruiting", "SAP Ariba Network Purchase Orders Buyer", "SAP Fieldglass Approvals", "SAP Graph Workforce", "HERE Location Services", "NASA Near Earth Object Web Service"],
         default: ["SAP S/4HANA Cloud Sales Order (A2X)"]
       },
       {
@@ -120,14 +120,14 @@ module.exports = class extends Generator {
         default: ""
       },
       {
-        when: response => response.api === true && response.apiLoB.includes("SAP Ariba Network Purchase Orders"),
+        when: response => response.api === true && response.apiLoB.includes("SAP Ariba Network Purchase Orders Buyer"),
         type: "input",
         name: "AribaNetworkId",
-        message: "What is your Ariba Network Id (ANID)?",
+        message: "What is the buyer's Ariba Network Id (ANID)?",
         default: "AN02000000280"
       },
       {
-        when: response => response.api === true && response.apiLoB.includes("SAP Ariba Network Purchase Orders"),
+        when: response => response.api === true && response.apiLoB.includes("SAP Ariba Network Purchase Orders Buyer"),
         type: "password",
         name: "APIKeyAriba",
         message: "What is your application-specific Ariba API Key?",
@@ -167,7 +167,7 @@ module.exports = class extends Generator {
         default: ""
       },
       {
-        when: response => response.api === true && (response.apiLoB.includes("SAP S/4HANA Cloud Sales Order (A2X)") || response.apiLoB.includes("SAP S/4HANA Cloud Business Partner (A2X)") || response.apiLoB.includes("SAP SuccessFactors Recruiting") || response.apiLoB.includes("SAP Ariba Network Purchase Orders") || response.apiLoB.includes("SAP Fieldglass Approvals")),
+        when: response => response.api === true && (response.apiLoB.includes("SAP S/4HANA Cloud Sales Order (A2X)") || response.apiLoB.includes("SAP S/4HANA Cloud Business Partner (A2X)") || response.apiLoB.includes("SAP SuccessFactors Recruiting") || response.apiLoB.includes("SAP Ariba Network Purchase Orders Buyer") || response.apiLoB.includes("SAP Fieldglass Approvals")),
         type: "password",
         name: "APIKeyHubSandbox",
         message: "What is your API Key for the SAP API Business Hub sandbox?",
@@ -354,7 +354,7 @@ module.exports = class extends Generator {
       answers.apiS4HCSO = answers.apiLoB.includes("SAP S/4HANA Cloud Sales Order (A2X)");
       answers.apiS4HCBP = answers.apiLoB.includes("SAP S/4HANA Cloud Business Partner (A2X)");
       answers.apiSFSFRC = answers.apiLoB.includes("SAP SuccessFactors Recruiting");
-      answers.apiARIBPO = answers.apiLoB.includes("SAP Ariba Network Purchase Orders");
+      answers.apiARIBPO = answers.apiLoB.includes("SAP Ariba Network Purchase Orders Buyer");
       answers.apiFGAP = answers.apiLoB.includes("SAP Fieldglass Approvals");
       answers.apiGRAPH = answers.apiLoB.includes("SAP Graph Workforce");
       answers.apiHERE = answers.apiLoB.includes("HERE Location Services");
