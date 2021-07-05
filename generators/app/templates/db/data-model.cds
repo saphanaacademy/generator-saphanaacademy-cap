@@ -85,6 +85,13 @@ entity CV_SALES {
   key REGION  : String(100);
       AMOUNT  : Integer;
 }
+
+@cds.persistence.exists
+@cds.persistence.calcview
+entity CV_SESSION_INFO {
+  key ITEM     : String(5000);
+      VALUE    : String(5000);
+}
 <% } -%>
 
 <% if(hanaTargetHDI !== ""){ -%>

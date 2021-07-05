@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Calculation:scenario xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" id="CV_SESSION_INFO" applyPrivilegeType="NONE" dataCategory="DIMENSION" dimensionType="STANDARD" schemaVersion="3.0" outputViewType="Projection" cacheInvalidationPeriod="NONE" enforceSqlExecution="false">
+<descriptions defaultDescription="Session Info"/>
+<localVariables/>
+<variableMappings/>
+<dataSources>
+  <DataSource id="<%= projectName.toUpperCase() %>_DB_TF_SESSION_INFO" type="TABLE_FUNCTION">
+    <resourceUri><%= projectName.toUpperCase() %>_DB_TF_SESSION_INFO</resourceUri>
+  </DataSource>
+</dataSources>
+<calculationViews/>
+<logicalModel id="<%= projectName.toUpperCase() %>_DB_TF_SESSION_INFO">
+  <attributes>
+    <attribute id="ITEM" order="1" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="Item"/>
+      <keyMapping columnObjectName="<%= projectName.toUpperCase() %>_DB_TF_SESSION_INFO" columnName="ITEM"/>
+    </attribute>
+    <attribute id="VALUE" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="Value"/>
+      <keyMapping columnObjectName="<%= projectName.toUpperCase() %>_DB_TF_SESSION_INFO" columnName="VALUE"/>
+    </attribute>
+  </attributes>
+  <calculatedAttributes/>
+  <baseMeasures/>
+  <calculatedMeasures/>
+  <restrictedMeasures/>
+</logicalModel>
+<layout>
+  <shapes>
+    <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
+      <upperLeftCorner x="40" y="85"/>
+    </shape>
+  </shapes>
+</layout>
+</Calculation:scenario>

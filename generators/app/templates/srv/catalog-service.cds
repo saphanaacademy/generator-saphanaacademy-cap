@@ -3,7 +3,7 @@ using {<%= projectName %>.db as db} from '../db/data-model';
 <% } -%>
 
 <% if(hanaNative){ -%>
-using {CV_SALES} from '../db/data-model';
+using {CV_SALES, CV_SESSION_INFO} from '../db/data-model';
 <% } -%>
 
 <% if(hanaTargetHDI !== ""){ -%>
@@ -94,6 +94,14 @@ service CatalogService @(path : '/catalog')
       @(restrict: [{ to: 'Viewer' }])
 <% } -%>
       as select * from CV_SALES
+    ;
+
+    @readonly
+    entity SessionInfo
+<% if(authorization){ -%>
+      @(restrict: [{ to: 'Viewer' }])
+<% } -%>
+      as select * from CV_SESSION_INFO
     ;
 
     function topSales

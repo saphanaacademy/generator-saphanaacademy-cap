@@ -81,8 +81,28 @@
             "destination": "srv"
         }
 <% } -%>
-<% if(ui){ -%>
+<% if(haa){ -%>
 <% if(hana || hanaTargetHDI !== "" || api || schemaName !== '' || multiTenant){ -%>
+        ,
+<% } -%>
+        {
+            "source": "/sap/bc/ina",
+            "httpMethods": ["POST", "GET"],
+            "authenticationType": "xsuaa",
+<% if(authorization){ -%>
+            "scope": "$XSAPPNAME.Viewer",
+<% } -%>
+            "destination": "haa"
+        },
+        {
+            "source": "/sap/bc/ina",
+            "httpMethods": ["OPTIONS"],
+            "authenticationType": "none",
+            "destination": "haa"
+        }
+<% } -%>
+<% if(ui){ -%>
+<% if(hana || hanaTargetHDI !== "" || api || schemaName !== '' || multiTenant || haa){ -%>
         ,
 <% } -%>
         {

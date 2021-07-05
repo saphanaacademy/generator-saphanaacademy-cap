@@ -41,6 +41,11 @@ GET http://localhost:4004/catalog/VSales
 Authorization: Basic joe:
 <% } -%>
 ###
+GET http://localhost:4004/catalog/SessionInfo
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
 <% } -%>
 <% if(hanaTargetHDI !== ""){ -%>
 GET http://localhost:4004/catalog/Widgets
@@ -192,6 +197,11 @@ Authorization: Basic joe:
 <% } -%>
 ###
 GET http://localhost:4004/v2/catalog/VSales
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+GET http://localhost:4004/v2/catalog/SessionInfo
 <% if(authentication){ -%>
 Authorization: Basic joe:
 <% } -%>
