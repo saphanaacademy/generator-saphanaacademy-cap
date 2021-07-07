@@ -18,6 +18,20 @@
 <% } -%>
             "destination": "<%= projectName %>-srv"
         }
+<% if(swagger){ -%>
+        ,
+        {
+            "source": "^/swagger/catalog/(.*)$",
+            "csrfProtection": false,
+<% if(authentication){ -%>
+            "authenticationType": "xsuaa",
+<% } -%>
+<% if(authorization){ -%>
+            "scope": "$XSAPPNAME.Viewer",
+<% } -%>
+            "destination": "srv"
+        }
+<% } -%>
 <% if(v2support){ -%>
         ,
         {
@@ -47,6 +61,20 @@
             "scope": "$XSAPPNAME.Viewer",
 <% } -%>
             "destination": "<%= projectName %>-srv"
+        }
+<% } -%>
+<% if(schemaName !== '' && swagger){ -%>
+        ,
+        {
+            "source": "^/swagger/<%= schemaName %>/(.*)$",
+            "csrfProtection": false,
+<% if(authentication){ -%>
+            "authenticationType": "xsuaa",
+<% } -%>
+<% if(authorization){ -%>
+            "scope": "$XSAPPNAME.Viewer",
+<% } -%>
+            "destination": "srv"
         }
 <% } -%>
 <% if(schemaName !== '' && v2support){ -%>

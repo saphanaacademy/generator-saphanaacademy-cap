@@ -1,5 +1,5 @@
 <% if(hana || hanaTargetHDI !== "" || api){ -%>
-GET http://localhost:4004/catalog
+GET http://localhost:4004/catalog/
 <% if(authentication){ -%>
 Authorization: Basic joe:
 <% } -%>
@@ -9,6 +9,13 @@ GET http://localhost:4004/catalog/$metadata
 Authorization: Basic joe:
 <% } -%>
 ###
+<% if(swagger){ -%>
+GET http://localhost:4004/swagger/catalog/
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
 <% } -%>
 <% if(hana){ -%>
 GET http://localhost:4004/catalog/Sales
@@ -329,6 +336,13 @@ GET http://localhost:4004/<%= schemaName %>/$metadata
 Authorization: Basic joe:
 <% } -%>
 ###
+<% if(swagger){ -%>
+GET http://localhost:4004/swagger/<%= schemaName %>/
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
 <% if(v2support){ -%>
 GET http://localhost:4004/v2/<%= schemaName %>/
 <% if(authentication){ -%>

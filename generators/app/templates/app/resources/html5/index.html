@@ -13,6 +13,9 @@
     <h3>Catalog</h3>
     <a href="<%= srvPath %>catalog/">Catalog</a><br />
     <a href="<%= srvPath %>catalog/$metadata">Metadata</a><br />
+<% if(swagger){ -%>
+    <a href="<%= srvPath %>swagger/catalog/">Swagger</a><br />
+<% } -%>
 <% } -%>
 <% if(hana){ -%>
     <a href="<%= srvPath %>catalog/Sales">Sales</a><br />
@@ -136,6 +139,9 @@
     <h3><%= schemaName %></h3>
     <a href="<%= srvPath %><%= schemaName %>/">Catalog</a><br />
     <a href="<%= srvPath %><%= schemaName %>/$metadata">Metadata</a><br />
+<% if(swagger){ -%>
+    <a href="<%= srvPath %>swagger/<%= schemaName %>/">Swagger</a><br />
+<% } -%>
 <% if(v2support){ -%>
     <h3>v2</h3>
     <a href="<%= srvPath %>v2/<%= schemaName %>/">Catalog</a><br />

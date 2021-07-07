@@ -45,6 +45,9 @@
 <% if(applicationLogging){ -%>
     "cf-nodejs-logging-support": "^6",
 <% } -%>
+<% if(swagger){ -%>
+  "cds-swagger-ui-express": "^0.1",
+<% } -%>
     "debug": "^4.3",
     "express": "^4"
   },

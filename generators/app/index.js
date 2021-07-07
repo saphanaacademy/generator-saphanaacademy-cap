@@ -352,6 +352,12 @@ module.exports = class extends Generator {
       },
       {
         type: "confirm",
+        name: "swagger",
+        message: "Would you like to serve an auto-generated Swagger UI?",
+        default: false
+      },
+      {
+        type: "confirm",
         name: "buildDeploy",
         message: "Would you like to build and deploy the project immediately?",
         default: false
@@ -601,7 +607,7 @@ module.exports = class extends Generator {
                       if (!(file.substring(0, 19) === 'srv/catalog-service' && answers.get('hana') === false && answers.get('hanaTargetHDI') === "" && answers.get('api') === false)) {
                         if (!(file === 'srv/lib/credStore.js' && answers.get('credStore') === '')) {
                           if (!((file === 'srv/provisioning.js' || file === 'app/custom.js') && answers.get('multiTenant') === false)) {
-                            if (!(file === 'srv/server.js' && answers.get('v2support') === false && answers.get('multiTenant') === false)) {
+                            if (!(file === 'srv/server.js' && answers.get('v2support') === false && answers.get('multiTenant') === false && answers.get('swagger') === false)) {
                               if (!(file.substring(0, 32) === 'srv/external/API_SALES_ORDER_SRV' && answers.get('apiS4HCSO') === false)) {
                                 if (!(file.substring(0, 33) === 'srv/external/API_BUSINESS_PARTNER' && answers.get('apiS4HCBP') === false)) {
                                   if (!((file.substring(0, 25) === 'srv/external/RCMCandidate' || file.includes('map.html')) && answers.get('apiSFSFRC') === false)) {
