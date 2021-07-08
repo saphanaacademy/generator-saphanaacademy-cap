@@ -353,7 +353,7 @@ module.exports = class extends Generator {
       {
         type: "confirm",
         name: "swagger",
-        message: "Would you like to serve an auto-generated Swagger UI?",
+        message: "Would you like to enable a Swagger UI?",
         default: false
       },
       {
