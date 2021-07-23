@@ -73,6 +73,16 @@ entity CandidatesLog : cuid, managed {
       cellPhone   : String;
 };
 <% } -%>
+
+<% if(apiSFSFEC){ -%>
+entity EmployeeJobsLog : cuid, managed {
+      seqNumber   : Integer64;
+      startDate   : Date;
+      userId      : String;
+      location    : String;
+      eventReason : LargeString;
+};
+<% } -%>
 <% } -%>
 
 <% if(hanaNative || hanaTargetHDI !== ""){ -%>

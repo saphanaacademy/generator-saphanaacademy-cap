@@ -51,12 +51,22 @@
     <a href="<%= srvPath %>catalog/CandidatesLog">Candidates Log</a><br />
 <% } -%>
 <% } -%>
+<% if(apiSFSFEC){ -%>
+    <a href="<%= srvPath %>catalog/EmployeeJobs?$top=10">Employee Jobs</a><br />
+<% if(em){ -%>
+    <a href="<%= srvPath %>catalog/EmployeeJobsLog">Employee Jobs Log</a><br />
+<% } -%>
+<% } -%>
 <% if(apiARIBPO){ -%>
     <a href="<%= srvPath %>catalog/PurchaseOrders?$top=3">Purchase Orders</a><br />
 <% } -%>
 <% if(apiFGAP){ -%>
     <a href="<%= srvPath %>catalog/Approvals">Approvals</a><br />
     <a href="<%= srvPath %>catalog/RejectReasons?$filter=ModuleID%20eq%20%2740%27">Approvals - Reject Reasons</a><br />
+<% } -%>
+<% if(apiCONC){ -%>
+    <a href="<%= srvPath %>catalog/ExpenseUsers?$top=3">Expense Users</a><br />
+    <a href="<%= srvPath %>catalog/ExpenseReports?$top=3">Expense Reports</a><br />
 <% } -%>
 <% if(apiGRAPH){ -%>
     <a href="<%= srvPath %>catalog/WorkforcePersons?$top=1">Workforce Persons</a><br />
@@ -112,12 +122,22 @@
     <a href="<%= srvPath %>v2/catalog/CandidatesLog">Candidates Log</a><br />
 <% } -%>
 <% } -%>
+<% if(apiSFSFEC){ -%>
+    <a href="<%= srvPath %>v2/catalog/EmployeeJobs?$top=10">Employee Jobs</a><br />
+<% if(em){ -%>
+    <a href="<%= srvPath %>v2/catalog/EmployeeJobsLog">Employee Jobs Log</a><br />
+<% } -%>
+<% } -%>
 <% if(apiARIBPO){ -%>
     <a href="<%= srvPath %>v2/catalog/PurchaseOrders?$top=3">Purchase Orders</a><br />
 <% } -%>
 <% if(apiFGAP){ -%>
     <a href="<%= srvPath %>v2/catalog/Approvals">Approvals</a><br />
     <a href="<%= srvPath %>v2/catalog/RejectReasons?$filter=ModuleID%20eq%20%2740%27">Approvals - Reject Reasons</a><br />
+<% } -%>
+<% if(apiCONC){ -%>
+    <a href="<%= srvPath %>v2/catalog/ExpenseUsers?$top=3">Expense Users</a><br />
+    <a href="<%= srvPath %>v2/catalog/ExpenseReports?$top=3">Expense Reports</a><br />
 <% } -%>
 <% if(apiGRAPH){ -%>
     <a href="<%= srvPath %>v2/catalog/WorkforcePersons?$top=1">Workforce Persons</a><br />

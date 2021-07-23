@@ -1,0 +1,123 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="urn:Ariba:Buyer:vrealm_3347">
+   <soapenv:Header>
+      <ns1:Headers>
+         <ns1:variant/>
+         <ns1:partition/>
+      </ns1:Headers>
+   </soapenv:Header>
+   <soapenv:Body>
+<ns1:RequisitionImportPullRequest xmlns:ns1="urn:Ariba:Buyer:vrealm_3347">
+  <ns1:Requisition_RequisitionImportPull_Item>
+
+    <ns1:item>
+    
+      <ns1:CompanyCode><ns1:UniqueName>3000</ns1:UniqueName></ns1:CompanyCode>
+      
+      <ns1:DefaultLineItem>
+        <ns1:DeliverTo>Test Name</ns1:DeliverTo>
+        <ns1:NeedBy>2021-07-31T00:00:00-08:00</ns1:NeedBy>
+      </ns1:DefaultLineItem>
+      
+      <ns1:LineItems>
+        <ns1:item>
+        
+          <ns1:BillingAddress><ns1:UniqueName>3000</ns1:UniqueName></ns1:BillingAddress>
+          
+          <ns1:CommodityCode><ns1:UniqueName>00801</ns1:UniqueName></ns1:CommodityCode>
+          
+          <ns1:Description>
+          
+            <ns1:CommonCommodityCode>
+            <ns1:Domain>unspsc</ns1:Domain>
+            <ns1:UniqueName>14</ns1:UniqueName>
+            </ns1:CommonCommodityCode>
+            
+            <ns1:Description>Req Testing 2021-07-14</ns1:Description>
+            
+            <ns1:Price>
+            <ns1:Amount>102.00</ns1:Amount>
+            <ns1:Currency>
+            <ns1:UniqueName>USD</ns1:UniqueName>
+            </ns1:Currency>
+            </ns1:Price>
+            
+            <ns1:UnitOfMeasure><ns1:UniqueName>EA</ns1:UniqueName></ns1:UnitOfMeasure>
+            
+          </ns1:Description>
+          
+          <ns1:ImportedAccountCategoryStaging><ns1:UniqueName>K</ns1:UniqueName></ns1:ImportedAccountCategoryStaging>
+          
+          <ns1:ImportedAccountingsStaging>
+          
+            <ns1:SplitAccountings>
+              <ns1:item>
+              
+                <ns1:CostCenter>
+                  <ns1:CompanyCode><ns1:UniqueName>3000</ns1:UniqueName></ns1:CompanyCode>
+                  <ns1:UniqueName>0000003100</ns1:UniqueName>
+                </ns1:CostCenter>
+                
+                <ns1:GeneralLedger>
+                  <ns1:CompanyCode><ns1:UniqueName>3000</ns1:UniqueName></ns1:CompanyCode>
+                  <ns1:UniqueName>0000404000</ns1:UniqueName>
+                </ns1:GeneralLedger>
+                
+                <ns1:NumberInCollection>1</ns1:NumberInCollection>
+                <ns1:Quantity>2.0000</ns1:Quantity>
+                                
+              </ns1:item>
+            </ns1:SplitAccountings>
+            <ns1:Type><ns1:UniqueName>_Quantity</ns1:UniqueName></ns1:Type>
+          </ns1:ImportedAccountingsStaging>
+          
+          <ns1:ImportedDeliverToStaging></ns1:ImportedDeliverToStaging>
+          <ns1:ImportedNeedByStaging>2021-07-31T00:00:00-08:00</ns1:ImportedNeedByStaging>
+          <ns1:ItemCategory>
+          <ns1:UniqueName>M</ns1:UniqueName>
+          </ns1:ItemCategory>
+          <ns1:NumberInCollection>1</ns1:NumberInCollection>
+          <ns1:OriginatingSystemLineNumber>10</ns1:OriginatingSystemLineNumber>
+          
+          <ns1:PurchaseGroup><ns1:UniqueName>100</ns1:UniqueName></ns1:PurchaseGroup>
+          
+
+          <ns1:Quantity>2.000</ns1:Quantity>
+          
+          <ns1:Supplier>
+          <ns1:UniqueName>1000003550</ns1:UniqueName>
+          </ns1:Supplier>
+          
+          <ns1:SupplierLocation>
+          <ns1:ContactID>1000003550</ns1:ContactID>
+          <ns1:UniqueName>1000003550</ns1:UniqueName>
+          </ns1:SupplierLocation>
+          
+
+        </ns1:item>
+        
+      </ns1:LineItems>
+      
+      <ns1:Preparer><ns1:PasswordAdapter>PasswordAdapter1</ns1:PasswordAdapter><ns1:UniqueName>puser1</ns1:UniqueName></ns1:Preparer>
+      <ns1:Requester><ns1:PasswordAdapter>PasswordAdapter1</ns1:PasswordAdapter><ns1:UniqueName>puser1</ns1:UniqueName></ns1:Requester>
+      
+      <ns1:Name>Test Req 07142021_04</ns1:Name>
+      <ns1:OriginatingSystem>GPO</ns1:OriginatingSystem>
+      <ns1:OriginatingSystemReferenceID>GPO_07142021_04</ns1:OriginatingSystemReferenceID>
+
+      
+      <ns1:UniqueName>GPO_07142021_04</ns1:UniqueName>
+      
+      <ns1:custom>
+        <ns1:CustomString name="cus_AD_sensitivedatatypequestion">false</ns1:CustomString>
+        <ns1:CustomString name="sensitivedatacertification">true</ns1:CustomString>
+        <ns1:CustomString name="sensitivedatatype">No Value (Select when requisition is not ITAR/EAR related)</ns1:CustomString>
+        <ns1:CustomString name="cus_AD_Reminder">Do NOT upload any Attachment containing any sensitive data in accordance with PRO-2227, Information</ns1:CustomString>
+
+      </ns1:custom>
+      
+    </ns1:item>
+    
+</ns1:Requisition_RequisitionImportPull_Item>
+</ns1:RequisitionImportPullRequest>
+</soapenv:Body>
+</soapenv:Envelope>

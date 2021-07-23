@@ -58,6 +58,8 @@
                     "icon": "sap-icon://customer",
 <% } else if(apiSFSFRC && em){ -%>
                     "icon": "sap-icon://employee",
+<% } else if(apiSFSFEC && em){ -%>
+                    "icon": "sap-icon://employee",
 <% } else { -%>
                     "icon": "sap-icon://sales-document",
 <% } -%>
@@ -69,6 +71,8 @@
                         "path": "SalesOrdersLog/$count",
 <% } else if(apiSFSFRC && em){ -%>
                         "path": "CandidatesLog/$count",
+<% } else if(apiSFSFEC && em){ -%>
+                        "path": "EmployeeJobsLog/$count",
 <% } else { -%>
                         "path": "Sales/$count",
 <% } -%>
@@ -132,13 +136,15 @@
                 },
                 {
 <% if(apiS4HCBP && em){ -%>
-                        "pattern": "CustomerProcesses({key}):?query:",
+                    "pattern": "CustomerProcesses({key}):?query:",
 <% } else if(apiS4HCSO && em){ -%>
-                        "pattern": "SalesOrdersLog({key}):?query:",
+                    "pattern": "SalesOrdersLog({key}):?query:",
 <% } else if(apiSFSFRC && em){ -%>
-                        "pattern": "CandidatesLog({key}):?query:",
+                    "pattern": "CandidatesLog({key}):?query:",
+<% } else if(apiSFSFEC && em){ -%>
+                    "pattern": "EmployeeJobsLog({key}):?query:",
 <% } else { -%>
-                        "pattern": "Sales({key}):?query:",
+                    "pattern": "Sales({key}):?query:",
 <% } -%>
                     "name": "ObjectPage",
                     "target": "ObjectPage"
@@ -157,6 +163,8 @@
                             "entitySet": "SalesOrdersLog",
 <% } else if(apiSFSFRC && em){ -%>
                             "entitySet": "CandidatesLog",
+<% } else if(apiSFSFEC && em){ -%>
+                            "entitySet": "EmployeeJobsLog",
 <% } else { -%>
                             "entitySet": "Sales",
 <% } -%>
@@ -168,6 +176,8 @@
                                 "SalesOrdersLog": {
 <% } else if(apiSFSFRC && em){ -%>
                                 "CandidatesLog": {
+<% } else if(apiSFSFEC && em){ -%>
+                                "EmployeeJobsLog": {
 <% } else { -%>
                                 "Sales": {
 <% } -%>
@@ -191,6 +201,8 @@
                             "entitySet": "SalesOrdersLog"
 <% } else if(apiSFSFRC && em){ -%>
                             "entitySet": "CandidatesLog"
+<% } else if(apiSFSFEC && em){ -%>
+                            "entitySet": "EmployeeJobsLog"
 <% } else { -%>
                             "entitySet": "Sales"
 <% } -%>

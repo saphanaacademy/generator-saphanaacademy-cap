@@ -376,6 +376,18 @@ resources:
                 #clientSecret: 
                 HTML5.DynamicDestination: true
 <% } -%>
+<% if(apiARIBWS){ -%>
+              - Name: <%= projectName %>-ariba-ws
+                Description: SAP Ariba Web Services
+                URL: https://s1.ariba.com
+                Type: HTTP
+                ProxyType: Internet
+                Authentication: BasicAuthentication
+                #User: 
+                #Password: 
+                Realm: <%= AribaRealm %>
+                HTML5.DynamicDestination: true
+<% } -%>
 <% if(apiFGAP){ -%>
               - Name: <%= projectName %>-fieldglass-api
                 Description: SAP Fieldglass
@@ -386,6 +398,19 @@ resources:
                 tokenServiceURL: https://www.fieldglass.net/api/oauth2/v2.0/token
                 #clientId: 
                 #clientSecret: 
+                HTML5.DynamicDestination: true
+<% } -%>
+<% if(apiCONC){ -%>
+              - Name: <%= projectName %>-concur-api
+                Description: SAP Concur
+                URL: <%= ConcurGeolocation %>
+                Type: HTTP
+                ProxyType: Internet
+                Authentication: NoAuthentication
+                token_url: <%= ConcurGeolocation %>/oauth2/v0/token
+                client_id: <SetValueInCockpit>
+                client_secret: <SetValueInCockpit>
+                refresh_token: <SetValueInCockpit>
                 HTML5.DynamicDestination: true
 <% } -%>
 <% if(apiGRAPH){ -%>
@@ -447,7 +472,7 @@ resources:
 <% } -%>
 <% } -%>
 
-<% if(apiSFSFRC){ -%>
+<% if(apiSFSFRC || apiSFSFEC){ -%>
   # ----------------- SUCCESSFACTORS API SERVICE ---------------
   - name: <%= projectName %>-sf-api
   # ------------------------------------------------------------

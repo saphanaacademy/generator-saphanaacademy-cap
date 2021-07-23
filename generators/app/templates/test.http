@@ -110,6 +110,20 @@ Authorization: Basic joe:
 ###
 <% } -%>
 <% } -%>
+<% if(apiSFSFEC){ -%>
+GET http://localhost:4004/catalog/EmployeeJobs?$top=10
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% if(em){ -%>
+GET http://localhost:4004/catalog/EmployeeJobsLog
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
+<% } -%>
 <% if(apiARIBPO){ -%>
 GET http://localhost:4004/catalog/PurchaseOrders?$top=3
 <% if(authentication){ -%>
@@ -124,6 +138,18 @@ Authorization: Basic joe:
 <% } -%>
 ###
 GET http://localhost:4004/catalog/RejectReasons?$filter=ModuleID%20eq%20%2740%27
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
+<% if(apiCONC){ -%>
+GET http://localhost:4004/catalog/ExpenseUsers?$top=3
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+GET http://localhost:4004/catalog/ExpenseReports?$top=3
 <% if(authentication){ -%>
 Authorization: Basic joe:
 <% } -%>
@@ -263,7 +289,21 @@ Authorization: Basic joe:
 <% } -%>
 ###
 <% if(em){ -%>
-GET http://localhost:4004/catalog/CandidatesLog
+GET http://localhost:4004/v2/catalog/CandidatesLog
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
+<% } -%>
+<% if(apiSFSFEC){ -%>
+GET http://localhost:4004/v2/catalog/EmployeeJobs?$top=10
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% if(em){ -%>
+GET http://localhost:4004/v2/catalog/EmployeeJobsLog
 <% if(authentication){ -%>
 Authorization: Basic joe:
 <% } -%>
@@ -284,6 +324,18 @@ Authorization: Basic joe:
 <% } -%>
 ###
 GET http://localhost:4004/v2/catalog/RejectReasons?$filter=ModuleID%20eq%20%2740%27
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
+<% if(apiCONC){ -%>
+GET http://localhost:4004/v2/catalog/ExpenseUsers?$top=3
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+GET http://localhost:4004/v2/catalog/ExpenseReports?$top=3
 <% if(authentication){ -%>
 Authorization: Basic joe:
 <% } -%>

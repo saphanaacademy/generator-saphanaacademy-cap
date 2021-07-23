@@ -22,12 +22,20 @@ using { API_BUSINESS_PARTNER } from './external/API_BUSINESS_PARTNER.csn';
 using { RCMCandidate } from './external/RCMCandidate.csn';
 <% } -%>
 
+<% if(apiSFSFEC){ -%>
+using { ECEmploymentInformation } from './external/ECEmploymentInformation.csn';
+<% } -%>
+
 <% if(apiARIBPO){ -%>
 using { AribaNetworkPurchaseOrders } from './external/AribaNetworkPurchaseOrders.csn';
 <% } -%>
 
 <% if(apiFGAP){ -%>
 using { FieldglassApprovals } from './external/FieldglassApprovals.csn';
+<% } -%>
+
+<% if(apiCONC){ -%>
+using { Concur } from './external/Concur.csn';
 <% } -%>
 
 <% if(apiGRAPH){ -%>
@@ -215,6 +223,32 @@ service CatalogService @(path : '/catalog')
 <% } -%>
 <% } -%>
 
+<% if(apiSFSFEC){ -%>
+    @readonly
+    entity EmployeeJobs
+<% if(authorization){ -%>
+      @(restrict: [{ to: 'Viewer' }])
+<% } -%>
+      as projection on ECEmploymentInformation.EmpJob {
+          seqNumber,
+          startDate,
+          userId,
+          location,
+          costCenter,
+          event,
+          eventReason
+        };
+
+<% if(em && hana){ -%>
+    entity EmployeeJobsLog
+<% if(authorization){ -%>
+      @(restrict: [{ to: 'Viewer' }])
+<% } -%>
+      as select * from db.EmployeeJobsLog
+    ;
+<% } -%>
+<% } -%>
+
 <% if(apiARIBPO){ -%>
     @readonly
     entity PurchaseOrders
@@ -238,6 +272,22 @@ service CatalogService @(path : '/catalog')
       @(restrict: [{ to: 'Viewer' }])
 <% } -%>
       as projection on FieldglassApprovals.RejectReasons;
+<% } -%>
+
+<% if(apiCONC){ -%>
+    @readonly
+    entity ExpenseUsers
+<% if(authorization){ -%>
+      @(restrict: [{ to: 'Viewer' }])
+<% } -%>
+      as projection on Concur.ExpenseUsers;
+
+    @readonly
+    entity ExpenseReports
+<% if(authorization){ -%>
+      @(restrict: [{ to: 'Viewer' }])
+<% } -%>
+      as projection on Concur.ExpenseReports;
 <% } -%>
 
 <% if(apiGRAPH){ -%>

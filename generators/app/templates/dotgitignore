@@ -7,8 +7,8 @@ default-*.json
 .vscode/
 coverage/
 gen/
-*-content.zip/
-manifest-bundle.zip/
+*-content.zip
+manifest-bundle.zip
 connection.properties
 *.db
 *.mtar

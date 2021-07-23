@@ -202,3 +202,34 @@ annotate catalog.CandidatesLog with {
     cellPhone   @title:'{i18n>cellPhone}';
 };
 <% } -%>
+
+<% if(apiSFSFEC && em){ -%>
+annotate catalog.EmployeeJobsLog with @(
+    UI: {
+        Identification: [ {Value: userId} ],
+        SelectionFields: [ ],
+        LineItem: [
+            {Value: seqNumber},
+            {Value: startDate},
+            {Value: userId},
+            {Value: modifiedAt},
+            {Value: location},
+            {Value: eventReason}
+        ],
+        HeaderInfo: {
+            TypeName: '{i18n>employeeJob}',
+            TypeNamePlural: '{i18n>employeeJobs}',
+            Title: {Value: userId},
+            Description: {Value: location}
+        }
+    }
+);
+
+annotate catalog.EmployeeJobsLog with {
+    seqNumber   @title:'{i18n>seqNumber}' @UI.HiddenFilter;
+    startDate   @title:'{i18n>startDate}' @UI.HiddenFilter;
+    userId      @title:'{i18n>userId}' @UI.HiddenFilter;
+    location    @title:'{i18n>location}';
+    eventReason @title:'{i18n>eventReason}';
+};
+<% } -%>

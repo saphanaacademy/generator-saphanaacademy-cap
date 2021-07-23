@@ -9,6 +9,14 @@ log.registerCustomFields(["country", "amount"]);
 <% if(credStore !== ''){ -%>
 const credStore = require('./lib/credStore');
 <% } -%>
+<% if(apiARIBWS){ -%>
+const fs = require('fs');
+const path = require('path');
+const soapRequest = require('easy-soap-request');
+<% } -%>
+<% if(apiARIBWS || apiCONC){ -%>
+const utils = require('./lib/utils');
+<% } -%>
 
 module.exports = cds.service.impl(async function () {
 
@@ -21,11 +29,17 @@ module.exports = cds.service.impl(async function () {
 <% if(apiSFSFRC){ -%>
     const sfrcm = await cds.connect.to('RCMCandidate');
 <% } -%>
+<% if(apiSFSFEC){ -%>
+    const sfecei = await cds.connect.to('ECEmploymentInformation');
+<% } -%>
 <% if(apiARIBPO){ -%>
     const aribapo = await cds.connect.to('ARIBA_NETWORK_PURCHASE_ORDERS');
 <% } -%>
 <% if(apiFGAP){ -%>
     const fgap = await cds.connect.to('FieldglassApprovals');
+<% } -%>
+<% if(apiCONC){ -%>
+    const conc = await cds.connect.to('Concur');
 <% } -%>
 <% if(apiGRAPH){ -%>
     const graph = await cds.connect.to('GraphWorkforce');
@@ -49,7 +63,7 @@ module.exports = cds.service.impl(async function () {
 <% } -%>
 <% if(hanaTargetHDI !== ""){ -%>
 <% if(hana){ -%>
-        ,
+            ,
 <% } -%>
             Widgets
 <% } -%>
@@ -58,7 +72,7 @@ module.exports = cds.service.impl(async function () {
             ,
 <% } -%>
             SalesOrders
-<% if(em){ -%>
+<% if(em && hana){ -%>
             ,
             SalesOrdersLog
 <% } -%>
@@ -68,7 +82,7 @@ module.exports = cds.service.impl(async function () {
             ,
 <% } -%>
             BusinessPartners
-<% if(em){ -%>
+<% if(em && hana){ -%>
             ,
             CustomerProcesses
 <% } -%>
@@ -78,38 +92,55 @@ module.exports = cds.service.impl(async function () {
             ,
 <% } -%>
             Candidates
-<% if(em){ -%>
+<% if(em && hana){ -%>
             ,
             CandidatesLog
 <% } -%>
 <% } -%>
-<% if(apiARIBPO){ -%>
+<% if(apiSFSFEC){ -%>
 <% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC){ -%>
+            ,
+<% } -%>
+            EmployeeJobs
+<% if(em && hana){ -%>
+            ,
+            EmployeeJobsLog
+<% } -%>
+<% } -%>
+<% if(apiARIBPO){ -%>
+<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC){ -%>
             ,
 <% } -%>
             PurchaseOrders
 <% } -%>
 <% if(apiFGAP){ -%>
-<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiARIBPO){ -%>
+<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO){ -%>
             ,
 <% } -%>
             Approvals,
             RejectReasons
 <% } -%>
+<% if(apiCONC){ -%>
+<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGAP){ -%>
+            ,
+<% } -%>
+            ExpenseUsers,
+            ExpenseReports
+<% } -%>
 <% if(apiGRAPH){ -%>
-<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiARIBPO || apiFGAP){ -%>
+<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGAP || apiCONC){ -%>
             ,
 <% } -%>
             WorkforcePersons
 <% } -%>
 <% if(apiHERE){ -%>
-<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiARIBPO || apiFGAP || apiGRAPH){ -%>
+<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGAP || apiCONC || apiGRAPH){ -%>
             ,
 <% } -%>
             Geocodes
 <% } -%>
 <% if(apiNeoWs){ -%>
-<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiARIBPO || apiFGAP || apiGRAPH || apiHERE){ -%>
+<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGAP || apiCONC || apiGRAPH || apiHERE){ -%>
             ,
 <% } -%>
             Asteroids
@@ -161,8 +192,11 @@ module.exports = cds.service.impl(async function () {
             console.error(err);
         }
     });
+<% } -%>
+<% } -%>
 
-<% if(apiS4HCSO){ -%>
+<% if(em && !multiTenant){ -%>
+<% if(apiS4HCSO && hana){ -%>
     em.on('sap/S4HANAOD/<%= emClientId %>/ce/sap/s4/beh/salesorder/v1/SalesOrder/Changed/v1', async msg => {
         debug('Event Mesh: SalesOrder Changed:', msg.data);
         try {
@@ -185,7 +219,7 @@ module.exports = cds.service.impl(async function () {
     });
 <% } -%>
 
-<% if(apiS4HCBP){ -%>
+<% if(apiS4HCBP && hana){ -%>
     const { BusinessPartner, BusinessPartnerRole, BusinessPartnerAddress, AddressPhoneNumber, AddressEmailAddress } = require('@sap/cloud-sdk-vdm-business-partner-service');
 
     const STATUS = { KICK_OFF: 1, OK: 2, FOLLOW_UP: 3, CRITICAL: 4, CLOSED: 5};
@@ -366,7 +400,7 @@ module.exports = cds.service.impl(async function () {
     });
 <% } -%>
 
-<% if(apiSFSFRC){ -%>
+<% if(apiSFSFRC && hana){ -%>
     em.on('<%= emNamespace %>/<%= projectName %>/candidate/updated', async msg => {
         debug('Event Mesh: Candidate Updated:', msg.headers);
         try {
@@ -378,6 +412,38 @@ module.exports = cds.service.impl(async function () {
         }
     });
 <% } -%>
+
+<% if(apiSFSFEC){ -%>
+    em.on('<%= emNamespace %>/<%= projectName %>/employee/transfer', async msg => {
+        debug('Event Mesh: Employee Transfer: Message Payload:', msg.headers);
+        try {
+<% if(hana){ -%>
+            await db.tx(msg).run (
+                INSERT.into(EmployeeJobsLog).entries({ seqNumber: msg.headers.seqNumber, startDate: msg.headers.startDate, userId: msg.headers.userId, location: msg.headers.location, eventReason: msg.headers.eventReason })
+            );
+<% } -%>
+<% if(apiARIBWS){ -%>
+            let dest = await utils.getDestination('<%= projectName %>-ariba-ws');
+            let soapURL = dest.destinationConfiguration.URL + '/Buyer/soap/' + dest.destinationConfiguration.Realm + '/RequisitionImportPull';
+            let soapHeaders = {
+                'user-agent': '<%= projectName %>-ariba-ws',
+                'Authorization': dest.authTokens[0].http_header.value,
+                'Content-Type': 'text/xml;charset=UTF-8',
+                'soapAction': ''
+            };
+            let soapXML = fs.readFileSync(path.resolve(__dirname, 'templates/AribaBuyerEnvelope.xml'), 'utf-8');
+            // TODO configure relevant SOAP XML
+            debug('Event Mesh: Employee Transfer: SOAP Request:', soapURL, soapHeaders, soapXML);
+            (async () => {
+                const { response } = await soapRequest({ url: soapURL, headers: soapHeaders, xml: soapXML, timeout: 1000 });
+                const { headers, body, statusCode } = response;
+                debug('Event Mesh: Employee Transfer: SOAP Response:', headers, body, statusCode);
+            })();
+<% } -%>
+        } catch (err) {
+            console.error(err);
+        }
+    });
 <% } -%>
 <% } -%>
 
@@ -476,6 +542,24 @@ module.exports = cds.service.impl(async function () {
     });
 <% } -%>
 
+<% if(apiSFSFEC){ -%>
+    this.on('READ', EmployeeJobs, async (req) => {
+        try {
+            const tx = sfecei.transaction(req);
+            return await tx.send({
+                query: req.query,
+                headers: {
+                    'Application-Interface-Key': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'ApplicationInterfaceKey')<% } else { -%>process.env.ApplicationInterfaceKey<% } -%>,
+                    'APIKey': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'APIKeyHubSandbox')<% } else { -%>process.env.APIKeyHubSandbox<% } -%>
+
+                }
+            })
+        } catch (err) {
+            req.reject(err);
+        }
+    });
+<% } -%>
+
 <% if(apiARIBPO){ -%>
     this.on('READ', PurchaseOrders, async (req) => {
     try {
@@ -506,6 +590,24 @@ module.exports = cds.service.impl(async function () {
                     'APIKey': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'APIKeyHubSandbox')<% } else { -%>process.env.APIKeyHubSandbox<% } -%>,
                     'x-ApplicationKey': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'APIKeyFieldglass')<% } else { -%>process.env.APIKeyFieldglass<% } -%>
 
+                }
+            })
+        } catch (err) {
+            req.reject(err);
+        }
+    });
+<% } -%>
+
+<% if(apiCONC){ -%>
+    this.on('READ', [ExpenseUsers, ExpenseReports], async (req) => {
+        try {
+            let accessToken = await utils.getAccessToken('<%= projectName %>-concur-api','refresh_token');
+            const tx = conc.transaction(req);
+            return await tx.send({
+                query: req.query,
+                headers: {
+                    'Application-Interface-Key': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'ApplicationInterfaceKey')<% } else { -%>process.env.ApplicationInterfaceKey<% } -%>,
+                    'Authorization': 'Bearer ' + accessToken
                 }
             })
         } catch (err) {

@@ -1,0 +1,143 @@
+{
+    "definitions": {
+        "ConcurExpenseUsers.Emails": {
+            "kind": "type",
+            "elements": {
+                "PrimaryEmail": {
+                    "type": "cds.String"
+                },
+                "VerifiedEmail": {
+                    "type": "cds.String"
+                },
+                "email2": {
+                    "type": "cds.String"
+                },
+                "email3": {
+                    "type": "cds.String"
+                },
+                "email4": {
+                    "type": "cds.String"
+                },
+                "email5": {
+                    "type": "cds.String"
+                }
+            }
+        },
+        "Concur.ExpenseUsers": {
+            "kind": "entity",
+            "elements": {
+                "Active": {
+                    "type": "cds.Boolean"
+                },
+                "CountryCode": {
+                    "type": "cds.String"
+                },
+                "CellPhoneNumber": {
+                    "type": "cds.String"
+                },
+                "PrimaryEmail": {
+                    "type": "cds.String"
+                },
+                "EmployeeID": {
+                    "type": "cds.String"
+                },
+                "Emails": {
+                    "type": "ConcurExpenseUsers.Emails"
+                },
+                "OrganizationUnit": {
+                    "type": "cds.String"
+                },
+                "MiddleName": {
+                    "type": "cds.String"
+                },
+                "LastName": {
+                    "type": "cds.String"
+                },
+                "FirstName": {
+                    "type": "cds.String"
+                },
+                "LoginID": {
+                    "type": "cds.String"
+                }
+            }
+        },
+        "Concur.ExpenseReports": {
+            "kind": "entity",
+            "elements": {
+                "AmountDueCompanyCard": {
+                    "type": "cds.Decimal",
+                    "precision": 5,
+                    "scale": 2
+                },
+                "AmountDueEmployee": {
+                    "type": "cds.Decimal",
+                    "precision": 5,
+                    "scale": 2
+                },
+                "ApprovalStatusCode": {
+                    "type": "cds.String"
+                },
+                "ApprovalStatusName": {
+                    "type": "cds.String"
+                },
+                "ApproverName": {
+                    "type": "cds.String"
+                },
+                "CreateDate": {
+                    "type": "cds.Date"
+                },
+                "CurrencyCode": {
+                    "type": "cds.String"
+                },
+                "HasException": {
+                    "type": "cds.Boolean"
+                },
+                "ID": {
+                    "type": "cds.String"
+                },
+                "LastComment": {
+                    "type": "cds.String"
+                },
+                "Name": {
+                    "type": "cds.String"
+                },
+                "OwnerLoginID": {
+                    "type": "cds.String"
+                },
+                "OwnerName": {
+                    "type": "cds.String"
+                },
+                "PaymentStatusCode": {
+                    "type": "cds.String"
+                },
+                "PaymentStatusName": {
+                    "type": "cds.String"
+                },
+                "PaidDate": {
+                    "type": "cds.Date"
+                },
+                "ReceiptsReceived": {
+                    "type": "cds.Boolean"
+                },
+                "SubmitDate": {
+                    "type": "cds.Date"
+                },
+                "Total": {
+                    "type": "cds.Decimal",
+                    "precision": 5,
+                    "scale": 2
+                },
+                "TotalApprovedAmount": {
+                    "type": "cds.Decimal",
+                    "precision": 5,
+                    "scale": 2
+                },
+                "TotalClaimedAmount": {
+                    "type": "cds.Decimal",
+                    "precision": 5,
+                    "scale": 2
+                }
+            }
+        }
+    }
+}
