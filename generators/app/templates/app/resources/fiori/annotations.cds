@@ -203,7 +203,7 @@ annotate catalog.CandidatesLog with {
 };
 <% } -%>
 
-<% if(apiSFSFEC && em){ -%>
+<% if(apiSFSFEC && em && hana){ -%>
 annotate catalog.EmployeeJobsLog with @(
     UI: {
         Identification: [ {Value: userId} ],

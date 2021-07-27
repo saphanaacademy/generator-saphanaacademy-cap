@@ -372,8 +372,8 @@ resources:
                 ProxyType: Internet
                 Authentication: OAuth2ClientCredentials
                 tokenServiceURL: https://api.ariba.com/v2/oauth/token
-                #clientId: 
-                #clientSecret: 
+                clientId: <SetValueInCockpit>
+                clientSecret: <SetValueInCockpit>
                 HTML5.DynamicDestination: true
 <% } -%>
 <% if(apiARIBWS){ -%>
@@ -383,8 +383,8 @@ resources:
                 Type: HTTP
                 ProxyType: Internet
                 Authentication: BasicAuthentication
-                #User: 
-                #Password: 
+                User: <SetValueInCockpit>
+                Password: <SetValueInCockpit>
                 Realm: <%= AribaRealm %>
                 HTML5.DynamicDestination: true
 <% } -%>
@@ -396,8 +396,8 @@ resources:
                 ProxyType: Internet
                 Authentication: OAuth2ClientCredentials
                 tokenServiceURL: https://www.fieldglass.net/api/oauth2/v2.0/token
-                #clientId: 
-                #clientSecret: 
+                clientId: <SetValueInCockpit>
+                clientSecret: <SetValueInCockpit>
                 HTML5.DynamicDestination: true
 <% } -%>
 <% if(apiCONC){ -%>

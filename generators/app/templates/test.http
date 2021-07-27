@@ -111,12 +111,12 @@ Authorization: Basic joe:
 <% } -%>
 <% } -%>
 <% if(apiSFSFEC){ -%>
-GET http://localhost:4004/catalog/EmployeeJobs?$top=10
+GET http://localhost:4004/catalog/EmployeeJobs?$top=10&$orderby=startDate%20desc
 <% if(authentication){ -%>
 Authorization: Basic joe:
 <% } -%>
 ###
-<% if(em){ -%>
+<% if(em && hana){ -%>
 GET http://localhost:4004/catalog/EmployeeJobsLog
 <% if(authentication){ -%>
 Authorization: Basic joe:
@@ -297,12 +297,12 @@ Authorization: Basic joe:
 <% } -%>
 <% } -%>
 <% if(apiSFSFEC){ -%>
-GET http://localhost:4004/v2/catalog/EmployeeJobs?$top=10
+GET http://localhost:4004/v2/catalog/EmployeeJobs?$top=10&$orderby=startDate%20desc
 <% if(authentication){ -%>
 Authorization: Basic joe:
 <% } -%>
 ###
-<% if(em){ -%>
+<% if(em && hana){ -%>
 GET http://localhost:4004/v2/catalog/EmployeeJobsLog
 <% if(authentication){ -%>
 Authorization: Basic joe:

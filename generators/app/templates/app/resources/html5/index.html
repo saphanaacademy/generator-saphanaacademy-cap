@@ -52,8 +52,8 @@
 <% } -%>
 <% } -%>
 <% if(apiSFSFEC){ -%>
-    <a href="<%= srvPath %>catalog/EmployeeJobs?$top=10">Employee Jobs</a><br />
-<% if(em){ -%>
+    <a href="<%= srvPath %>catalog/EmployeeJobs?$top=10&$orderby=startDate%20desc">Employee Jobs</a><br />
+<% if(em && hana){ -%>
     <a href="<%= srvPath %>catalog/EmployeeJobsLog">Employee Jobs Log</a><br />
 <% } -%>
 <% } -%>
@@ -123,8 +123,8 @@
 <% } -%>
 <% } -%>
 <% if(apiSFSFEC){ -%>
-    <a href="<%= srvPath %>v2/catalog/EmployeeJobs?$top=10">Employee Jobs</a><br />
-<% if(em){ -%>
+    <a href="<%= srvPath %>v2/catalog/EmployeeJobs?$top=10&$orderby=startDate%20desc">Employee Jobs</a><br />
+<% if(em && hana){ -%>
     <a href="<%= srvPath %>v2/catalog/EmployeeJobsLog">Employee Jobs Log</a><br />
 <% } -%>
 <% } -%>

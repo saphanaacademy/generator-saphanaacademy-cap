@@ -71,7 +71,7 @@
                         "path": "SalesOrdersLog/$count",
 <% } else if(apiSFSFRC && em){ -%>
                         "path": "CandidatesLog/$count",
-<% } else if(apiSFSFEC && em){ -%>
+<% } else if(apiSFSFEC && em && hana){ -%>
                         "path": "EmployeeJobsLog/$count",
 <% } else { -%>
                         "path": "Sales/$count",
@@ -141,7 +141,7 @@
                     "pattern": "SalesOrdersLog({key}):?query:",
 <% } else if(apiSFSFRC && em){ -%>
                     "pattern": "CandidatesLog({key}):?query:",
-<% } else if(apiSFSFEC && em){ -%>
+<% } else if(apiSFSFEC && em && hana){ -%>
                     "pattern": "EmployeeJobsLog({key}):?query:",
 <% } else { -%>
                     "pattern": "Sales({key}):?query:",
@@ -163,7 +163,7 @@
                             "entitySet": "SalesOrdersLog",
 <% } else if(apiSFSFRC && em){ -%>
                             "entitySet": "CandidatesLog",
-<% } else if(apiSFSFEC && em){ -%>
+<% } else if(apiSFSFEC && em && hana){ -%>
                             "entitySet": "EmployeeJobsLog",
 <% } else { -%>
                             "entitySet": "Sales",
@@ -176,7 +176,7 @@
                                 "SalesOrdersLog": {
 <% } else if(apiSFSFRC && em){ -%>
                                 "CandidatesLog": {
-<% } else if(apiSFSFEC && em){ -%>
+<% } else if(apiSFSFEC && em && hana){ -%>
                                 "EmployeeJobsLog": {
 <% } else { -%>
                                 "Sales": {
@@ -201,7 +201,7 @@
                             "entitySet": "SalesOrdersLog"
 <% } else if(apiSFSFRC && em){ -%>
                             "entitySet": "CandidatesLog"
-<% } else if(apiSFSFEC && em){ -%>
+<% } else if(apiSFSFEC && em && hana){ -%>
                             "entitySet": "EmployeeJobsLog"
 <% } else { -%>
                             "entitySet": "Sales"
