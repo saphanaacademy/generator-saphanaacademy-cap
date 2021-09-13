@@ -8,7 +8,7 @@ annotate catalog.Sales with @(
             {Value: ID},
             {Value: region},
             {Value: country},
-            {Value: amount},
+            {Value: amount, Criticality: criticality},
             {$Type: 'UI.DataFieldForAction', Label: '{i18n>boost}', Action: 'CatalogService.boost', Inline: true},
             {Value: comments}
         ],

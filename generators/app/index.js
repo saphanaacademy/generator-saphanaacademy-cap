@@ -109,7 +109,7 @@ module.exports = class extends Generator {
         type: "checkbox",
         name: "apiLoB",
         message: "Which external API(s) would you like to use?",
-        choices: ["SAP S/4HANA Cloud Sales Order (A2X)", "SAP S/4HANA Cloud Business Partner (A2X)", "SAP SuccessFactors Recruiting", "SAP SuccessFactors Employee Central", "SAP Ariba Network Purchase Orders Buyer", "SAP Ariba Web Services", "SAP Fieldglass Approvals", "SAP Concur", "SAP Graph Workforce", "HERE Location Services", "NASA Near Earth Object Web Service"],
+        choices: ["SAP S/4HANA Cloud Sales Order (A2X)", "SAP S/4HANA Cloud Business Partner (A2X)", "SAP SuccessFactors Recruiting", "SAP SuccessFactors Employee Central", "SAP Ariba Network Purchase Orders Buyer", "SAP Ariba Web Services", "SAP Fieldglass Connectors", "SAP Fieldglass Approvals", "SAP Concur", "SAP Graph Workforce", "HERE Location Services", "NASA Near Earth Object Web Service"],
         default: ["SAP S/4HANA Cloud Sales Order (A2X)"]
       },
       {
@@ -123,14 +123,14 @@ module.exports = class extends Generator {
         when: response => response.api === true && response.apiLoB.includes("SAP Ariba Network Purchase Orders Buyer"),
         type: "input",
         name: "AribaNetworkId",
-        message: "What is the buyer's Ariba Network Id (ANID)?",
+        message: "What is the buyer's SAP Ariba Network Id (ANID)?",
         default: "AN02000000280"
       },
       {
         when: response => response.api === true && response.apiLoB.includes("SAP Ariba Network Purchase Orders Buyer"),
         type: "password",
         name: "APIKeyAriba",
-        message: "What is your application-specific Ariba API Key?",
+        message: "What is your application-specific SAP Ariba API Key?",
         mask: "*",
         default: ""
       },
@@ -138,22 +138,63 @@ module.exports = class extends Generator {
         when: response => response.api === true && response.apiLoB.includes("SAP Ariba Web Services"),
         type: "input",
         name: "AribaRealm",
-        message: "What is your Ariba Realm?",
+        message: "What is your SAP Ariba Realm?",
         default: "consulting-T"
       },
       {
-        when: response => response.api === true && response.apiLoB.includes("SAP Fieldglass Approvals"),
-        type: "password",
-        name: "APIKeyFieldglass",
-        message: "What is your company-specific key provided by SAP Fieldglass for API access?",
-        mask: "*",
+        when: response => response.api === true && (response.apiLoB.includes("SAP Fieldglass Connectors") || response.apiLoB.includes("SAP Fieldglass Approvals")),
+        type: "input",
+        name: "FGHost",
+        message: "What is the host name of your SAP Fieldglass system?",
+        default: ""
+      },
+      {
+        when: response => response.api === true && response.apiLoB.includes("SAP Fieldglass Connectors"),
+        type: "input",
+        name: "FGCNclientId",
+        message: "What is your SAP Fieldglass Buyer Company Code?",
+        default: ""
+      },
+      {
+        when: response => response.api === true && response.apiLoB.includes("SAP Fieldglass Connectors"),
+        type: "input",
+        name: "FGCNsupplierId",
+        message: "What is your SAP Fieldglass Supplier Company Code?",
+        default: ""
+      },
+      {
+        when: response => response.api === true && response.apiLoB.includes("SAP Fieldglass Connectors"),
+        type: "input",
+        name: "FGCNJobPostingSupplierDownload",
+        message: "What is your SAP Fieldglass Given Connector Name for Job Posting Supplier Download?",
+        default: ""
+      },
+      {
+        when: response => response.api === true && response.apiLoB.includes("SAP Fieldglass Connectors"),
+        type: "input",
+        name: "FGCNWorkerfromWorkOrderXMLDownload",
+        message: "What is your SAP Fieldglass Given Connector Name for Worker from Work Order XML Download?",
+        default: ""
+      },
+      {
+        when: response => response.api === true && response.apiLoB.includes("SAP Fieldglass Connectors"),
+        type: "input",
+        name: "FGCNJobSeekerUpload",
+        message: "What is your SAP Fieldglass Given Connector Name for Job Seeker Upload?",
+        default: ""
+      },
+      {
+        when: response => response.api === true && response.apiLoB.includes("SAP Fieldglass Connectors"),
+        type: "input",
+        name: "FGCNWorkOrderAcceptUpload",
+        message: "What is your SAP Fieldglass Given Connector Name for Work Order Accept Upload?",
         default: ""
       },
       {
         when: response => response.api === true && response.apiLoB.includes("SAP Concur"),
         type: "input",
         name: "ConcurGeolocation",
-        message: "What is your Concur geolocation?",
+        message: "What is your SAP Concur geolocation?",
         default: "https://us.api.concursolutions.com"
       },
       {
@@ -180,6 +221,16 @@ module.exports = class extends Generator {
         mask: "*",
         default: ""
       },
+      /*
+      {
+        when: response => response.api === true && (response.apiLoB.includes("SAP S/4HANA Cloud Sales Order (A2X)") || response.apiLoB.includes("SAP S/4HANA Cloud Business Partner (A2X)") || response.apiLoB.includes("SAP SuccessFactors Recruiting") || response.apiLoB.includes("SAP SuccessFactors Employee Central") || response.apiLoB.includes("SAP Ariba Network Purchase Orders Buyer") || response.apiLoB.includes("SAP Ariba Web Services") || response.apiLoB.includes("SAP Fieldglass Connectors") || response.apiLoB.includes("SAP Fieldglass Approvals") || response.apiLoB.includes("SAP Concur") || response.apiLoB.includes("SAP Graph Workforce")),
+        type: "password",
+        name: "ApplicationInterfaceKey",
+        message: "What is your Partner Application Interface Key? Leave blank to use the default for dev/test scenarios.",
+        mask: "*",
+        default: "saptest0"
+      },
+      */
       {
         when: response => response.api === true && (response.apiLoB.includes("SAP S/4HANA Cloud Sales Order (A2X)") || response.apiLoB.includes("SAP S/4HANA Cloud Business Partner (A2X)") || response.apiLoB.includes("SAP SuccessFactors Recruiting") || response.apiLoB.includes("SAP SuccessFactors Employee Central") || response.apiLoB.includes("SAP Ariba Network Purchase Orders Buyer") || response.apiLoB.includes("SAP Fieldglass Approvals")),
         type: "password",
@@ -407,7 +458,13 @@ module.exports = class extends Generator {
         answers.AribaNetworkId = "";
         answers.APIKeyAriba = "";
         answers.AribaRealm = "";
-        answers.APIKeyFieldglass = "";
+        answers.FGHost = "";
+        answers.FGCNclientId = "";
+        answers.FGCNsupplierId = "";
+        answers.FGCNJobPostingSupplierDownload = "";
+        answers.FGCNWorkerfromWorkOrderXMLDownload = "";
+        answers.FGCNJobSeekerUpload = "";
+        answers.FGCNWorkOrderAcceptUpload = "";
         answers.ConcurGeolocation = "";
         answers.APIKeyGraph = "";
         answers.APIKeyHERE = "";
@@ -420,15 +477,18 @@ module.exports = class extends Generator {
       answers.apiSFSFEC = answers.apiLoB.includes("SAP SuccessFactors Employee Central");
       answers.apiARIBPO = answers.apiLoB.includes("SAP Ariba Network Purchase Orders Buyer");
       answers.apiARIBWS = answers.apiLoB.includes("SAP Ariba Web Services");
+      answers.apiFGCN = answers.apiLoB.includes("SAP Fieldglass Connectors");
       answers.apiFGAP = answers.apiLoB.includes("SAP Fieldglass Approvals");
       answers.apiCONC = answers.apiLoB.includes("SAP Concur");
       answers.apiGRAPH = answers.apiLoB.includes("SAP Graph Workforce");
       answers.apiHERE = answers.apiLoB.includes("HERE Location Services");
       answers.apiNeoWs = answers.apiLoB.includes("NASA Near Earth Object Web Service");
       answers.apiSAP = false;
+      answers.ApplicationInterfaceKey = "";
       if (answers.api) {
-        if (answers.apiS4HCSO || answers.apiS4HCBP || answers.apiSFSFRC || answers.apiSFSFEC || answers.apiARIBPO || answers.apiFGAP || answers.apiCONC || answers.apiGRAPH) {
+        if (answers.apiS4HCSO || answers.apiS4HCBP || answers.apiSFSFRC || answers.apiSFSFEC || answers.apiARIBPO || answers.apiARIBWS || answers.apiFGCN || answers.apiFGAP || answers.apiCONC || answers.apiGRAPH) {
           answers.apiSAP = true;
+          answers.ApplicationInterfaceKey = "saptest0";
         }
         if (!(answers.apiS4HCSO || answers.apiS4HCBP || answers.apiSFSFRC || answers.apiSFSFEC || answers.apiARIBPO || answers.apiFGAP)) {
           answers.APIKeyHubSandbox = "";
@@ -444,8 +504,16 @@ module.exports = class extends Generator {
       if (answers.apiARIBWS === false) {
         answers.AribaRealm = "";
       }
-      if (answers.apiFGAP === false) {
-        answers.APIKeyFieldglass = "";
+      if (answers.apiFGCN === false) {
+        answers.FGCNclientId = "";
+        answers.FGCNsupplierId = "";
+        answers.FGCNJobPostingSupplierDownload = "";
+        answers.FGCNWorkerfromWorkOrderXMLDownload = "";
+        answers.FGCNJobSeekerUpload = "";
+        answers.FGCNWorkOrderAcceptUpload = "";
+      }
+      if (answers.apiFGCN === false && answers.apiFGAP === false) {
+        answers.FGHost = "";
       }
       if (answers.apiCONC === false) {
         answers.ConcurGeolocation = "";
@@ -463,7 +531,6 @@ module.exports = class extends Generator {
       } else if (answers.APIKeyNASA === "") {
         answers.APIKeyNASA = "DEMO_KEY";
       }
-      answers.ApplicationInterfaceKey = "saptest0";
       if (answers.authentication === false) {
         answers.authorization = false;
         answers.multiTenant = false;
@@ -597,13 +664,12 @@ module.exports = class extends Generator {
       credsBinding = JSON.parse(credsBinding.substring(credsBinding.indexOf('{')));
       this.log("Writing credentials...");
       const credsNS = answers.get('credStoreNS');
-      if (answers.get('apiSAP')) resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'ApplicationInterfaceKey', answers.get('ApplicationInterfaceKey'));
+      if (answers.get('apiSAP') && !(answers.get('apiFGCN') || answers.get('apiFGAP'))) resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'ApplicationInterfaceKey', answers.get('ApplicationInterfaceKey'));
       if (answers.get('APIKeyHubSandbox') !== '') resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'APIKeyHubSandbox', answers.get('APIKeyHubSandbox'));
       if (answers.get('apiARIBPO')) {
         resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'AribaNetworkId', answers.get('AribaNetworkId'));
         resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'APIKeyAriba', answers.get('APIKeyAriba'));
       }
-      if (answers.get('apiFGAP')) resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'APIKeyFieldglass', answers.get('APIKeyFieldglass'));
       if (answers.get('apiGRAPH')) resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'APIKeyGraph', answers.get('APIKeyGraph'));
       if (answers.get('apiHERE')) resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'APIKeyHERE', answers.get('APIKeyHERE'));
       if (answers.get('apiNeoWs')) resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'APIKeyNASA', answers.get('APIKeyNASA'));
@@ -640,53 +706,57 @@ module.exports = class extends Generator {
                                       if (!(file.substring(0, 36) === 'srv/external/ECEmploymentInformation' && answers.get('apiSFSFEC') === false)) {
                                         if (!((file.substring(0, 25) === 'srv/external/AribaNetwork') && answers.get('apiARIBPO') === false)) {
                                           if (!(file.substring(0, 19) === 'srv/templates/Ariba' && answers.get('apiARIBWS') === false)) {
-                                            if (!((file.substring(0, 23) === 'srv/external/Fieldglass') && answers.get('apiFGAP') === false)) {
-                                              if (!((file.substring(0, 19) === 'srv/external/Concur') && answers.get('apiCONC') === false)) {
-                                                if (!((file.substring(0, 33) === 'srv/external/HERELocationServices') && answers.get('apiHERE') === false)) {
-                                                  if (!((file.substring(0, 38) === 'srv/external/NearEarthObjectWebService') && answers.get('apiNeoWs') === false)) {
-                                                    if (!((file.substring(0, 15) === 'app/xs-app.json' || file.substring(0, 16) === 'app/package.json') && (answers.get('managedAppRouter') === true || (answers.get('authentication') === false && answers.get('ui') === false)))) {
-                                                      if (!((file.substring(0, 13) === 'app/resources' || file.includes('i18n') || file.includes('index.cds')) && answers.get('ui') === false)) {
-                                                        if (!((file.substring(0, 19) === 'app/resources/fiori' || file.includes('i18n') || file.includes('index.cds')) && answers.get('hana') === false)) {
-                                                          if (!((file.substring(0, 31) === 'app/resources/fiori/xs-app.json' || file.substring(0, 32) === 'app/resources/fiori/package.json') && answers.get('html5repo') === false)) {
-                                                            if (!((file.substring(0, 31) === 'app/resources/html5/xs-app.json' || file.substring(0, 32) === 'app/resources/html5/package.json' || file.substring(0, 33) === 'app/resources/html5/manifest.json') && answers.get('html5repo') === false)) {
-                                                              if (!(file.substring(0, 2) === 'db' && answers.get('hana') === false && answers.get('schemaName') === "" && answers.get('hanaTargetHDI') === "")) {
-                                                                if (!((file.substring(0, 17) === 'db/data-model.cds' || file.substring(0, 7) === 'db/data' || file.substring(0, 6) === 'db/csv') && (answers.get('hana') === false && answers.get('hanaTargetHDI') === ""))) {
-                                                                  if (!(file.substring(0, 31) === 'db/data/_PROJECT_NAME_.db.Sales' && answers.get('hana') === false)) {
-                                                                    if (!((file.substring(0, 39) === 'db/src/_PROJECT_NAME_DB_EXTERNAL_ACCESS') && answers.get('hanaExternalHDI') === false)) {
-                                                                      if (!(file.substring(0, 33) === 'db/data/_PROJECT_NAME_.db.Widgets' && answers.get('hanaExternalHDI') === false)) {
-                                                                        if (!((file.substring(0, 35) === 'db/csv/_PROJECT_NAME_.db.Conditions' || file.substring(0, 43) === 'db/data/_PROJECT_NAME_.db.CustomerProcesses' || file.substring(0, 31) === 'db/csv/_PROJECT_NAME_.db.Status') && (answers.get('apiS4HCBP') === false || answers.get('em') === false))) {
-                                                                          if (!(file.substring(0, 7) === 'db/src/' && answers.get('hanaNative') === false && answers.get('hanaExternalHDI') === false && answers.get('hanaTargetHDI') === "" && answers.get('schemaName') === "")) {
-                                                                            if (!((file.substring(0, 7) === 'db/cfg/' || file.substring(0, 19) === 'db/src/_TARGET_HDI_') && answers.get('hanaTargetHDI') === "")) {
-                                                                              if (!(file.substring(0, 20) === 'db/src/_SCHEMA_NAME_' && answers.get('schemaName') === "")) {
-                                                                                if (!((file.substring(0, 10) === 'db/src/SP_' || file.substring(0, 10) === 'db/src/TT_' || file.substring(0, 10) === 'db/src/CV_' || file.substring(0, 10) === 'db/src/TF_' || file.substring(0, 10) === 'db/src/SYS') && answers.get('hanaNative') === false)) {
-                                                                                  const sOrigin = this.templatePath(file);
-                                                                                  let fileDest = file;
-                                                                                  if (fileDest.includes('_PROJECT_NAME_.db')) {
-                                                                                    let folder = 'db/data';
-                                                                                    if (fileDest.substring(0, 6) === 'db/csv') folder = fileDest.substring(0, 6);
-                                                                                    fileDest = folder + '/' + answers.get('projectName') + '.db-' + fileDest.split(".", 3)[2] + '.csv';
-                                                                                  }
-                                                                                  if (fileDest.includes('_PROJECT_NAME_DB_EXTERNAL_ACCESS')) {
-                                                                                    let tempDest = 'db/src/' + answers.get('projectName').toUpperCase() + '_DB_EXTERNAL_ACCESS';
-                                                                                    if (fileDest.includes('EXTERNAL_ACCESS_G')) {
-                                                                                      tempDest += '_G';
+                                            if (!((file.substring(0, 33) === 'srv/external/FieldglassConnectors') && answers.get('apiFGCN') === false)) {
+                                              if (!(file.substring(0, 34) === 'srv/templates/FieldglassConnectors' && answers.get('apiFGCN') === false)) {
+                                                if (!((file.substring(0, 32) === 'srv/external/FieldglassApprovals') && answers.get('apiFGAP') === false)) {
+                                                  if (!((file.substring(0, 19) === 'srv/external/Concur') && answers.get('apiCONC') === false)) {
+                                                    if (!((file.substring(0, 33) === 'srv/external/HERELocationServices') && answers.get('apiHERE') === false)) {
+                                                      if (!((file.substring(0, 38) === 'srv/external/NearEarthObjectWebService') && answers.get('apiNeoWs') === false)) {
+                                                        if (!((file.substring(0, 15) === 'app/xs-app.json' || file.substring(0, 16) === 'app/package.json') && (answers.get('managedAppRouter') === true || (answers.get('authentication') === false && answers.get('ui') === false)))) {
+                                                          if (!((file.substring(0, 13) === 'app/resources' || file.includes('i18n') || file.includes('index.cds')) && answers.get('ui') === false)) {
+                                                            if (!((file.substring(0, 19) === 'app/resources/fiori' || file.includes('i18n') || file.includes('index.cds')) && answers.get('hana') === false)) {
+                                                              if (!((file.substring(0, 31) === 'app/resources/fiori/xs-app.json' || file.substring(0, 32) === 'app/resources/fiori/package.json') && answers.get('html5repo') === false)) {
+                                                                if (!((file.substring(0, 31) === 'app/resources/html5/xs-app.json' || file.substring(0, 32) === 'app/resources/html5/package.json' || file.substring(0, 33) === 'app/resources/html5/manifest.json') && answers.get('html5repo') === false)) {
+                                                                  if (!(file.substring(0, 2) === 'db' && answers.get('hana') === false && answers.get('schemaName') === "" && answers.get('hanaTargetHDI') === "")) {
+                                                                    if (!((file.substring(0, 17) === 'db/data-model.cds' || file.substring(0, 7) === 'db/data' || file.substring(0, 6) === 'db/csv') && (answers.get('hana') === false && answers.get('hanaTargetHDI') === ""))) {
+                                                                      if (!(file.substring(0, 31) === 'db/data/_PROJECT_NAME_.db.Sales' && answers.get('hana') === false)) {
+                                                                        if (!((file.substring(0, 39) === 'db/src/_PROJECT_NAME_DB_EXTERNAL_ACCESS') && answers.get('hanaExternalHDI') === false)) {
+                                                                          if (!(file.substring(0, 33) === 'db/data/_PROJECT_NAME_.db.Widgets' && answers.get('hanaExternalHDI') === false)) {
+                                                                            if (!((file.substring(0, 35) === 'db/csv/_PROJECT_NAME_.db.Conditions' || file.substring(0, 43) === 'db/data/_PROJECT_NAME_.db.CustomerProcesses' || file.substring(0, 31) === 'db/csv/_PROJECT_NAME_.db.Status') && (answers.get('apiS4HCBP') === false || answers.get('em') === false))) {
+                                                                              if (!(file.substring(0, 7) === 'db/src/' && answers.get('hanaNative') === false && answers.get('hanaExternalHDI') === false && answers.get('hanaTargetHDI') === "" && answers.get('schemaName') === "")) {
+                                                                                if (!((file.substring(0, 7) === 'db/cfg/' || file.substring(0, 19) === 'db/src/_TARGET_HDI_') && answers.get('hanaTargetHDI') === "")) {
+                                                                                  if (!(file.substring(0, 20) === 'db/src/_SCHEMA_NAME_' && answers.get('schemaName') === "")) {
+                                                                                    if (!((file.substring(0, 10) === 'db/src/SP_' || file.substring(0, 10) === 'db/src/TT_' || file.substring(0, 10) === 'db/src/CV_' || file.substring(0, 10) === 'db/src/TF_' || file.substring(0, 10) === 'db/src/SYS') && answers.get('hanaNative') === false)) {
+                                                                                      const sOrigin = this.templatePath(file);
+                                                                                      let fileDest = file;
+                                                                                      if (fileDest.includes('_PROJECT_NAME_.db')) {
+                                                                                        let folder = 'db/data';
+                                                                                        if (fileDest.substring(0, 6) === 'db/csv') folder = fileDest.substring(0, 6);
+                                                                                        fileDest = folder + '/' + answers.get('projectName') + '.db-' + fileDest.split(".", 3)[2] + '.csv';
+                                                                                      }
+                                                                                      if (fileDest.includes('_PROJECT_NAME_DB_EXTERNAL_ACCESS')) {
+                                                                                        let tempDest = 'db/src/' + answers.get('projectName').toUpperCase() + '_DB_EXTERNAL_ACCESS';
+                                                                                        if (fileDest.includes('EXTERNAL_ACCESS_G')) {
+                                                                                          tempDest += '_G';
+                                                                                        }
+                                                                                        fileDest = tempDest + '.' + fileDest.split(".", 3)[1];
+                                                                                      }
+                                                                                      if (fileDest.includes('_SCHEMA_NAME_')) {
+                                                                                        fileDest = 'db/src/' + answers.get('schemaName') + '.' + fileDest.split(".", 3)[1];
+                                                                                      }
+                                                                                      if (fileDest.includes('_TARGET_HDI_')) {
+                                                                                        fileDest = fileDest.substring(0, 7) + answers.get('hanaTargetHDI').toUpperCase().replace(/-/g, '_') + '.' + fileDest.split(".", 3)[1];
+                                                                                      }
+                                                                                      if (fileDest === 'dotenv') {
+                                                                                        fileDest = '.env';
+                                                                                      }
+                                                                                      if (fileDest === 'dotgitignore') {
+                                                                                        fileDest = '.gitignore';
+                                                                                      }
+                                                                                      const sTarget = this.destinationPath(fileDest);
+                                                                                      this.fs.copyTpl(sOrigin, sTarget, this.config.getAll());
                                                                                     }
-                                                                                    fileDest = tempDest + '.' + fileDest.split(".", 3)[1];
                                                                                   }
-                                                                                  if (fileDest.includes('_SCHEMA_NAME_')) {
-                                                                                    fileDest = 'db/src/' + answers.get('schemaName') + '.' + fileDest.split(".", 3)[1];
-                                                                                  }
-                                                                                  if (fileDest.includes('_TARGET_HDI_')) {
-                                                                                    fileDest = fileDest.substring(0, 7) + answers.get('hanaTargetHDI').toUpperCase().replace(/-/g, '_') + '.' + fileDest.split(".", 3)[1];
-                                                                                  }
-                                                                                  if (fileDest === 'dotenv') {
-                                                                                    fileDest = '.env';
-                                                                                  }
-                                                                                  if (fileDest === 'dotgitignore') {
-                                                                                    fileDest = '.gitignore';
-                                                                                  }
-                                                                                  const sTarget = this.destinationPath(fileDest);
-                                                                                  this.fs.copyTpl(sOrigin, sTarget, this.config.getAll());
                                                                                 }
                                                                               }
                                                                             }
@@ -1053,7 +1123,9 @@ module.exports = class extends Generator {
     answers.delete('AribaNetworkId');
     answers.delete('APIKeyAriba');
     answers.delete('AribaRealm');
-    answers.delete('APIKeyFieldglass');
+    answers.delete('FGHost');
+    answers.delete('FGCNclientId');
+    answers.delete('FGCNsupplierId');
     answers.delete('ConcurGeolocation');
     answers.delete('APIKeyGraph');
     answers.delete('APIKeyHERE');

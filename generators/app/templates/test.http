@@ -131,6 +131,51 @@ Authorization: Basic joe:
 <% } -%>
 ###
 <% } -%>
+<% if(apiFGCN){ -%>
+GET http://localhost:4004/catalog/JobPosting
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+POST http://localhost:4004/catalog/jobSeekerSubmit
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+Content-Type: application/json
+
+{
+    "jobPostingId": "",
+    "startDate": "YYYY-MM-DD",
+    "endDate": "YYYY-MM-DD",
+    "fullName": "Firstname Lastname",
+    "securityId": "FFLLCCDDMMYYYY",
+    "resumeName": "resume.pdf",
+    "resumeMimeType": "application/pdf",
+    "resumeText": "<base64>"
+}
+###
+GET http://localhost:4004/catalog/WorkOrder
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+POST http://localhost:4004/catalog/workOrderRespond
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+Content-Type: application/json
+
+{
+    "workOrderId": "",
+    "jobSeekerId": "",
+    "email": "email.address@domain.com",
+    "startDate": "YYYY-MM-DD",
+    "endDate": "YYYY-MM-DD",
+    "modificationType": "A",
+    "comments": ""
+}
+###
+<% } -%>
 <% if(apiFGAP){ -%>
 GET http://localhost:4004/catalog/Approvals
 <% if(authentication){ -%>
@@ -312,6 +357,18 @@ Authorization: Basic joe:
 <% } -%>
 <% if(apiARIBPO){ -%>
 GET http://localhost:4004/v2/catalog/PurchaseOrders?$top=3
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
+<% if(apiFGCN){ -%>
+GET http://localhost:4004/v2/catalog/JobPosting
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+GET http://localhost:4004/v2/catalog/WorkOrder
 <% if(authentication){ -%>
 Authorization: Basic joe:
 <% } -%>

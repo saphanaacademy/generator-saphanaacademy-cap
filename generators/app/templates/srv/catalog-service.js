@@ -17,6 +17,9 @@ const soapRequest = require('easy-soap-request');
 <% if(apiARIBWS || apiCONC){ -%>
 const utils = require('./lib/utils');
 <% } -%>
+<% if(apiFGCN){ -%>
+const fgcnAPI = require('./external/FieldglassConnectorsAPI');
+<% } -%>
 
 module.exports = cds.service.impl(async function () {
 
@@ -34,6 +37,9 @@ module.exports = cds.service.impl(async function () {
 <% } -%>
 <% if(apiARIBPO){ -%>
     const aribapo = await cds.connect.to('ARIBA_NETWORK_PURCHASE_ORDERS');
+<% } -%>
+<% if(apiFGCN){ -%>
+    const fgcn = await cds.connect.to('FieldglassConnectors');
 <% } -%>
 <% if(apiFGAP){ -%>
     const fgap = await cds.connect.to('FieldglassApprovals');
@@ -113,34 +119,41 @@ module.exports = cds.service.impl(async function () {
 <% } -%>
             PurchaseOrders
 <% } -%>
-<% if(apiFGAP){ -%>
+<% if(apiFGCN){ -%>
 <% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO){ -%>
+            ,
+<% } -%>
+            JobPosting,
+            WorkOrder
+<% } -%>
+<% if(apiFGAP){ -%>
+<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN){ -%>
             ,
 <% } -%>
             Approvals,
             RejectReasons
 <% } -%>
 <% if(apiCONC){ -%>
-<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGAP){ -%>
+<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP){ -%>
             ,
 <% } -%>
             ExpenseUsers,
             ExpenseReports
 <% } -%>
 <% if(apiGRAPH){ -%>
-<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGAP || apiCONC){ -%>
+<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP || apiCONC){ -%>
             ,
 <% } -%>
             WorkforcePersons
 <% } -%>
 <% if(apiHERE){ -%>
-<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGAP || apiCONC || apiGRAPH){ -%>
+<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP || apiCONC || apiGRAPH){ -%>
             ,
 <% } -%>
             Geocodes
 <% } -%>
 <% if(apiNeoWs){ -%>
-<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGAP || apiCONC || apiGRAPH || apiHERE){ -%>
+<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP || apiCONC || apiGRAPH || apiHERE){ -%>
             ,
 <% } -%>
             Asteroids
@@ -150,6 +163,7 @@ module.exports = cds.service.impl(async function () {
 <% if(hana){ -%>
     this.after('READ', Sales, (each) => {
         if (each.amount > 500) {
+            each.criticality = 3;
             if (each.comments === null)
                 each.comments = '';
             else
@@ -159,6 +173,10 @@ module.exports = cds.service.impl(async function () {
 <% if(applicationLogging){ -%>
             log.info(each.comments, {"country": each.country, "amount": each.amount});
 <% } -%>
+        } else if (each.amount < 150) {
+            each.criticality = 1;
+        } else {
+            each.criticality = 2;
         }
     });
 
@@ -209,6 +227,7 @@ module.exports = cds.service.impl(async function () {
 <% if (APIKeyHubSandbox !== ""){ -%>
                     'APIKey': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'APIKeyHubSandbox')<% } else { -%>process.env.APIKeyHubSandbox<% } -%>
 <% } -%>
+
                 }
             });
             await db.tx(msg).run (
@@ -274,6 +293,7 @@ module.exports = cds.service.impl(async function () {
 <% if (APIKeyHubSandbox !== ""){ -%>
                     'APIKey': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'APIKeyHubSandbox')<% } else { -%>process.env.APIKeyHubSandbox<% } -%>
 <% } -%>
+
                 })
                 .execute({ 
                     destinationName: cds.env.requires.API_BUSINESS_PARTNER.credentials.destination
@@ -433,6 +453,7 @@ module.exports = cds.service.impl(async function () {
                 'Authorization': dest.authTokens[0].http_header.value,
                 'Content-Type': 'text/xml;charset=UTF-8',
                 'Application-Interface-Key': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'ApplicationInterfaceKey')<% } else { -%>process.env.ApplicationInterfaceKey<% } -%>,
+
                 'soapAction': ''
             };
             let soapXML = fs.readFileSync(path.resolve(__dirname, 'templates/AribaBuyerEnvelope.xml'), 'utf-8');
@@ -475,7 +496,8 @@ module.exports = cds.service.impl(async function () {
 <% if (APIKeyHubSandbox !== ""){ -%>
                     'APIKey': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'APIKeyHubSandbox')<% } else { -%>process.env.APIKeyHubSandbox<% } -%>
 <% } -%>
-                }
+
+}
             })
         } catch (err) {
             req.reject(err);
@@ -498,6 +520,7 @@ module.exports = cds.service.impl(async function () {
 <% if (APIKeyHubSandbox !== ""){ -%>
                     'APIKey': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'APIKeyHubSandbox')<% } else { -%>process.env.APIKeyHubSandbox<% } -%>
 <% } -%>
+
                 }
             });
             if (res2) {
@@ -523,6 +546,7 @@ module.exports = cds.service.impl(async function () {
 <% if (APIKeyHubSandbox !== ""){ -%>
                     'APIKey': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'APIKeyHubSandbox')<% } else { -%>process.env.APIKeyHubSandbox<% } -%>
 <% } -%>
+
                 }
             })
         } catch (err) {
@@ -542,6 +566,7 @@ module.exports = cds.service.impl(async function () {
 <% if (APIKeyHubSandbox !== ""){ -%>
                     'APIKey': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'APIKeyHubSandbox')<% } else { -%>process.env.APIKeyHubSandbox<% } -%>
 <% } -%>
+
                 }
             })
         } catch (err) {
@@ -561,6 +586,7 @@ module.exports = cds.service.impl(async function () {
 <% if (APIKeyHubSandbox !== ""){ -%>
                     'APIKey': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'APIKeyHubSandbox')<% } else { -%>process.env.APIKeyHubSandbox<% } -%>
 <% } -%>
+
                 }
             })
         } catch (err) {
@@ -581,8 +607,38 @@ module.exports = cds.service.impl(async function () {
                     'APIKey': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'APIKeyAriba')<% } else { -%>process.env.APIKeyAriba<% } -%>,
                     'X-ARIBA-NETWORK-ID': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'AribaNetworkId')<% } else { -%>process.env.AribaNetworkId<% } -%>
 <% } -%>
+
                 }
             })
+        } catch (err) {
+            req.reject(err);
+        }
+    });
+<% } -%>
+
+<% if(apiFGCN){ -%>
+    this.on('READ', [JobPosting, WorkOrder], async (req) => {
+        try {
+            const tx = fgcn.transaction(req);
+            return await tx.send({
+                query: req.query
+            })
+        } catch (err) {
+            req.reject(err);
+        }
+    });
+
+    this.on('jobSeekerSubmit', async (req) => {
+        try {
+            return await fgcnAPI.jobSeekerSubmit(req);
+        } catch (err) {
+            req.reject(err);
+        }
+    });
+
+    this.on('workOrderRespond', async (req) => {
+        try {
+            return await fgcnAPI.workOrderRespond(req);
         } catch (err) {
             req.reject(err);
         }
@@ -596,11 +652,9 @@ module.exports = cds.service.impl(async function () {
             return await tx.send({
                 query: req.query,
                 headers: {
-                    'Application-Interface-Key': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'ApplicationInterfaceKey')<% } else { -%>process.env.ApplicationInterfaceKey<% } -%>,
 <% if (APIKeyHubSandbox !== ""){ -%>
-                    'APIKey': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'APIKeyHubSandbox')<% } else { -%>process.env.APIKeyHubSandbox<% } -%>,
+                    'APIKey': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'APIKeyHubSandbox')<% } else { -%>process.env.APIKeyHubSandbox<% } -%>
 <% } -%>
-                    'x-ApplicationKey': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'APIKeyFieldglass')<% } else { -%>process.env.APIKeyFieldglass<% } -%>
 
                 }
             })
@@ -620,6 +674,7 @@ module.exports = cds.service.impl(async function () {
                 headers: {
                     'Application-Interface-Key': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'ApplicationInterfaceKey')<% } else { -%>process.env.ApplicationInterfaceKey<% } -%>,
                     'Authorization': 'Bearer ' + accessToken
+
                 }
             })
         } catch (err) {

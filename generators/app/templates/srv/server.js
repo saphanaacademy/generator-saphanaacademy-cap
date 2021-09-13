@@ -1,7 +1,7 @@
 const cds = require('@sap/cds');
 
 <% if(swagger){ -%>
-const cdsSwagger = require ('cds-swagger-ui-express');
+const cdsSwagger = require('cds-swagger-ui-express');
 <% } -%>
 
 <% if(v2support){ -%>

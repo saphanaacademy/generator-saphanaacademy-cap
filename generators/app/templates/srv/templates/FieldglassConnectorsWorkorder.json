@@ -1,0 +1,60 @@
+{
+    "StaffingOrder": {
+        "@xmlns": "workOrder",
+        "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+        "@xsi:schemaLocation": "workOrder InSiteWorkOrder.xsd",
+        "AssignmentType": {
+            "Assignment": {
+                "@idOwner": "",
+                "AssignmentId": {
+                    "@revisionNumber": "0",
+                    "@idOwner": "",
+                    "@validFrom": "",
+                    "@validTo": "",
+                    "IdValue": ""
+                },
+                "ReferenceInformation": {
+                    "StaffingCustomerId": {
+                        "@idOwner": "",
+                        "@validFrom": "",
+                        "@validTo": "",
+                        "IdValue": ""
+                    },
+                    "UserArea": {
+                        "JobSeekerId": "",
+                        "ModificationType": "",
+                        "Comments": "",
+                        "CustomFields": null
+                    }
+                },
+                "ContractInformation": {
+                    "ContactMethod": {
+                        "InternetEmailAddress": ""
+                    }
+                }
+            },
+            "Rates": [
+                {
+                    "@rateStatus": "agreed",
+                    "@rateType": "bill",
+                    "PayRate": {
+                        "@rateAmountPeriod": "Hr",
+                        "@currency": "",
+                        "$": "35.00"
+                    },
+                    "Class": "ST"
+                },
+                {
+                    "@rateStatus": "agreed",
+                    "@rateType": "bill",
+                    "PayRate": {
+                        "@rateAmountPeriod": "Hr",
+                        "@currency": "",
+                        "$": "36.00"
+                    },
+                    "Class": "OT"
+                }
+            ]
+        }
+    }
+}

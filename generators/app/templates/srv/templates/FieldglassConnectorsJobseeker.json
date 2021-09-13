@@ -1,0 +1,125 @@
+{
+    "HumanResource": {
+        "@xmlns": "jobSeeker",
+        "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+        "@xsi:schemaLocation": "jobSeeker https://localhost/schema/InSiteJobSeeker.xsd",
+        "HumanResourceId": {
+            "@validFrom": "",
+            "@validTo": "",
+            "IdValue": null,
+            "ExternalReferenceId": "",
+            "EntityContactInfo": {
+                "PersonName": {
+                    "LegalName": ""
+                }
+            }
+        },
+        "ReferenceInformation": {
+            "StaffingSupplierId": {
+                "IdValue": ""
+            },
+            "StaffingCustomerId": {
+                "IdValue": ""
+            },
+            "OrderId": {
+                "IdValue": ""
+            },
+            "RemitToAddress": null,
+            "WorkerPayType": "Default"
+        },
+        "ResourceInformation": {
+            "EntityContactInfo": {
+                "PersonName": {
+                    "LegalName": "",
+                    "FirstName": "",
+                    "LastName": ""
+                },
+                "UserName": null,
+                "SecurityId": "",
+                "ContactMethod": {
+                    "InternetEmailAddress": ""
+                }
+            },
+            "AvailabilityDate": {
+                "AvailabilityStartDate": ""
+            }
+        },
+        "Rates": [
+            {
+                "@rateType": "bill",
+                "@rateStatus": "agreed",
+                "@payType": "Default",
+                "BillAmount": {
+                    "@rateAmountPeriod": "Hr",
+                    "@currency": "USD",
+                    "$": "75.00"
+                },
+                "PayAmount": {
+                    "@rateAmountPeriod": "Hr",
+                    "@currency": "USD",
+                    "$": "0.00"
+                },
+                "Class": "ST",
+                "Markup": null,
+                "Factor": null,
+                "BaseClass": null
+            },
+            {
+                "@rateType": "bill",
+                "@rateStatus": "agreed",
+                "@payType": "Standard",
+                "BillAmount": {
+                    "@rateAmountPeriod": "Hr",
+                    "@currency": "USD",
+                    "$": "112.50"
+                },
+                "PayAmount": {
+                    "@rateAmountPeriod": "Hr",
+                    "@currency": "USD",
+                    "$": "0.00"
+                },
+                "Class": "OT",
+                "Markup": null,
+                "Factor": "1.500",
+                "BaseClass": "ST"
+            }
+        ],
+        "CustomFields": {
+            "CustomField": {
+                "@name": "Reason for Job Posting",
+                "@mandatory": "yes",
+                "@type": "xsd:pickList",
+                "pickList": {
+                    "@isCompleteList": "yes",
+                    "@totalNumberOfItems": "6",
+                    "item": [
+                        "Change Job Level",
+                        "False Start Replacement (Re-source the Position)",
+                        "Increase in Number of Positions Requested",
+                        "Open Position",
+                        "Program Transition",
+                        "Worker Secondary Assignment"
+                    ]
+                },
+                "Value": "Program Transition",
+                "Class": "JobPosting"
+            }
+        },
+        "Quals": null,
+        "HumanResourceComments": "",
+        "Profile": {
+            "Resume": {
+                "NonXMLResume": {
+                    "TextResume": "",
+                    "SupportingMaterials": {
+                        "AttachmentReference": {
+                            "@mimeType": "",
+                            "$": ""
+                        }
+                    }
+                }
+            },
+            "AdditionalAttachment": null
+        }
+    }
+}

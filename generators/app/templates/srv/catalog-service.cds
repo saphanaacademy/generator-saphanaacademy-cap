@@ -30,6 +30,10 @@ using { ECEmploymentInformation } from './external/ECEmploymentInformation.csn';
 using { AribaNetworkPurchaseOrders } from './external/AribaNetworkPurchaseOrders.csn';
 <% } -%>
 
+<% if(apiFGCN){ -%>
+using { FieldglassConnectors } from './external/FieldglassConnectors.csn';
+<% } -%>
+
 <% if(apiFGAP){ -%>
 using { FieldglassApprovals } from './external/FieldglassApprovals.csn';
 <% } -%>
@@ -256,6 +260,42 @@ service CatalogService @(path : '/catalog')
       @(restrict: [{ to: 'Viewer' }])
 <% } -%>
       as projection on AribaNetworkPurchaseOrders.Orders;
+<% } -%>
+
+<% if(apiFGCN){ -%>
+    @readonly
+    entity JobPosting
+<% if(authorization){ -%>
+      @(restrict: [{ to: 'Viewer' }])
+<% } -%>
+      as projection on FieldglassConnectors.JobPosting;
+
+    @readonly
+    entity WorkOrder
+<% if(authorization){ -%>
+      @(restrict: [{ to: 'Viewer' }])
+<% } -%>
+      as projection on FieldglassConnectors.WorkOrder;
+
+<% if(authorization){ -%>
+    @(restrict: [{ to: 'Admin' }])
+<% } -%>
+    action jobSeekerSubmit( jobPostingId: String, startDate: Date, endDate: Date, fullName: String, securityId: String, resumeName: String, resumeMimeType: String, resumeText: String )
+      returns {
+        TransactionID: String;
+        ReturnCode   : String;
+        Message      : String;
+      };
+
+<% if(authorization){ -%>
+    @(restrict: [{ to: 'Admin' }])
+<% } -%>
+    action workOrderRespond( workOrderId: String, jobSeekerId: String, email: String, startDate: Date, endDate: Date, modificationType: String, comments: String )
+      returns {
+        TransactionID: String;
+        ReturnCode   : String;
+        Message      : String;
+      };
 <% } -%>
 
 <% if(apiFGAP){ -%>

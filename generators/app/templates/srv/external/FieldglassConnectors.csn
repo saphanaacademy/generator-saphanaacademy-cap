@@ -1,0 +1,64 @@
+{
+    "definitions": {
+        "FieldglassConnectors.JobPosting": {
+            "kind": "entity",
+            "elements": {
+                "OrderId": {
+                    "type": "cds.String",
+                    "key": "true"
+                },
+                "ReferenceInformation": {
+                    "type": "cds.String"
+                },
+                "BusinessUnit": {
+                    "type": "cds.String"
+                },
+                "LaborType": {
+                    "type": "cds.String"
+                },
+                "ClosedReasonName": {
+                    "type": "cds.String"
+                },
+                "OrderClassification": {
+                    "type": "cds.String"
+                },
+                "Comments": {
+                    "type": "cds.String"
+                },
+                "OrderContact": {
+                    "type": "cds.String"
+                },
+                "RequiredResponseDate": {
+                    "type": "cds.Date"
+                },
+                "PositionQuantity": {
+                    "type": "cds.Integer"
+                },
+                "MaxSubmissionsAllowed": {
+                    "type": "cds.Integer"
+                },
+                "CanSubmitJobSeeker": {
+                    "type": "cds.String"
+                },
+                "StaffingPosition": {
+                    "type": "cds.String"
+                },
+                "DistributionList": {
+                    "type": "cds.String"
+                }
+            }
+        },
+        "FieldglassConnectors.WorkOrder": {
+            "kind": "entity",
+            "elements": {
+                "ApplicationArea": {
+                    "type": "cds.String",
+                    "key": "true"
+                },
+                "DataArea": {
+                    "type": "cds.String"
+                }
+            }
+        }
+    }
+}

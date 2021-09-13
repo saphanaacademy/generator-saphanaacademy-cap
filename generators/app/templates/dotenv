@@ -2,8 +2,12 @@
 BusinessPartnerCountry=US
 BusinessPartnerRole=FLCU01
 <% } -%>
+<% if(apiFGCN){ -%>
+FGCNclientId=<%= FGCNclientId %>
+FGCNsupplierId=<%= FGCNsupplierId %>
+<% } -%>
 <% if(credStore === ""){ -%>
-<% if (apiSAP){ -%>
+<% if(apiSAP && !(apiFGCN || apiFGAP)){ -%>
 ApplicationInterfaceKey=<%= ApplicationInterfaceKey %>
 <% } -%>
 <% if (APIKeyHubSandbox !== ""){ -%>
@@ -12,9 +16,6 @@ APIKeyHubSandbox=<%= APIKeyHubSandbox %>
 <% if(apiARIBPO){ -%>
 AribaNetworkId=<%= AribaNetworkId %>
 APIKeyAriba=<%= APIKeyHubSandbox %>
-<% } -%>
-<% if(apiFGAP){ -%>
-APIKeyFieldglass=<%= APIKeyFieldglass %>
 <% } -%>
 <% if(apiGRAPH){ -%>
 APIKeyGraph=<%= APIKeyGraph %>

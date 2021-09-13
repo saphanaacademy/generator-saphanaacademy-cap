@@ -11,8 +11,10 @@ build-parameters:
       commands:
         - npm install --production
         - npx -p @sap/cds-dk cds build --production
+<% if(hana){ -%>
 #        - npx rimraf gen/db/src/gen/data # uncomment this line to prevent loading of initial data which is only relevant for dev/test deployments 
 #        - npx rimraf gen/db/src/gen/csv  # uncomment this line unless db/csv folder has been used for config/control table data which is entirely managed by the developer and never changed by the app
+<% } -%>
 
 modules:
 <% if((hana || schemaName !== '' || hanaTargetHDI !== '') && !multiTenant){ -%>
@@ -61,16 +63,22 @@ modules:
       domain: <%= customDomain %>
 <% } -%>
 <% if(api){ -%>
-<% if(em && !multiTenant && apiS4HCBP){ -%>
+<% if((em && !multiTenant && apiS4HCBP) || apiFGCN){ -%>
     properties:
+<% } -%>
+<% if(em && !multiTenant && apiS4HCBP){ -%>
       BusinessPartnerCountry: US
       BusinessPartnerRole: FLCU01
 <% } -%>
+<% if(apiFGCN){ -%>
+      FGCNclientId: <%= FGCNclientId %>
+      FGCNsupplierId: <%= FGCNsupplierId %>
+<% } -%>
 <% if(credStore === ""){ -%>
-<% if (!(em && !multiTenant && apiS4HCBP)){ -%>
+<% if (!((em && !multiTenant && apiS4HCBP) || apiFGCN)){ -%>
     properties:
 <% } -%>
-<% if(apiSAP){ -%>
+<% if(apiSAP && !(apiFGCN || apiFGAP)){ -%>
       ApplicationInterfaceKey: <%= ApplicationInterfaceKey %>
 <% } -%>
 <% if(APIKeyHubSandbox !== ""){ -%>
@@ -79,9 +87,6 @@ modules:
 <% if(apiARIBPO){ -%>
       AribaNetworkId: <%= AribaNetworkId %>
       APIKeyAriba: <%= APIKeyAriba %>
-<% } -%>
-<% if(apiFGAP){ -%>
-      APIKeyFieldglass: <%= APIKeyFieldglass %>
 <% } -%>
 <% if(apiGRAPH){ -%>
       APIKeyGraph: <%= APIKeyGraph %>
@@ -390,14 +395,17 @@ resources:
                 Realm: <%= AribaRealm %>
                 HTML5.DynamicDestination: true
 <% } -%>
-<% if(apiFGAP){ -%>
+<% if(apiFGCN || apiFGAP){ -%>
               - Name: <%= projectName %>-fieldglass-api
                 Description: SAP Fieldglass
-                URL: https://www.fieldglass.net
+                URL: https://<%= FGHost %>.fgvms.com
+                URL.headers.x-ApplicationKey: <SetValueInCockpit>
+                URL.headers.Application-Interface-Key: <SetValueInCockpit>
                 Type: HTTP
                 ProxyType: Internet
                 Authentication: OAuth2ClientCredentials
-                tokenServiceURL: https://www.fieldglass.net/api/oauth2/v2.0/token
+                tokenServiceURL: https://<%= FGHost %>.fgvms.com/api/oauth2/v2.0/token
+                tokenServiceURL.headers.x-ApplicationKey: <SetValueInCockpit>
                 clientId: <SetValueInCockpit>
                 clientSecret: <SetValueInCockpit>
                 HTML5.DynamicDestination: true

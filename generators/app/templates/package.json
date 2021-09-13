@@ -49,7 +49,10 @@
     "cf-nodejs-logging-support": "^6",
 <% } -%>
 <% if(swagger){ -%>
-  "cds-swagger-ui-express": "^0.1",
+    "cds-swagger-ui-express": "^0.1",
+<% } -%>
+<% if(apiFGCN){ -%>
+    "uuid": "^8.3",
 <% } -%>
     "debug": "^4.3",
     "express": "^4"
@@ -246,26 +249,45 @@
         }
       }
 <% } -%>
-<% if(apiFGAP){ -%>
+<% if(apiFGCN){ -%>
 <% if(authentication || hana || schemaName !== '' || hanaTargetHDI !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiSFSFEC || apiARIBPO){ -%>
       ,
 <% } -%>
-      "FieldglassApprovals": {
+      "FieldglassConnectors": {
         "kind": "rest",
-        "impl": "srv/external/FieldglassApprovals.js",
+        "impl": "srv/external/FieldglassConnectors.js",
         "credentials": {
           "[production]": {
             "destination": "<%= projectName %>-fieldglass-api",
-            "path": "/api/v1"
+            "path": "/api/vc/connector"
           },
           "[development]": {
-            "url": "https://sandbox.api.sap.com/fieldglass/api/v1"
+            "destination": "<%= projectName %>-fieldglass-api",
+            "path": "/api/vc/connector"
           }
         }
       }
 <% } -%>
-<% if(apiCONC){ -%>
-<% if(authentication || hana || schemaName !== '' || hanaTargetHDI !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGAP){ -%>
+<% if(apiFGAP){ -%>
+  <% if(authentication || hana || schemaName !== '' || hanaTargetHDI !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGAP){ -%>
+        ,
+  <% } -%>
+        "FieldglassApprovals": {
+          "kind": "rest",
+          "impl": "srv/external/FieldglassApprovals.js",
+          "credentials": {
+            "[production]": {
+              "destination": "<%= projectName %>-fieldglass-api",
+              "path": "/api/v1"
+            },
+            "[development]": {
+              "url": "https://sandbox.api.sap.com/fieldglass/api/v1"
+            }
+          }
+        }
+  <% } -%>
+  <% if(apiCONC){ -%>
+<% if(authentication || hana || schemaName !== '' || hanaTargetHDI !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP){ -%>
       ,
 <% } -%>
       "Concur": {
@@ -282,7 +304,7 @@
       }
 <% } -%>
 <% if(apiGRAPH){ -%>
-<% if(authentication || hana || schemaName !== '' || hanaTargetHDI !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGAP || apiCONC){ -%>
+<% if(authentication || hana || schemaName !== '' || hanaTargetHDI !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP || apiCONC){ -%>
       ,
 <% } -%>
       "GraphWorkforce": {
@@ -299,7 +321,7 @@
       }
 <% } -%>
 <% if(apiHERE){ -%>
-<% if(authentication || hana || schemaName !== '' || hanaTargetHDI !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGAP || apiCONC || apiGRAPH){ -%>
+<% if(authentication || hana || schemaName !== '' || hanaTargetHDI !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP || apiCONC || apiGRAPH){ -%>
       ,
 <% } -%>
       "HERELocationServices": {
@@ -317,7 +339,7 @@
       }
 <% } -%>
 <% if(apiNeoWs){ -%>
-<% if(authentication || hana || schemaName !== '' || hanaTargetHDI !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGAP || apiCONC || apiGRAPH || apiHERE){ -%>
+<% if(authentication || hana || schemaName !== '' || hanaTargetHDI !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP || apiCONC || apiGRAPH || apiHERE){ -%>
       ,
 <% } -%>
       "NearEarthObjectWebService": {
@@ -335,7 +357,7 @@
       }
 <% } -%>
 <% if(em){ -%>
-<% if(authentication || hana || schemaName !== '' || hanaTargetHDI !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGAP || apiCONC || apiGRAPH || apiHERE || apiNeoWs){ -%>
+<% if(authentication || hana || schemaName !== '' || hanaTargetHDI !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP || apiCONC || apiGRAPH || apiHERE || apiNeoWs){ -%>
       ,
 <% } -%>
       "messaging": {
