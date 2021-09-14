@@ -4,6 +4,9 @@ version: 0.0.1
 
 parameters:
   enable-parallel-deployments: true
+<% if(html5repo){ -%>
+  deploy_mode: html5-repo
+<% } -%>
 
 build-parameters:
   before-all:
@@ -233,11 +236,13 @@ modules:
   - name: <%= projectName %>-html5
   # ------------------------------------------------------------
     type: html5
-    path: app/resources/html5
+    path: app/html5
     build-parameters:
+      build-result: dist
       builder: custom
       commands:
-        - npm run build
+        - npm install
+        - npm run build:cf
       supported-platforms: []
 
 <% if(hana){ -%>
@@ -245,11 +250,13 @@ modules:
   - name: <%= projectName %>-fiori
   # ------------------------------------------------------------
     type: html5
-    path: app/resources/fiori
+    path: app/fiori
     build-parameters:
+      build-result: dist
       builder: custom
       commands:
-        - npm run build
+        - npm install
+        - npm run build:cf
       supported-platforms: []
 <% } -%>
 
@@ -268,12 +275,12 @@ modules:
         - artifacts:
             - html5-content.zip
           name: <%= projectName %>-html5
-          target-path: gen/app/
+          target-path: gen/app
 <% if(hana){ -%>
         - artifacts:
             - fiori-content.zip
           name: <%= projectName %>-fiori
-          target-path: gen/app/
+          target-path: gen/app
 <% } -%>
 
   # ----- HTML5 APP REPOSITORY DESTINATION CONTENT MODULE ------
@@ -294,7 +301,7 @@ modules:
             name: <%= projectName %>-html5repo-sk
     parameters:
       content:
-        subaccount:
+        instance:
           existing_destinations_policy: update
           destinations:
             - Name: <%= projectName %>-service-<%= projectName %>-uaa
@@ -349,7 +356,7 @@ resources:
 <% } -%>
 <% if(api || html5repo){ -%>
         init_data:
-          subaccount:
+          instance:
             existing_destinations_policy: update
             destinations:
 <% } -%>

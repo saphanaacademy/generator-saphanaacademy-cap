@@ -1,1 +1,1 @@
-using from './resources/fiori/annotations';
+using from './<% if(!html5repo){ -%>resources/<% } -%>fiori/annotations';
