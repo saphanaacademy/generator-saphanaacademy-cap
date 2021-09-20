@@ -1,6 +1,8 @@
 {
   "name": "<%= projectName %>",
   "version": "0.0.1",
+  "repository": "<Add your repository here>",
+  "license": "UNLICENSED",
   "description": "<%= description %>",
   "engines": {
     "node": "12.x"

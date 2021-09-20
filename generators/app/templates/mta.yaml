@@ -468,6 +468,12 @@ resources:
 <% if(authentication){ -%>
                 HTML5.ForwardAuthToken: true
 <% } -%>
+              - Name: ui5
+                Description: SAPUI5
+                URL: https://ui5.sap.com
+                Type: HTTP
+                ProxyType: Internet
+                Authentication: NoAuthentication
 
   # ----------- HTML5 APP REPOSITORY HOSTING SERVICE -----------
   - name: <%= projectName %>-html5repo

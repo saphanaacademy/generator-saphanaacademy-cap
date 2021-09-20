@@ -57,6 +57,22 @@
         }
 <% } -%>
         ,{
+            "source": "^/resources/(.*)$",
+            "target": "/resources/$1",
+<% if(authentication){ -%>
+            "authenticationType": "none",
+<% } -%>
+            "destination": "ui5"
+        }
+        ,{
+            "source": "^/test-resources/(.*)$",
+            "target": "/test-resources/$1",
+<% if(authentication){ -%>
+            "authenticationType": "none",
+<% } -%>
+            "destination": "ui5"
+        }
+        ,{
             "source": "^/(.*)$",
 <% if(authentication){ -%>
             "authenticationType": "xsuaa",
