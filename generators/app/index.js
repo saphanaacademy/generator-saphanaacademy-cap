@@ -1048,12 +1048,38 @@ module.exports = class extends Generator {
               serviceCDS += "};";
 
               // scaffold project files
+              /* 22sep2021 - with @sap/hana-client 2.x this.fs stopped working here so changed to use core node fs which allows to specify a callback but will now overwrite any existing files without warning!
+              fs.write(destinationRoot + "/db/" + answers.get('schemaName') + ".cds", schemaCDS);
               fs.write(destinationRoot + "/db/src/" + answers.get('schemaName') + ".hdbsynonym", hdbSynonym);
               hdbViews.forEach(element => {
                 fs.write(destinationRoot + "/db/src/" + answers.get('schemaName') + "-" + element.NAME + ".hdbview", element.VIEW);
               });
-              fs.write(destinationRoot + "/db/" + answers.get('schemaName') + ".cds", schemaCDS);
               fs.write(destinationRoot + "/srv/" + answers.get('schemaName') + "-service.cds", serviceCDS);
+              */
+              const fs2 = require('fs');
+              if (!fs2.existsSync(destinationRoot + "/db")) {
+                fs2.mkdirSync(destinationRoot + "/db");
+              };
+              fs2.writeFile(destinationRoot + "/db/" + answers.get('schemaName') + ".cds", schemaCDS, 'utf8', function (err) {
+                if (err) return thisgen.log(err);
+              });
+              if (!fs2.existsSync(destinationRoot + "/db/src")) {
+                fs2.mkdirSync(destinationRoot + "/db/src");
+              };
+              fs2.writeFile(destinationRoot + "/db/src/" + answers.get('schemaName') + ".hdbsynonym", hdbSynonym, 'utf8', function (err) {
+                if (err) return thisgen.log(err);
+              });
+              hdbViews.forEach(element => {
+                fs2.writeFile(destinationRoot + "/db/src/" + answers.get('schemaName') + "-" + element.NAME + ".hdbview", element.VIEW, 'utf8', function (err) {
+                  if (err) return thisgen.log(err);
+                });
+              });
+              if (!fs2.existsSync(destinationRoot + "/srv")) {
+                fs2.mkdirSync(destinationRoot + "/srv");
+              };
+              fs2.writeFile(destinationRoot + "/srv/" + answers.get('schemaName') + "-service.cds", serviceCDS, 'utf8', function (err) {
+                if (err) return thisgen.log(err);
+              });
 
               // define SAP HANA Cloud technical user, roles and grants
               thisgen.log('Syntax to create the SAP HANA Cloud technical user, roles and grants:');
