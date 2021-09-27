@@ -17,7 +17,7 @@
     "authenticationMethod": "none",
 <% } -%>
     "routes": [
-<% if(hana || hanaTargetHDI !== "" || api){ -%>
+<% if(hana || api){ -%>
         {
             "source": "^/catalog/(.*)$",
 <% if(authentication){ -%>
@@ -54,11 +54,14 @@
             "destination": "srv"
         }
 <% } -%>
-<% if(schemaName !== ''){ -%>
+<% if(schemaName !== '' && hanaTargetHDI === ''){ -%>
+        ,
+<% } -%>
+<% if(hanaTargetHDI !== ''){ -%>
         ,
 <% } -%>
 <% } -%>
-<% if(schemaName !== ''){ -%>
+<% if(schemaName !== '' && hanaTargetHDI === ''){ -%>
         {
             "source": "^/<%= schemaName %>/(.*)$",
 <% if(authentication){ -%>
@@ -70,7 +73,7 @@
             "destination": "srv"
         }
 <% } -%>
-<% if(schemaName !== '' && swagger){ -%>
+<% if((schemaName !== '' && hanaTargetHDI === '') && swagger){ -%>
         ,
         {
             "source": "^/swagger/<%= schemaName %>/(.*)$",
@@ -83,10 +86,48 @@
             "destination": "srv"
         }
 <% } -%>
-<% if(schemaName !== '' && v2support){ -%>
+<% if((schemaName !== '' && hanaTargetHDI === '') && v2support){ -%>
         ,
         {
             "source": "^/v2/<%= schemaName %>/(.*)$",
+<% if(authentication){ -%>
+            "authenticationType": "xsuaa",
+<% } -%>
+<% if(authorization){ -%>
+            "scope": "$XSAPPNAME.Viewer",
+<% } -%>
+            "destination": "srv"
+        }
+<% } -%>
+<% if(hanaTargetHDI !== ''){ -%>
+        {
+            "source": "^/<%= hanaTargetHDI %>/(.*)$",
+<% if(authentication){ -%>
+            "authenticationType": "xsuaa",
+<% } -%>
+<% if(authorization){ -%>
+            "scope": "$XSAPPNAME.Viewer",
+<% } -%>
+            "destination": "srv"
+        }
+<% } -%>
+<% if(hanaTargetHDI !== '' && swagger){ -%>
+        ,
+        {
+            "source": "^/swagger/<%= hanaTargetHDI %>/(.*)$",
+<% if(authentication){ -%>
+            "authenticationType": "xsuaa",
+<% } -%>
+<% if(authorization){ -%>
+            "scope": "$XSAPPNAME.Viewer",
+<% } -%>
+            "destination": "srv"
+        }
+<% } -%>
+<% if(hanaTargetHDI && v2support){ -%>
+        ,
+        {
+            "source": "^/v2/<%= hanaTargetHDI %>/(.*)$",
 <% if(authentication){ -%>
             "authenticationType": "xsuaa",
 <% } -%>
@@ -108,7 +149,7 @@
         }
 <% } -%>
 <% if(haa){ -%>
-<% if(hana || hanaTargetHDI !== "" || api || schemaName !== '' || multiTenant){ -%>
+<% if(hana || api || (schemaName !== '' && hanaTargetHDI === '') || hanaTargetHDI !== '' || multiTenant){ -%>
         ,
 <% } -%>
         {
@@ -128,7 +169,7 @@
         }
 <% } -%>
 <% if(ui){ -%>
-<% if(hana || hanaTargetHDI !== "" || api || schemaName !== '' || multiTenant || haa){ -%>
+<% if(hana || api || (schemaName !== '' && hanaTargetHDI === '') || hanaTargetHDI !== '' || multiTenant || haa){ -%>
         ,
 <% } -%>
         {

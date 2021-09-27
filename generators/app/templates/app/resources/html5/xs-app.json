@@ -6,7 +6,7 @@
     "authenticationMethod": "none",
 <% } -%>
     "routes": [
-<% if(hana || hanaTargetHDI !== "" || api){ -%>
+<% if(hana || api){ -%>
         {
             "source": "^/catalog/(.*)$",
             "csrfProtection": false,
@@ -32,11 +32,14 @@
             "destination": "<%= projectName %>-srv"
         }
 <% } -%>
-<% if(schemaName !== ''){ -%>
+<% if(schemaName !== '' && hanaTargetHDI === ''){ -%>
+        ,
+<% } -%>
+<% if(hanaTargetHDI !== ''){ -%>
         ,
 <% } -%>
 <% } -%>
-<% if(schemaName !== ''){ -%>
+<% if(schemaName !== '' && hanaTargetHDI === ''){ -%>
         {
             "source": "^/<%= schemaName %>/(.*)$",
             "csrfProtection": false,
@@ -49,7 +52,7 @@
             "destination": "<%= projectName %>-srv"
         }
 <% } -%>
-<% if(schemaName !== '' && v2support){ -%>
+<% if(schemaName !== '' && hanaTargetHDI === '' && v2support){ -%>
         ,
         {
             "source": "^/v2/<%= schemaName %>/(.*)$",
@@ -63,7 +66,34 @@
             "destination": "<%= projectName %>-srv"
         }
 <% } -%>
-<% if(hana || hanaTargetHDI !== "" || api || schemaName !== ''){ -%>
+<% if(hanaTargetHDI !== ''){ -%>
+        {
+            "source": "^/<%= hanaTargetHDI %>/(.*)$",
+            "csrfProtection": false,
+<% if(authentication){ -%>
+            "authenticationType": "xsuaa",
+<% } -%>
+<% if(authorization){ -%>
+            "scope": "$XSAPPNAME.Viewer",
+<% } -%>
+            "destination": "<%= projectName %>-srv"
+        }
+<% } -%>
+<% if(hanaTargetHDI !== '' && v2support){ -%>
+        ,
+        {
+            "source": "^/v2/<%= hanaTargetHDI %>/(.*)$",
+            "csrfProtection": false,
+<% if(authentication){ -%>
+            "authenticationType": "xsuaa",
+<% } -%>
+<% if(authorization){ -%>
+            "scope": "$XSAPPNAME.Viewer",
+<% } -%>
+            "destination": "<%= projectName %>-srv"
+        }
+<% } -%>
+<% if(hana || api || (schemaName !== '' && hanaTargetHDI === '') || hanaTargetHDI !== ''){ -%>
         ,
 <% } -%>
         {

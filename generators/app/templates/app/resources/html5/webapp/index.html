@@ -12,7 +12,7 @@
 
 <body>
     <h2><%= description %></h2>
-<% if(hana || hanaTargetHDI !== "" || api){ -%>
+<% if(hana || api){ -%>
     <h3>Catalog</h3>
     <a href="<%= srvPath %>catalog/">Catalog</a><br />
     <a href="<%= srvPath %>catalog/$metadata">Metadata</a><br />
@@ -28,9 +28,6 @@
     <a href="<%= srvPath %>catalog/topSales(amount=700)">Top Sales</a><br />
     <a href="<%= srvPath %>catalog/VSales">Sales by Region</a><br />
     <a href="<%= srvPath %>catalog/SessionInfo">Session Info</a><br />
-<% } -%>
-<% if(hanaTargetHDI !== ""){ -%>
-    <a href="<%= srvPath %>catalog/Widgets">Widgets</a><br />
 <% } -%>
 <% if(apiS4HCSO){ -%>
     <a href="<%= srvPath %>catalog/SalesOrders?$top=10&$filter=TotalNetAmount%20gt%202000&$orderby=SalesOrder%20desc">Sales Orders</a><br />
@@ -204,11 +201,11 @@
 <% if(apiNeoWs){ -%>
     <a href="<%= srvPath %>catalog/Asteroids">Near Earth Objects</a><br />
 <% } -%>
-<% if((hana || hanaTargetHDI !== "" || api) && authentication){ -%>
+<% if((hana || api) && authentication){ -%>
     <a href="<%= srvPath %>catalog/userInfo()">User Info</a><br />
 <% } -%>
 <% if(v2support){ -%>
-<% if(hana || hanaTargetHDI !== "" || api){ -%>
+<% if(hana || api){ -%>
     <h3>v2</h3>
     <a href="<%= srvPath %>v2/catalog/">Catalog</a><br />
     <a href="<%= srvPath %>v2/catalog/$metadata">Metadata</a><br />
@@ -221,9 +218,6 @@
     <a href="<%= srvPath %>v2/catalog/topSales()?amount=700">Top Sales</a><br />
     <a href="<%= srvPath %>v2/catalog/VSales">Sales by Region</a><br />
     <a href="<%= srvPath %>v2/catalog/SessionInfo">Session Info</a><br />
-<% } -%>
-<% if(hanaTargetHDI !== ""){ -%>
-    <a href="<%= srvPath %>v2/catalog/Widgets">Widgets</a><br />
 <% } -%>
 <% if(apiS4HCSO){ -%>
     <a href="<%= srvPath %>v2/catalog/SalesOrders?$top=10&$filter=TotalNetAmount%20gt%202000&$orderby=SalesOrder%20desc">Sales Orders</a><br />
@@ -279,11 +273,11 @@
 <% if(apiNeoWs){ -%>
     <a href="<%= srvPath %>v2/catalog/Asteroids">Near Earth Objects</a><br />
 <% } -%>
-<% if((hana || hanaTargetHDI !== "" || api) && authentication){ -%>
+<% if((hana || api) && authentication){ -%>
     <a href="<%= srvPath %>v2/catalog/userInfo()">User Info</a><br />
 <% } -%>
 <% } -%>
-<% if(schemaName !== ''){ -%>
+<% if(schemaName !== '' && hanaTargetHDI === ''){ -%>
     <h3><%= schemaName %></h3>
     <a href="<%= srvPath %><%= schemaName %>/">Catalog</a><br />
     <a href="<%= srvPath %><%= schemaName %>/$metadata">Metadata</a><br />
@@ -294,6 +288,19 @@
     <h3>v2</h3>
     <a href="<%= srvPath %>v2/<%= schemaName %>/">Catalog</a><br />
     <a href="<%= srvPath %>v2/<%= schemaName %>/$metadata">Metadata</a><br />
+<% } -%>
+<% } -%>
+<% if(hanaTargetHDI !== ''){ -%>
+    <h3><%= hanaTargetHDI %></h3>
+    <a href="<%= srvPath %><%= hanaTargetHDI %>/">Catalog</a><br />
+    <a href="<%= srvPath %><%= hanaTargetHDI %>/$metadata">Metadata</a><br />
+<% if(swagger){ -%>
+    <a href="<%= srvPath %>swagger/<%= hanaTargetHDI %>/">Swagger</a><br />
+<% } -%>
+<% if(v2support){ -%>
+    <h3>v2</h3>
+    <a href="<%= srvPath %>v2/<%= hanaTargetHDI %>/">Catalog</a><br />
+    <a href="<%= srvPath %>v2/<%= hanaTargetHDI %>/$metadata">Metadata</a><br />
 <% } -%>
 <% } -%>
 </body>

@@ -6,10 +6,6 @@ using {<%= projectName %>.db as db} from '../db/data-model';
 using {CV_SALES, CV_SESSION_INFO} from '../db/data-model';
 <% } -%>
 
-<% if(hanaTargetHDI !== ""){ -%>
-using {<%= hanaTargetHDI.toUpperCase().replace(/-/g, '_') %>_WIDGETS} from '../db/data-model';
-<% } -%>
-
 <% if(apiS4HCSO){ -%>
 using { API_SALES_ORDER_SRV } from './external/API_SALES_ORDER_SRV.csn';
 <% } -%>
@@ -122,16 +118,6 @@ service CatalogService @(path : '/catalog')
 <% } -%>
       (amount: Integer)
       returns many Sales;
-<% } -%>
-
-<% if(hanaTargetHDI !== ""){ -%>
-    @readonly
-    entity Widgets
-<% if(authorization){ -%>
-      @(restrict: [{ to: 'Viewer' }])
-<% } -%>
-      as select * from <%= hanaTargetHDI.toUpperCase().replace(/-/g, '_') %>_WIDGETS
-    ;
 <% } -%>
 
 <% if(apiS4HCSO){ -%>

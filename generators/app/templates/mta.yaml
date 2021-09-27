@@ -42,7 +42,7 @@ modules:
       - name: <%= projectName %>-uaa
 <% } -%>
       - name: <%= projectName %>-db
-<% if(schemaName !== ""){ -%>
+<% if(schemaName !== "" && hanaTargetHDI === ""){ -%>
       - name: <%= projectName %>-db-<%= schemaName %>
 <% } -%>
 <% if(hanaTargetHDI !== ""){ -%>
@@ -120,9 +120,6 @@ modules:
       - name: <%= projectName %>-sm
 <% } else if (hana || schemaName !== '' || hanaTargetHDI !== ''){ -%>
       - name: <%= projectName %>-db
-<% } -%>
-<% if(hanaTargetHDI !== ""){ -%>
-      - name: <%= hanaTargetHDI %>
 <% } -%>
 <% if(credStore !== ""){ -%>
       - name: <%= credStore %>
@@ -529,7 +526,7 @@ resources:
     properties:
       hdi-service-name: ${service-name}
 
-<% if(schemaName !== ""){ -%>
+<% if(schemaName !== "" && hanaTargetHDI === ""){ -%>
   # ------------------- USER-PROVIDED SERVICE ------------------
   - name: <%= projectName %>-db-<%= schemaName %>
   # ------------------------------------------------------------

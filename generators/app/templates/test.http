@@ -1,4 +1,4 @@
-<% if(hana || hanaTargetHDI !== "" || api){ -%>
+<% if(hana || api){ -%>
 GET http://localhost:4004/catalog/
 <% if(authentication){ -%>
 Authorization: Basic joe:
@@ -49,13 +49,6 @@ Authorization: Basic joe:
 <% } -%>
 ###
 GET http://localhost:4004/catalog/SessionInfo
-<% if(authentication){ -%>
-Authorization: Basic joe:
-<% } -%>
-###
-<% } -%>
-<% if(hanaTargetHDI !== ""){ -%>
-GET http://localhost:4004/catalog/Widgets
 <% if(authentication){ -%>
 Authorization: Basic joe:
 <% } -%>
@@ -228,7 +221,7 @@ Authorization: Basic joe:
 <% } -%>
 ###
 <% } -%>
-<% if((hana || hanaTargetHDI !== "" || api) && authentication){ -%>
+<% if((hana || api) && authentication){ -%>
 GET http://localhost:4004/catalog/userInfo()
 <% if(authentication){ -%>
 Authorization: Basic joe:
@@ -236,7 +229,7 @@ Authorization: Basic joe:
 ###
 <% } -%>
 <% if(v2support){ -%>
-<% if(hana || hanaTargetHDI !== "" || api){ -%>
+<% if(hana || api){ -%>
 GET http://localhost:4004/v2/catalog
 <% if(authentication){ -%>
 Authorization: Basic joe:
@@ -280,13 +273,6 @@ Authorization: Basic joe:
 <% } -%>
 ###
 GET http://localhost:4004/v2/catalog/SessionInfo
-<% if(authentication){ -%>
-Authorization: Basic joe:
-<% } -%>
-###
-<% } -%>
-<% if(hanaTargetHDI !== ""){ -%>
-GET http://localhost:4004/v2/catalog/Widgets
 <% if(authentication){ -%>
 Authorization: Basic joe:
 <% } -%>
@@ -426,7 +412,7 @@ Authorization: Basic joe:
 <% } -%>
 ###
 <% } -%>
-<% if((hana || hanaTargetHDI !== "" || api) && authentication){ -%>
+<% if((hana || api) && authentication){ -%>
 GET http://localhost:4004/v2/catalog/userInfo()
 <% if(authentication){ -%>
 Authorization: Basic joe:
@@ -434,7 +420,7 @@ Authorization: Basic joe:
 ###
 <% } -%>
 <% } -%>
-<% if(schemaName !== ''){ -%>
+<% if(schemaName !== '' && hanaTargetHDI === ''){ -%>
 GET http://localhost:4004/<%= schemaName %>/
 <% if(authentication){ -%>
 Authorization: Basic joe:
@@ -459,6 +445,37 @@ Authorization: Basic joe:
 <% } -%>
 ###
 GET http://localhost:4004/v2/<%= schemaName %>/$metadata
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
+<% } -%>
+<% if(hanaTargetHDI !== ''){ -%>
+GET http://localhost:4004/<%= hanaTargetHDI %>/
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+GET http://localhost:4004/<%= hanaTargetHDI %>/$metadata
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% if(swagger){ -%>
+GET http://localhost:4004/swagger/<%= hanaTargetHDI %>/
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
+<% if(v2support){ -%>
+GET http://localhost:4004/v2/<%= hanaTargetHDI %>/
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+GET http://localhost:4004/v2/<%= hanaTargetHDI %>/$metadata
 <% if(authentication){ -%>
 Authorization: Basic joe:
 <% } -%>

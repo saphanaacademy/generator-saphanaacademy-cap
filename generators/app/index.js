@@ -39,44 +39,46 @@ module.exports = class extends Generator {
       },
       {
         type: "input",
-        name: "schemaName",
-        message: "Will you be using an existing SAP HANA Cloud schema? If so please enter the schema name here or leave blank for none. Note: schema names in mixed case are case sensitive!",
-        default: ""
+        name: "hanaTargetHDI",
+        message: "Will you be using an existing SAP HANA Cloud HDI Container? If so please enter the HDI Container service instance name here or leave blank for none.",
+        default: "travel-db"
       },
       {
-        when: response => response.schemaName !== "",
+        when: response => response.hanaTargetHDI === "",
+        type: "input",
+        name: "schemaName",
+        message: "Will you be using an existing SAP HANA Cloud schema? If so please enter the schema name here or leave blank for none. Note: schema names in mixed case are case sensitive!",
+        default: "travel"
+      },
+      {
+        when: response => response.hanaTargetHDI === "" && response.schemaName !== "",
         type: "input",
         name: "hanaEndpoint",
         message: "What is your SAP HANA Cloud SQL endpoint?",
-        default: "<guid>.hana.<region>.hanacloud.ondemand.com:443"
+        //default: "<guid>.hana.<region>.hanacloud.ondemand.com:443"
+        default: "22906e6c-b1fc-4e54-94ce-2698dad07d1f.hana.trial-us10.hanacloud.ondemand.com:443"
       },
       {
-        when: response => response.schemaName !== "",
+        when: response => response.hanaTargetHDI === "" && response.schemaName !== "",
         type: "input",
         name: "hanaUser",
         message: "What is your SAP HANA Cloud user name?",
         default: "DBADMIN"
       },
       {
-        when: response => response.schemaName !== "",
+        when: response => response.hanaTargetHDI === "" && response.schemaName !== "",
         type: "password",
         name: "hanaPassword",
         message: "What is the password for your SAP HANA Cloud user?",
         mask: "*",
-        default: ""
+        default: "SHALive1"
       },
       {
-        when: response => response.schemaName !== "",
+        when: response => response.hanaTargetHDI === "" && response.schemaName !== "",
         type: "confirm",
         name: "schemaUPS",
         message: "Would you like to create the SAP HANA Cloud technical user and User-Provided Service Instance?",
         default: true
-      },
-      {
-        type: "input",
-        name: "hanaTargetHDI",
-        message: "Will you be accessing an external HDI Container? If so please enter the HDI Container service instance name here or leave blank for none.",
-        default: ""
       },
       {
         type: "confirm",
@@ -431,15 +433,16 @@ module.exports = class extends Generator {
       if (answers.newDir) {
         this.destinationRoot(`${answers.projectName}`);
       }
+      if (answers.hanaTargetHDI !== "") {
+        answers.schemaName = "";
+        answers.multiTenant = false;
+      }
       if (answers.schemaName === "") {
         answers.hanaEndpoint = "";
         answers.hanaUser = "";
         answers.hanaPassword = "";
         answers.schemaUPS = false;
       } else {
-        answers.multiTenant = false;
-      }
-      if (answers.hanaTargetHDI !== "") {
         answers.multiTenant = false;
       }
       if (answers.hana === false) {
@@ -587,6 +590,33 @@ module.exports = class extends Generator {
 
   async writing() {
     var answers = this.config;
+    if (answers.get('hanaTargetHDI') !== "") {
+      this.log("Accessing existing HDI Container: Start");
+      this.log("Checking whether the service instance exists...");
+      let resHDI = this.spawnCommandSync('cf', ['service', answers.get('hanaTargetHDI'), '--guid'], { stdio: 'pipe' });
+      if (resHDI.status) {
+        this.log("Service instance does not exist.");
+      }
+      this.log("Creating service key...");
+      const hdiSK = 'sha-cap';
+      resHDI = this.spawnCommandSync('cf', ['create-service-key', answers.get('hanaTargetHDI'), hdiSK], { stdio: 'pipe' });
+      if (resHDI.status) {
+        this.log("Unable to create service key:", resHDI.stdout.toString('utf8'));
+      }
+      this.log("Reading service key...");
+      resHDI = this.spawnCommandSync('cf', ['service-key', answers.get('hanaTargetHDI'), hdiSK], { stdio: 'pipe' });
+      if (resHDI.status) {
+        this.log("Unable to read service key:", resHDI.stdout.toString('utf8'));
+      }
+      var hdiBinding;
+      hdiBinding = resHDI.stdout.toString('utf8');
+      hdiBinding = JSON.parse(hdiBinding.substring(hdiBinding.indexOf('{')));
+      answers.set('schemaName', hdiBinding.schema);
+      answers.set('hanaEndpoint', hdiBinding.host + ':' + hdiBinding.port);
+      answers.set('hanaUser', hdiBinding.user);
+      answers.set('hanaPassword', hdiBinding.password);
+      this.log("Accessing existing HDI Container: End");
+    }
     if (answers.get('schemaName') !== "") {
       // when schema name is lowercase sometimes we need to specify it in uppercase!
       var schemaNameAdjustedCase = answers.get('schemaName');
@@ -695,7 +725,7 @@ module.exports = class extends Generator {
                 if (!((file === 'Jenkinsfile' || file.substring(0, 9) === '.pipeline') && answers.get('cicd') === false)) {
                   if (!(file.substring(0, 3) === 'haa' && answers.get('haa') === false)) {
                     if (!(file.substring(0, 3) === 'tpl' && (answers.get('hana') === false || answers.get('multiTenant') === false))) {
-                      if (!(file.substring(0, 19) === 'srv/catalog-service' && answers.get('hana') === false && answers.get('hanaTargetHDI') === "" && answers.get('api') === false)) {
+                      if (!(file.substring(0, 19) === 'srv/catalog-service' && answers.get('hana') === false && answers.get('api') === false)) {
                         if (!(file === 'srv/lib/credStore.js' && answers.get('credStore') === '')) {
                           if (!(file === 'srv/lib/utils.js' && (answers.get('apiARIBWS') === false && answers.get('apiCONC') === false))) {
                             if (!((file === 'srv/provisioning.js' || file === 'app/custom.js') && answers.get('multiTenant') === false)) {
@@ -719,49 +749,37 @@ module.exports = class extends Generator {
                                                                 if (!((file.substring(0, 31) === 'app/resources/fiori/xs-app.json' || file.substring(0, 32) === 'app/resources/fiori/package.json' || file.substring(0, 35) === 'app/resources/fiori/ui5-deploy.yaml') && answers.get('html5repo') === false)) {
                                                                   if (!((file.substring(0, 31) === 'app/resources/html5/xs-app.json' || file.substring(0, 32) === 'app/resources/html5/package.json' || file.substring(0, 35) === 'app/resources/html5/ui5-deploy.yaml' || file.substring(0, 40) === 'app/resources/html5/webapp/manifest.json') && answers.get('html5repo') === false)) {
                                                                     if (!(file.substring(0, 2) === 'db' && answers.get('hana') === false && answers.get('schemaName') === "" && answers.get('hanaTargetHDI') === "")) {
-                                                                      if (!((file.substring(0, 17) === 'db/data-model.cds' || file.substring(0, 7) === 'db/data' || file.substring(0, 6) === 'db/csv') && (answers.get('hana') === false && answers.get('hanaTargetHDI') === ""))) {
+                                                                      if (!((file.substring(0, 17) === 'db/data-model.cds' || file.substring(0, 7) === 'db/data' || file.substring(0, 6) === 'db/csv') && answers.get('hana') === false)) {
                                                                         if (!(file.substring(0, 31) === 'db/data/_PROJECT_NAME_.db.Sales' && answers.get('hana') === false)) {
                                                                           if (!((file.substring(0, 39) === 'db/src/_PROJECT_NAME_DB_EXTERNAL_ACCESS') && answers.get('hanaExternalHDI') === false)) {
-                                                                            if (!(file.substring(0, 33) === 'db/data/_PROJECT_NAME_.db.Widgets' && answers.get('hanaExternalHDI') === false)) {
-                                                                              if (!((file.substring(0, 35) === 'db/csv/_PROJECT_NAME_.db.Conditions' || file.substring(0, 43) === 'db/data/_PROJECT_NAME_.db.CustomerProcesses' || file.substring(0, 31) === 'db/csv/_PROJECT_NAME_.db.Status') && (answers.get('apiS4HCBP') === false || answers.get('em') === false))) {
-                                                                                if (!(file.substring(0, 7) === 'db/src/' && answers.get('hanaNative') === false && answers.get('hanaExternalHDI') === false && answers.get('hanaTargetHDI') === "" && answers.get('schemaName') === "")) {
-                                                                                  if (!((file.substring(0, 7) === 'db/cfg/' || file.substring(0, 19) === 'db/src/_TARGET_HDI_') && answers.get('hanaTargetHDI') === "")) {
-                                                                                    if (!(file.substring(0, 20) === 'db/src/_SCHEMA_NAME_' && answers.get('schemaName') === "")) {
-                                                                                      if (!((file.substring(0, 10) === 'db/src/SP_' || file.substring(0, 10) === 'db/src/TT_' || file.substring(0, 10) === 'db/src/CV_' || file.substring(0, 10) === 'db/src/TF_' || file.substring(0, 10) === 'db/src/SYS') && answers.get('hanaNative') === false)) {
-                                                                                        const sOrigin = this.templatePath(file);
-                                                                                        let fileDest = file;
-                                                                                        if (fileDest.includes('_PROJECT_NAME_.db')) {
-                                                                                          let folder = 'db/data';
-                                                                                          if (fileDest.substring(0, 6) === 'db/csv') folder = fileDest.substring(0, 6);
-                                                                                          fileDest = folder + '/' + answers.get('projectName') + '.db-' + fileDest.split(".", 3)[2] + '.csv';
-                                                                                        }
-                                                                                        if (fileDest.includes('_PROJECT_NAME_DB_EXTERNAL_ACCESS')) {
-                                                                                          let tempDest = 'db/src/' + answers.get('projectName').toUpperCase() + '_DB_EXTERNAL_ACCESS';
-                                                                                          if (fileDest.includes('EXTERNAL_ACCESS_G')) {
-                                                                                            tempDest += '_G';
-                                                                                          }
-                                                                                          fileDest = tempDest + '.' + fileDest.split(".", 3)[1];
-                                                                                        }
-                                                                                        if (fileDest.includes('_SCHEMA_NAME_')) {
-                                                                                          fileDest = 'db/src/' + answers.get('schemaName') + '.' + fileDest.split(".", 3)[1];
-                                                                                        }
-                                                                                        if (fileDest.includes('_TARGET_HDI_')) {
-                                                                                          fileDest = fileDest.substring(0, 7) + answers.get('hanaTargetHDI').toUpperCase().replace(/-/g, '_') + '.' + fileDest.split(".", 3)[1];
-                                                                                        }
-                                                                                        if (fileDest.includes('app/resources/') && answers.get('html5repo')) {
-                                                                                          fileDest = 'app/' + fileDest.substring(14);
-                                                                                        }
-                                                                                        if (fileDest === 'dotenv') {
-                                                                                          fileDest = '.env';
-                                                                                        }
-                                                                                        if (fileDest === 'dotgitignore') {
-                                                                                          fileDest = '.gitignore';
-                                                                                        }
-                                                                                        const sTarget = this.destinationPath(fileDest);
-                                                                                        this.fs.copyTpl(sOrigin, sTarget, this.config.getAll());
-                                                                                      }
-                                                                                    }
+                                                                            if (!((file.substring(0, 35) === 'db/csv/_PROJECT_NAME_.db.Conditions' || file.substring(0, 43) === 'db/data/_PROJECT_NAME_.db.CustomerProcesses' || file.substring(0, 31) === 'db/csv/_PROJECT_NAME_.db.Status') && (answers.get('apiS4HCBP') === false || answers.get('em') === false))) {
+                                                                              if (!(file.substring(0, 7) === 'db/src/' && answers.get('hanaNative') === false && answers.get('hanaExternalHDI') === false && answers.get('hanaTargetHDI') === "" && answers.get('schemaName') === "")) {
+                                                                                if (!((file.substring(0, 10) === 'db/src/SP_' || file.substring(0, 10) === 'db/src/TT_' || file.substring(0, 10) === 'db/src/CV_' || file.substring(0, 10) === 'db/src/TF_' || file.substring(0, 10) === 'db/src/SYS') && answers.get('hanaNative') === false)) {
+                                                                                  const sOrigin = this.templatePath(file);
+                                                                                  let fileDest = file;
+                                                                                  if (fileDest.includes('_PROJECT_NAME_.db')) {
+                                                                                    let folder = 'db/data';
+                                                                                    if (fileDest.substring(0, 6) === 'db/csv') folder = fileDest.substring(0, 6);
+                                                                                    fileDest = folder + '/' + answers.get('projectName') + '.db-' + fileDest.split(".", 3)[2] + '.csv';
                                                                                   }
+                                                                                  if (fileDest.includes('_PROJECT_NAME_DB_EXTERNAL_ACCESS')) {
+                                                                                    let tempDest = 'db/src/' + answers.get('projectName').toUpperCase() + '_DB_EXTERNAL_ACCESS';
+                                                                                    if (fileDest.includes('EXTERNAL_ACCESS_G')) {
+                                                                                      tempDest += '_G';
+                                                                                    }
+                                                                                    fileDest = tempDest + '.' + fileDest.split(".", 3)[1];
+                                                                                  }
+                                                                                  if (fileDest.includes('app/resources/') && answers.get('html5repo')) {
+                                                                                    fileDest = 'app/' + fileDest.substring(14);
+                                                                                  }
+                                                                                  if (fileDest === 'dotenv') {
+                                                                                    fileDest = '.env';
+                                                                                  }
+                                                                                  if (fileDest === 'dotgitignore') {
+                                                                                    fileDest = '.gitignore';
+                                                                                  }
+                                                                                  const sTarget = this.destinationPath(fileDest);
+                                                                                  this.fs.copyTpl(sOrigin, sTarget, this.config.getAll());
                                                                                 }
                                                                               }
                                                                             }
@@ -831,8 +849,8 @@ module.exports = class extends Generator {
     }
 
     if (answers.get('schemaName') !== "") {
-      var prefix = answers.get('projectName') + '_' + answers.get('schemaName');
       var thisgen = this;
+      var prefix = answers.get('projectName') + '_' + answers.get('schemaName');
 
       // connect to HANA to obtain metadata for tables in schema, scaffold project files & create technical user and roles
       var hana = require('@sap/hana-client')
@@ -847,26 +865,70 @@ module.exports = class extends Generator {
       let connection = hana.createConnection();
       connection.connect(connOptions, function (err) {
         if (err) {
-          return this.error(err);
+          thisgen.log(err.message);
+          return;
         }
-        let sql = "SELECT 'T' AS object_type, table_name as object_name FROM tables WHERE schema_name='" + schemaNameAdjustedCase + "' AND is_system_table='FALSE' AND is_temporary='FALSE' UNION SELECT 'V' AS object_type, view_name as object_name FROM views WHERE schema_name='" + schemaNameAdjustedCase + "'";
+        let sql = "SELECT 'T' AS object_type, table_name as object_name FROM tables WHERE schema_name='" + schemaNameAdjustedCase + "' AND is_system_table='FALSE' AND is_temporary='FALSE' AND is_user_defined_type='FALSE' UNION SELECT 'V' AS object_type, view_name as object_name FROM views WHERE schema_name='" + schemaNameAdjustedCase + "'";
         connection.exec(sql, function (err, resObjects) {
           if (err) {
-            return this.error(err);
+            thisgen.log(err.message);
+            return;
+          }
+          // for HDI containers only objects that use namespaces are supported ie: app.db::object
+          if (answers.get('hanaTargetHDI') !== "") {
+            let l = resObjects.length;
+            while (l--) {
+              if (resObjects[l].OBJECT_NAME.search('::') === -1) {
+                thisgen.log('Table or View does not use a namespace so will not be processed:', resObjects[l].OBJECT_NAME);
+                resObjects.splice(l, 1);
+              }
+            }
           }
           if (resObjects.length < 1) {
-            return this.error("No tables or views found in schema " + answers.get('schemaName'));
+            thisgen.log("No suitable tables or views found in schema " + answers.get('schemaName'));
+            return;
           }
+
+          // create grants
+          let hdbGrants = '{"';
+          if (answers.get('hanaTargetHDI') !== "") {
+            hdbGrants += answers.get('hanaTargetHDI');
+          } else {
+            hdbGrants += answers.get('projectName') + "-db-" + answers.get('schemaName');
+          }
+          hdbGrants += '": { "object_owner": {';
+          if (answers.get('hanaTargetHDI') !== "") {
+            hdbGrants += ' "container_roles": ["' + resObjects[0].OBJECT_NAME.split("::")[0] + "::EXTERNAL_ACCESS_G#";
+          } else {
+            hdbGrants += ' "roles": ["' + answers.get('projectName') + "_" + answers.get('schemaName') + "::EXTERNAL_ACCESS_G";
+          }
+          hdbGrants += '"] }, "application_user": {';
+          if (answers.get('hanaTargetHDI') !== "") {
+            hdbGrants += ' "container_roles": ["' + resObjects[0].OBJECT_NAME.split("::")[0] + "::EXTERNAL_ACCESS";
+          } else {
+            hdbGrants += ' "roles": ["' + answers.get('projectName') + "_" + answers.get('schemaName') + "::EXTERNAL_ACCESS";
+          }
+          hdbGrants += '"] } } }';
 
           // create synonyms
           let hdbSynonym = "{";
+          let hdbSynonymConfig = "{";
           let i = 0;
           resObjects.forEach(element => {
-            if (i) hdbSynonym += ",";
-            hdbSynonym += '"' + answers.get('projectName').toUpperCase() + '_DB_' + answers.get('schemaName').toUpperCase() + '_SY_' + element.OBJECT_NAME + '": {"target": {"object":"' + element.OBJECT_NAME + '","schema":"' + schemaNameAdjustedCase + '"}}';
+            if (i) {
+              hdbSynonym += ",";
+              hdbSynonymConfig += ",";
+            }
+            if (answers.get('hanaTargetHDI') !== "") {
+              hdbSynonym += '"' + answers.get('projectName').toUpperCase() + '_DB_' + element.OBJECT_NAME.split("::")[0].replace(/\./g, "_").toUpperCase() + '_SY_' + element.OBJECT_NAME.split("::")[1] + '": {"target": {"object":"' + element.OBJECT_NAME + '","schema":"_PLACEHOLDER_"}}';
+              hdbSynonymConfig += '"' + answers.get('projectName').toUpperCase() + '_DB_' + element.OBJECT_NAME.split("::")[0].replace(/\./g, "_").toUpperCase() + '_SY_' + element.OBJECT_NAME.split("::")[1] + '": {"target": {"object":"' + element.OBJECT_NAME + '","schema.configure":"' + answers.get('hanaTargetHDI') + '/schema"}}';
+            } else {
+              hdbSynonym += '"' + answers.get('projectName').toUpperCase() + '_DB_' + answers.get('schemaName').toUpperCase() + '_SY_' + element.OBJECT_NAME + '": {"target": {"object":"' + element.OBJECT_NAME + '","schema":"' + schemaNameAdjustedCase + '"}}';
+            }
             i++;
           });
           hdbSynonym += "}";
+          hdbSynonymConfig += "}";
           sql = "SELECT 'T' AS object_type, table_name as object_name, column_name, data_type_name, length, scale, is_nullable, default_value, position FROM table_columns WHERE schema_name='" + schemaNameAdjustedCase + "' AND table_name IN(''";
           resObjects.forEach(element => {
             if (element.OBJECT_TYPE === "T") {
@@ -882,27 +944,35 @@ module.exports = class extends Generator {
           sql += ") ORDER BY object_name, position";
           connection.exec(sql, function (err, resColumns) {
             if (err) {
-              return this.error(err);
+              thisgen.log(err.message);
+              return;
             }
 
             // create hdbview for each object
             var hdbViews = [];
             resObjects.forEach(elementO => {
-              let hdbView = "VIEW " + answers.get('projectName').toUpperCase() + "_DB_" + answers.get('schemaName').toUpperCase() + "_" + (elementO.OBJECT_NAME).toUpperCase() + " AS SELECT";
+              var hdbView;
+              if (answers.get('hanaTargetHDI') !== "") {
+                hdbView = "VIEW " + answers.get('projectName').toUpperCase() + '_DB_' + elementO.OBJECT_NAME.split("::")[0].replace(/\./g, "_").toUpperCase() + '_' + elementO.OBJECT_NAME.split("::")[1].toUpperCase() + " AS\n  SELECT";
+              } else {
+                hdbView = "VIEW " + answers.get('projectName').toUpperCase() + "_DB_" + answers.get('schemaName').toUpperCase() + "_" + elementO.OBJECT_NAME.toUpperCase() + " AS\n  SELECT";
+              }
               let i = 0;
               resColumns.forEach(elementC => {
                 if (elementC.OBJECT_NAME === elementO.OBJECT_NAME) {
-                  if (i) hdbView += ",";
-                  if (elementC.COLUMN_NAME !== (elementC.COLUMN_NAME).toUpperCase()) {
-                    hdbView += ' "' + elementC.COLUMN_NAME + '" AS ' + (elementC.COLUMN_NAME).toUpperCase();
-                  } else {
-                    hdbView += " " + elementC.COLUMN_NAME;
-                  }
+                  if (i) hdbView += ",\n        ";
+                  hdbView += ' "' + elementC.COLUMN_NAME + '" AS ' + (elementC.COLUMN_NAME).toUpperCase();
                   i++;
                 }
               });
-              hdbView += ' FROM "' + answers.get('projectName').toUpperCase() + '_DB_' + answers.get('schemaName').toUpperCase() + '_SY_' + elementO.OBJECT_NAME + '"';
-              var view = { "NAME": elementO.OBJECT_NAME, "VIEW": hdbView };
+              var view;
+              if (answers.get('hanaTargetHDI') !== "") {
+                hdbView += '\n  FROM "' + answers.get('projectName').toUpperCase() + '_DB_' + elementO.OBJECT_NAME.split("::")[0].replace(/\./g, "_").toUpperCase() + '_SY_' + elementO.OBJECT_NAME.split("::")[1] + '"';
+                view = { "NAME": answers.get('projectName').toUpperCase() + '_DB_' + elementO.OBJECT_NAME.split("::")[0].replace(/\./g, "_").toUpperCase() + '_' + elementO.OBJECT_NAME.split("::")[1].toUpperCase(), "VIEW": hdbView };
+              } else {
+                hdbView += '\n  FROM "' + answers.get('projectName').toUpperCase() + '_DB_' + answers.get('schemaName').toUpperCase() + '_SY_' + elementO.OBJECT_NAME + '"';
+                view = { "NAME": elementO.OBJECT_NAME, "VIEW": hdbView };
+              }
               hdbViews.push(view);
             });
             let sql = "SELECT table_name as object_name, column_name, position, is_primary_key FROM constraints WHERE schema_name='" + schemaNameAdjustedCase + "' AND table_name IN(''";
@@ -914,19 +984,31 @@ module.exports = class extends Generator {
             sql += ") ORDER BY table_name, position";
             connection.exec(sql, function (err, resConstraints) {
               if (err) {
-                return this.error(err);
+                thisgen.log(err.message);
+                return;
               }
 
               // create facade entity for each view
-              let schemaCDS = "namespace " + answers.get('projectName') + ".db; context " + answers.get('schemaName') + " {";
+              let schemaCDS = "namespace " + answers.get('projectName') + ".db;\n\ncontext ";
+              if (answers.get('hanaTargetHDI') !== "") {
+                schemaCDS += resObjects[0].OBJECT_NAME.split(".")[0] + " {\n  context " + resObjects[0].OBJECT_NAME.split(".")[1].split("::")[0];
+              } else {
+                schemaCDS += answers.get('schemaName');
+              }
+              schemaCDS += " {";
               resObjects.forEach(elementO => {
-                schemaCDS += " @cds.persistence.exists entity " + elementO.OBJECT_NAME;
+                schemaCDS += "\n    @cds.persistence.exists\n    entity ";
+                if (answers.get('hanaTargetHDI') !== "") {
+                  schemaCDS += elementO.OBJECT_NAME.split("::")[1];
+                } else {
+                  schemaCDS += elementO.OBJECT_NAME;
+                }
                 /* view parameters not supported yet: need to include in db/src/.hdbview, db/<schemaName>.cds and srv/<schemaName>-service.cds
                 //let sql = "SELECT view_name as object_name, parameter_name, data_type_name, length, scale, has_default_value, position FROM view_parameters WHERE schema_name='" + schemaNameAdjustedCase + "' AND view_name IN(";
                   // add any view parameters
                   i = 0;
                   resParameters.forEach(elementP => {
-                    this.log(elementP.OBJECT_NAME,elementO.OBJECT_NAME);
+                    thisgen.log(elementP.OBJECT_NAME,elementO.OBJECT_NAME);
                     if (elementP.OBJECT_NAME === elementO.OBJECT_NAME) {
                       if (i) {
                         schemaCDS += ",";
@@ -963,21 +1045,25 @@ module.exports = class extends Generator {
                   });
                   if (i) schemaCDS += ")";
                 */
-                schemaCDS += " {";
+                schemaCDS += " {\n";
                 i = 0;
                 resColumns.forEach(elementC => {
                   if (elementC.OBJECT_NAME === elementO.OBJECT_NAME) {
+                    let isKey = false;
                     resConstraints.forEach(elementI => {
                       if (elementI.OBJECT_NAME === elementC.OBJECT_NAME && elementI.COLUMN_NAME === elementC.COLUMN_NAME && elementI.IS_PRIMARY_KEY === "TRUE") {
-                        schemaCDS += " key";
+                        schemaCDS += "      key ";
+                        isKey = true;
                       }
                     });
                     // unclear how to determine key for views - assume first column
                     if (elementC.OBJECT_TYPE === "V" && i === 0) {
-                      schemaCDS += " key";
+                      schemaCDS += "      key ";
+                      isKey = true;
                     }
                     i++;
-                    schemaCDS += " " + (elementC.COLUMN_NAME).toLowerCase() + " : ";
+                    if (!isKey) { schemaCDS += "          " }
+                    schemaCDS += (elementC.COLUMN_NAME).toLowerCase() + " : ";
                     switch (elementC.DATA_TYPE_NAME) {
                       case "BOOLEAN": schemaCDS += "Boolean"; break;
                       case "TINYINT":
@@ -1021,114 +1107,179 @@ module.exports = class extends Generator {
                       }
 
                     }
-                    schemaCDS += ";";
+                    schemaCDS += ";\n";
                   }
                 });
-                schemaCDS += "};";
+                schemaCDS += "    };";
               });
-              schemaCDS += "}";
+              if (answers.get('hanaTargetHDI') !== "") {
+                schemaCDS += "\n  }";
+              }
+              schemaCDS += "\n}";
 
               // create service
-              let serviceCDS = "using {" + answers.get('projectName') + ".db." + answers.get('schemaName') + " as " + answers.get('schemaName') + "} from '../db/" + answers.get('schemaName') + "'; service " + answers.get('schemaName') + "Service @(path : '/" + answers.get('schemaName') + "')";
+              var serviceCDS;
+              if (answers.get('hanaTargetHDI') !== "") {
+                serviceCDS = "using {" + answers.get('projectName') + ".db." + resObjects[0].OBJECT_NAME.split("::")[0] + " as " + answers.get('hanaTargetHDI').replace(/-/g, "_") + "} from '../db/" + answers.get('hanaTargetHDI') + "';\n\nservice " + answers.get('hanaTargetHDI').replace(/-/g, "_") + "_service @(path : '/" + answers.get('hanaTargetHDI') + "')";
+              } else {
+                serviceCDS = "using {" + answers.get('projectName') + ".db." + answers.get('schemaName') + " as " + answers.get('schemaName') + "} from '../db/" + answers.get('schemaName') + "';\n\nservice " + answers.get('schemaName') + "_service @(path : '/" + answers.get('schemaName') + "')";
+              }
               if (answers.get('authentication')) {
                 serviceCDS += " @(requires:'authenticated-user')";
               }
               serviceCDS += " {";
               resObjects.forEach(element => {
-                serviceCDS += " entity " + element.OBJECT_NAME;
+                if (answers.get('hanaTargetHDI') !== "") {
+                  serviceCDS += "\n    entity " + element.OBJECT_NAME.split("::")[1];
+                } else {
+                  serviceCDS += "\n    entity " + element.OBJECT_NAME;
+                }
                 if (answers.get('authorization')) {
                   serviceCDS += " @(restrict: [{ grant: 'READ', to: 'Viewer' }, { grant: 'WRITE', to: 'Admin' } ])";
                 }
-                if (element.OBJECT_TYPE === "V") {
-                  serviceCDS += " as select * from " + answers.get('schemaName') + "." + element.OBJECT_NAME + ";";
+                if (answers.get('hanaTargetHDI') !== "") {
+                  serviceCDS += " as select * from " + answers.get('hanaTargetHDI').replace(/-/g, "_") + "." + element.OBJECT_NAME.split("::")[1] + ";";
                 } else {
                   serviceCDS += " as select * from " + answers.get('schemaName') + "." + element.OBJECT_NAME + ";";
                 }
               });
-              serviceCDS += "};";
+              serviceCDS += "\n};";
 
               // scaffold project files
-              /* 22sep2021 - with @sap/hana-client 2.x this.fs stopped working here so changed to use core node fs which allows to specify a callback but will now overwrite any existing files without warning!
-              fs.write(destinationRoot + "/db/" + answers.get('schemaName') + ".cds", schemaCDS);
-              fs.write(destinationRoot + "/db/src/" + answers.get('schemaName') + ".hdbsynonym", hdbSynonym);
-              hdbViews.forEach(element => {
-                fs.write(destinationRoot + "/db/src/" + answers.get('schemaName') + "-" + element.NAME + ".hdbview", element.VIEW);
-              });
-              fs.write(destinationRoot + "/srv/" + answers.get('schemaName') + "-service.cds", serviceCDS);
-              */
               const fs2 = require('fs');
               if (!fs2.existsSync(destinationRoot + "/db")) {
                 fs2.mkdirSync(destinationRoot + "/db");
               };
-              fs2.writeFile(destinationRoot + "/db/" + answers.get('schemaName') + ".cds", schemaCDS, 'utf8', function (err) {
-                if (err) return thisgen.log(err);
+              let fileDest;
+              if (answers.get('hanaTargetHDI') !== "") {
+                fileDest = destinationRoot + "/db/" + answers.get('hanaTargetHDI');
+              } else {
+                fileDest = destinationRoot + "/db/" + answers.get('schemaName');
+              }
+              fs2.writeFile(fileDest + ".cds", schemaCDS, 'utf8', function (err) {
+                if (err) {
+                  thisgen.log(err.message);
+                  return;
+                }
               });
               if (!fs2.existsSync(destinationRoot + "/db/src")) {
                 fs2.mkdirSync(destinationRoot + "/db/src");
               };
-              fs2.writeFile(destinationRoot + "/db/src/" + answers.get('schemaName') + ".hdbsynonym", hdbSynonym, 'utf8', function (err) {
-                if (err) return thisgen.log(err);
+              if (answers.get('hanaTargetHDI') !== "") {
+                fileDest = destinationRoot + "/db/src/" + answers.get('hanaTargetHDI');
+              } else {
+                fileDest = destinationRoot + "/db/src/" + answers.get('schemaName');
+              }
+              fs2.writeFile(fileDest + ".hdbgrants", JSON.stringify(JSON.parse(hdbGrants), null, 4), 'utf8', function (err) {
+                if (err) {
+                  thisgen.log(err.message);
+                  return;
+                }
               });
+              fs2.writeFile(fileDest + ".hdbsynonym", JSON.stringify(JSON.parse(hdbSynonym), null, 4), 'utf8', function (err) {
+                if (err) {
+                  thisgen.log(err.message);
+                  return;
+                }
+              });
+              if (answers.get('hanaTargetHDI') !== "") {
+                if (!fs2.existsSync(destinationRoot + "/db/cfg")) {
+                  fs2.mkdirSync(destinationRoot + "/db/cfg");
+                };
+                fileDest = destinationRoot + "/db/cfg/" + answers.get('hanaTargetHDI');
+                fs2.writeFile(fileDest + ".hdbsynonymconfig", JSON.stringify(JSON.parse(hdbSynonymConfig), null, 4), 'utf8', function (err) {
+                  if (err) {
+                    thisgen.log(err.message);
+                    return;
+                  }
+                });
+              }
               hdbViews.forEach(element => {
-                fs2.writeFile(destinationRoot + "/db/src/" + answers.get('schemaName') + "-" + element.NAME + ".hdbview", element.VIEW, 'utf8', function (err) {
-                  if (err) return thisgen.log(err);
+                if (answers.get('hanaTargetHDI') !== "") {
+                  fileDest = destinationRoot + "/db/src/" + element.NAME;
+                } else {
+                  fileDest = destinationRoot + "/db/src/" + answers.get('schemaName') + "-" + element.NAME;
+                }
+                fs2.writeFile(fileDest + ".hdbview", element.VIEW, 'utf8', function (err) {
+                  if (err) {
+                    thisgen.log(err.message);
+                    return;
+                  }
                 });
               });
               if (!fs2.existsSync(destinationRoot + "/srv")) {
                 fs2.mkdirSync(destinationRoot + "/srv");
               };
-              fs2.writeFile(destinationRoot + "/srv/" + answers.get('schemaName') + "-service.cds", serviceCDS, 'utf8', function (err) {
-                if (err) return thisgen.log(err);
+              if (answers.get('hanaTargetHDI') !== "") {
+                fileDest = destinationRoot + "/srv/" + answers.get('hanaTargetHDI');
+              } else {
+                fileDest = destinationRoot + "/srv/" + answers.get('schemaName');
+              }
+              fs2.writeFile(fileDest + "-service.cds", serviceCDS, 'utf8', function (err) {
+                if (err) {
+                  thisgen.log(err.message);
+                  return;
+                }
               });
 
               // define SAP HANA Cloud technical user, roles and grants
-              thisgen.log('Syntax to create the SAP HANA Cloud technical user, roles and grants:');
               const sql1 = 'CREATE USER ' + prefix + '_GRANTOR PASSWORD ' + grantorPassword + ' NO FORCE_FIRST_PASSWORD_CHANGE';
-              thisgen.log(sql1 + ";");
               const sql2 = 'CREATE ROLE "' + prefix + '::EXTERNAL_ACCESS_G"';
-              thisgen.log(sql2 + ";");
               const sql3 = 'CREATE ROLE "' + prefix + '::EXTERNAL_ACCESS"';
-              thisgen.log(sql3 + ";");
               const sql4 = 'GRANT "' + prefix + '::EXTERNAL_ACCESS_G", "' + prefix + '::EXTERNAL_ACCESS" TO ' + prefix + '_GRANTOR WITH ADMIN OPTION';
-              thisgen.log(sql4 + ";");
               const sql5 = 'GRANT SELECT,INSERT,UPDATE,DELETE ON SCHEMA "' + schemaNameAdjustedCase + '" TO "' + prefix + '::EXTERNAL_ACCESS_G" WITH GRANT OPTION';
-              thisgen.log(sql5 + ";");
               const sql6 = 'GRANT SELECT,INSERT,UPDATE,DELETE ON SCHEMA "' + schemaNameAdjustedCase + '" TO "' + prefix + '::EXTERNAL_ACCESS"';
-              thisgen.log(sql6 + ";");
-              thisgen.log("");
+              if (answers.get('hanaTargetHDI') === "") {
+                thisgen.log('Syntax to create the SAP HANA Cloud technical user, roles and grants:');
+                thisgen.log(sql1 + ";");
+                thisgen.log(sql2 + ";");
+                thisgen.log(sql3 + ";");
+                thisgen.log(sql4 + ";");
+                thisgen.log(sql5 + ";");
+                thisgen.log(sql6 + ";");
+                thisgen.log("");
+              }
 
               // define user-provided service instance
               // we take this approach instead of writing to mta.yaml to avoid the SAP HANA Cloud technical user & password being visible in project source files
               const cupsParams = '{"user":"' + prefix + '_GRANTOR","password":"' + grantorPassword + '","schema":"' + schemaNameAdjustedCase + '","tags":["hana"]}';
-              thisgen.log('Syntax to create the User-Provided Service Instance:');
-              thisgen.log('cf cups ' + answers.get('projectName') + '-db-' + answers.get('schemaName') + " -p '" + cupsParams + "'");
-              thisgen.log("");
+              if (answers.get('hanaTargetHDI') === "") {
+                thisgen.log('Syntax to create the User-Provided Service Instance:');
+                thisgen.log('cf cups ' + answers.get('projectName') + '-db-' + answers.get('schemaName') + " -p '" + cupsParams + "'");
+                thisgen.log("");
+              }
 
               // create HANA technical user and roles only when requested
               if (answers.get('schemaUPS') === true) {
                 connection.exec(sql1, function (err, result) {
                   if (err) {
-                    return this.error(err);
+                    thisgen.log(err.message);
+                    return;
                   }
                   connection.exec(sql2, function (err, result) {
                     if (err) {
-                      return this.error(err);
+                      thisgen.log(err.message);
+                      return;
                     }
                     connection.exec(sql3, function (err, result) {
                       if (err) {
-                        return this.error(err);
+                        thisgen.log(err.message);
+                        return;
                       }
                       connection.exec(sql4, function (err, result) {
                         if (err) {
-                          return this.error(err);
+                          thisgen.log(err.message);
+                          return;
                         }
                         connection.exec(sql5, function (err, result) {
                           if (err) {
-                            return this.error(err);
+                            thisgen.log(err.message);
+                            return;
                           }
                           connection.exec(sql6, function (err, result) {
                             if (err) {
-                              return this.error(err);
+                              thisgen.log(err.message);
+                              return;
                             }
                             connection.disconnect(function (err) {
                               done(err);
@@ -1147,6 +1298,7 @@ module.exports = class extends Generator {
       });
     }
 
+    answers.delete('hanaEndpoint');
     answers.delete('hanaUser');
     answers.delete('hanaPassword');
     answers.delete('APIKeyHubSandbox');

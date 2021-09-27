@@ -1,10 +1,8 @@
 {
     "role": {
-        "name": "<%= projectName.toUpperCase() %>_DB_EXTERNAL_ACCESS",
-        "object_privileges": [
+        "name": "<%= projectName %>.db::EXTERNAL_ACCESS",
+        "schema_privileges": [
             {
-                "name": "<%= projectName.toUpperCase() %>_DB_WIDGETS",
-                "type": "TABLE",
                 "privileges": [
                     "SELECT"
                 ]

@@ -1,8 +1,0 @@
-{
-    "<%= hanaTargetHDI.toUpperCase().replace(/-/g, '_') %>_WIDGETS": {
-        "target": {
-            "object": "<%= hanaTargetHDI.toUpperCase().replace(/-/g, '_') %>_WIDGETS",
-            "schema.configure": "<%= hanaTargetHDI %>/schema"
-        }
-    }
-}

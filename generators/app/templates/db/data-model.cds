@@ -5,7 +5,7 @@ using { sap.common.CodeList } from '@sap/cds/common';
 <% } -%>
 <% } -%>
 
-<% if(hanaNative || hanaTargetHDI !== ""){ -%>
+<% if(hanaNative){ -%>
 context <%= projectName %>.db {
 <% } else { -%>
 namespace <%= projectName %>.db;
@@ -20,14 +20,6 @@ entity Sales {
       amount      : Integer;
       comments    : String(100);
       criticality : Integer;
-};
-<% } -%>
-
-<% if(hanaExternalHDI){ -%>
-entity Widgets {
-  key ID    : Integer;
-      code  : String(10);
-      stock : Integer;
 };
 <% } -%>
 
@@ -86,10 +78,9 @@ entity EmployeeJobsLog : cuid, managed {
 <% } -%>
 <% } -%>
 
-<% if(hanaNative || hanaTargetHDI !== ""){ -%>
+<% if(hanaNative){ -%>
 }
 
-<% if(hanaNative){ -%>
 @cds.persistence.exists
 @cds.persistence.calcview
 entity CV_SALES {
@@ -103,14 +94,4 @@ entity CV_SESSION_INFO {
   key ITEM     : String(5000);
       VALUE    : String(5000);
 }
-<% } -%>
-
-<% if(hanaTargetHDI !== ""){ -%>
-@cds.persistence.exists
-entity <%= hanaTargetHDI.toUpperCase().replace(/-/g, '_') %>_WIDGETS {
-  key ID    : Integer;
-      code  : String(10);
-      stock : Integer;
-}
-<% } -%>
 <% } -%>

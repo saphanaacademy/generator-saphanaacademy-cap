@@ -67,14 +67,8 @@ module.exports = cds.service.impl(async function () {
 <% if(hana){ -%>
             Sales
 <% } -%>
-<% if(hanaTargetHDI !== ""){ -%>
-<% if(hana){ -%>
-            ,
-<% } -%>
-            Widgets
-<% } -%>
 <% if(apiS4HCSO){ -%>
-<% if(hana || hanaTargetHDI !== ""){ -%>
+<% if(hana){ -%>
             ,
 <% } -%>
             SalesOrders
@@ -84,7 +78,7 @@ module.exports = cds.service.impl(async function () {
 <% } -%>
 <% } -%>
 <% if(apiS4HCBP){ -%>
-<% if(hana || hanaTargetHDI !== "" || apiS4HCSO){ -%>
+<% if(hana || apiS4HCSO){ -%>
             ,
 <% } -%>
             BusinessPartners
@@ -94,7 +88,7 @@ module.exports = cds.service.impl(async function () {
 <% } -%>
 <% } -%>
 <% if(apiSFSFRC){ -%>
-<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO){ -%>
+<% if(hana || apiS4HCBP || apiS4HCSO){ -%>
             ,
 <% } -%>
             Candidates
@@ -104,7 +98,7 @@ module.exports = cds.service.impl(async function () {
 <% } -%>
 <% } -%>
 <% if(apiSFSFEC){ -%>
-<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC){ -%>
+<% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC){ -%>
             ,
 <% } -%>
             EmployeeJobs
@@ -114,46 +108,46 @@ module.exports = cds.service.impl(async function () {
 <% } -%>
 <% } -%>
 <% if(apiARIBPO){ -%>
-<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC){ -%>
+<% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC){ -%>
             ,
 <% } -%>
             PurchaseOrders
 <% } -%>
 <% if(apiFGCN){ -%>
-<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO){ -%>
+<% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO){ -%>
             ,
 <% } -%>
             JobPosting,
             WorkOrder
 <% } -%>
 <% if(apiFGAP){ -%>
-<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN){ -%>
+<% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN){ -%>
             ,
 <% } -%>
             Approvals,
             RejectReasons
 <% } -%>
 <% if(apiCONC){ -%>
-<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP){ -%>
+<% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP){ -%>
             ,
 <% } -%>
             ExpenseUsers,
             ExpenseReports
 <% } -%>
 <% if(apiGRAPH){ -%>
-<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP || apiCONC){ -%>
+<% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP || apiCONC){ -%>
             ,
 <% } -%>
             WorkforcePersons
 <% } -%>
 <% if(apiHERE){ -%>
-<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP || apiCONC || apiGRAPH){ -%>
+<% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP || apiCONC || apiGRAPH){ -%>
             ,
 <% } -%>
             Geocodes
 <% } -%>
 <% if(apiNeoWs){ -%>
-<% if(hana || hanaTargetHDI !== "" || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP || apiCONC || apiGRAPH || apiHERE){ -%>
+<% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP || apiCONC || apiGRAPH || apiHERE){ -%>
             ,
 <% } -%>
             Asteroids
