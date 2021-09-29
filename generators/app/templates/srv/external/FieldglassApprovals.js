@@ -1,12 +1,9 @@
 class FieldglassApprovals extends cds.RemoteService {
     async init() {
 
-        const Approvals = this.model.definitions['CatalogService.Approvals'];
-        const RejectReasons = this.model.definitions['CatalogService.RejectReasons'];
-
         this.reject(['CREATE', 'UPDATE', 'DELETE'], '*');
 
-        this.before('READ', Approvals, (req) => {
+        this.before('READ', 'Approvals', (req) => {
             try {
                 let query = 'GET /approvals';
                 let select = req.query.SELECT;
@@ -40,7 +37,7 @@ class FieldglassApprovals extends cds.RemoteService {
             }
         });
 
-        this.before('READ', RejectReasons, (req) => {
+        this.before('READ', 'RejectReasons', (req) => {
             try {
                 let query = 'GET /approvals/reject_reasons';
                 let select = req.query.SELECT;

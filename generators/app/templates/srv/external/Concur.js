@@ -1,12 +1,9 @@
 class Concur extends cds.RemoteService {
     async init() {
 
-        const ExpenseUsers = this.model.definitions['CatalogService.ExpenseUsers'];
-        const ExpenseReports = this.model.definitions['CatalogService.ExpenseReports'];
-
         this.reject(['CREATE', 'UPDATE', 'DELETE'], '*');
 
-        this.before('READ', ExpenseUsers, (req) => {
+        this.before('READ', 'ExpenseUsers', (req) => {
             try {
                 let select = req.query.SELECT;
                 let query = 'GET /users?limit=' + select.limit.rows.val;
@@ -26,7 +23,7 @@ class Concur extends cds.RemoteService {
             }
         });
 
-        this.before('READ', ExpenseReports, (req) => {
+        this.before('READ', 'ExpenseReports', (req) => {
             try {
                 let select = req.query.SELECT;
                 if (select.limit.rows.val > 100) select.limit.rows.val = 100;

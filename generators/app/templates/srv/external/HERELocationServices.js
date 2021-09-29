@@ -5,11 +5,9 @@ const credStore = require('./../lib/credStore');
 class HERELocationServices extends cds.RemoteService {
     async init() {
 
-        const Geocodes = this.model.definitions['CatalogService.Geocode'];
-
         this.reject(['CREATE', 'UPDATE', 'DELETE'], '*');
 
-        this.before('READ', Geocodes, async (req) => {
+        this.before('READ', 'Geocodes', async (req) => {
             try {
                 let query = 'GET /geocode?apiKey=' + <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'APIKeyHERE')<% } else { -%>process.env.APIKeyHERE<% } -%>;
                 let select = req.query.SELECT;
@@ -34,7 +32,7 @@ class HERELocationServices extends cds.RemoteService {
             }
         });
 
-        this.on('READ', Geocodes, async (req, next) => {
+        this.on('READ', 'Geocodes', async (req, next) => {
             const response = await next(req);
             return response.items;
         });

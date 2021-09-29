@@ -3,12 +3,9 @@ const debug = require('debug')('srv:FieldglassConnectors');
 class FieldglassConnectors extends cds.RemoteService {
     async init() {
 
-        const JobPosting = this.model.definitions['CatalogService.JobPosting'];
-        const WorkOrder = this.model.definitions['CatalogService.WorkOrder'];
+        this.reject(['CREATE', 'UPDATE', 'DELETE'], ['JobPosting', 'WorkOrder']);
 
-        this.reject(['CREATE', 'UPDATE', 'DELETE'], [JobPosting, WorkOrder]);
-
-        this.before('READ', JobPosting, (req) => {
+        this.before('READ', 'JobPosting', (req) => {
             try {
                 let query = 'GET /<%= FGCNJobPostingSupplierDownload %>';
                 if (req.query.SELECT.from.ref[0].where) {
@@ -21,7 +18,7 @@ class FieldglassConnectors extends cds.RemoteService {
             }
         });
 
-        this.on('READ', JobPosting, async (req, next) => {
+        this.on('READ', 'JobPosting', async (req, next) => {
             const response = await next(req);
             debug(response);
             if (response.StaffingOrder) {
@@ -31,7 +28,7 @@ class FieldglassConnectors extends cds.RemoteService {
             }
         });
 
-        this.before('READ', WorkOrder, (req) => {
+        this.before('READ', 'WorkOrder', (req) => {
             try {
                 let query = 'GET /<%= FGCNWorkerfromWorkOrderXMLDownload %>';
                 if (req.query.SELECT.from.ref[0].where) {
@@ -44,7 +41,7 @@ class FieldglassConnectors extends cds.RemoteService {
             }
         });
 
-        this.on('READ', WorkOrder, async (req, next) => {
+        this.on('READ', 'WorkOrder', async (req, next) => {
             const response = await next(req);
             debug(response);
             if (response.ShowWorker) {
