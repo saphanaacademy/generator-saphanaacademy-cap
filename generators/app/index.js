@@ -41,22 +41,21 @@ module.exports = class extends Generator {
         type: "input",
         name: "hanaTargetHDI",
         message: "Will you be using an existing SAP HANA Cloud HDI Container? If so please enter the HDI Container service instance name here or leave blank for none.",
-        default: "travel-db"
+        default: ""
       },
       {
         when: response => response.hanaTargetHDI === "",
         type: "input",
         name: "schemaName",
         message: "Will you be using an existing SAP HANA Cloud schema? If so please enter the schema name here or leave blank for none. Note: schema names in mixed case are case sensitive!",
-        default: "travel"
+        default: ""
       },
       {
         when: response => response.hanaTargetHDI === "" && response.schemaName !== "",
         type: "input",
         name: "hanaEndpoint",
         message: "What is your SAP HANA Cloud SQL endpoint?",
-        //default: "<guid>.hana.<region>.hanacloud.ondemand.com:443"
-        default: "22906e6c-b1fc-4e54-94ce-2698dad07d1f.hana.trial-us10.hanacloud.ondemand.com:443"
+        default: "<guid>.hana.<region>.hanacloud.ondemand.com:443"
       },
       {
         when: response => response.hanaTargetHDI === "" && response.schemaName !== "",
@@ -71,7 +70,7 @@ module.exports = class extends Generator {
         name: "hanaPassword",
         message: "What is the password for your SAP HANA Cloud user?",
         mask: "*",
-        default: "SHALive1"
+        default: ""
       },
       {
         when: response => response.hanaTargetHDI === "" && response.schemaName !== "",
