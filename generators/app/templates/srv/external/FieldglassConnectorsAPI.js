@@ -27,24 +27,13 @@ class FieldglassConnectorsAPI {
             data.HumanResource.Profile.Resume.NonXMLResume.SupportingMaterials.AttachmentReference['@mimeType'] = req.data.resumeMimeType;
             data.HumanResource.Profile.Resume.NonXMLResume.TextResume = req.data.resumeText;
             debug(data);
-            //call Cloud SDK directly as CAP wrapper doesn't return response data when status is 400
-            //const fgcn = await cds.connect.to('FieldglassConnectors');
-            //let response = await fgcn.tx(req).post('/<%= FGCNJobSeekerUpload %>', data);
-            let response = await cloudSDKCore.executeHttpRequest(
-                {
-                    destinationName: cds.env.requires.FieldglassConnectors.credentials.destination
-                },
-                {
-                    method: 'POST',
-                    url: cds.env.requires.FieldglassConnectors.credentials.path + '/<%= FGCNJobSeekerUpload %>',
-                    data: data
-                }
-            );
-            debug(response.data);
-            return response.data.Status;
+            const fgcn = await cds.connect.to('FieldglassConnectors');
+            let response = await fgcn.tx(req).post('/<%= FGCNJobSeekerUpload %>', data);
+            debug(response.Status);
+            return response.Status;
         } catch (error) {
-            console.error(error.stack, error.response.data);
-            return error.response.data.Status;
+            console.error(error.stack, error.innererror.response.body);
+            return error.innererror.response.body.Status;
         }
     }
 
@@ -61,24 +50,13 @@ class FieldglassConnectorsAPI {
             data.StaffingOrder.AssignmentType.Assignment.ReferenceInformation.UserArea.Comments = req.data.comments;
             data.StaffingOrder.AssignmentType.Assignment.ContractInformation.ContactMethod.InternetEmailAddress = req.data.email;
             debug(data);
-            //call Cloud SDK directly as CAP wrapper doesn't return response data when status is 400
-            //const fgcn = await cds.connect.to('FieldglassConnectors');
-            //let response = await fgcn.tx(req).post('/<%= FGCNWorkOrderAcceptUpload %>', data);
-            let response = await cloudSDKCore.executeHttpRequest(
-                {
-                    destinationName: cds.env.requires.FieldglassConnectors.credentials.destination
-                },
-                {
-                    method: 'POST',
-                    url: cds.env.requires.FieldglassConnectors.credentials.path + '/<%= FGCNWorkOrderAcceptUpload %>',
-                    data: data
-                }
-            );
-            debug(response.data);
-            return response.data.Status;
+            const fgcn = await cds.connect.to('FieldglassConnectors');
+            let response = await fgcn.tx(req).post('/<%= FGCNWorkOrderAcceptUpload %>', data);
+            debug(response.Status);
+            return response.Status;
         } catch (error) {
-            console.error(error.stack, error.response.data);
-            return error.response.data.Status;
+            console.error(error.stack, error.innererror.response.body);
+            return error.innererror.response.body.Status;
         }
     }
 
