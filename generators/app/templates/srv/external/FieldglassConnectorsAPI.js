@@ -1,6 +1,5 @@
 const cds = require('@sap/cds');
 const debug = require('debug')('srv:FieldglassConnectorsAPI');
-const cloudSDKCore = require('@sap-cloud-sdk/core');
 const fs = require('fs');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
