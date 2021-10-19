@@ -883,6 +883,14 @@ module.exports = class extends Generator {
               }
             }
           }
+          // ignore calc view hierarchies
+          let ll = resObjects.length;
+          while (ll--) {
+            if (!(resObjects[ll].OBJECT_NAME.search('/sqlh/') === -1 && resObjects[ll].OBJECT_NAME.search('/hier/') === -1)) {
+              thisgen.log('Ignoring Calculation View hierarchy:', resObjects[ll].OBJECT_NAME);
+              resObjects.splice(ll, 1);
+            }
+          }
           if (resObjects.length < 1) {
             thisgen.log("No suitable tables or views found in schema " + answers.get('schemaName'));
             return;
