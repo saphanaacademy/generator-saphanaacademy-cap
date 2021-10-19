@@ -878,7 +878,7 @@ module.exports = class extends Generator {
             let l = resObjects.length;
             while (l--) {
               if (resObjects[l].OBJECT_NAME.search('::') === -1) {
-                thisgen.log('Table or View does not use a namespace so will not be processed:', resObjects[l].OBJECT_NAME);
+                thisgen.log("Table or View does not use a namespace so will not be processed: " + resObjects[l].OBJECT_NAME);
                 resObjects.splice(l, 1);
               }
             }
@@ -887,7 +887,7 @@ module.exports = class extends Generator {
           let ll = resObjects.length;
           while (ll--) {
             if (!(resObjects[ll].OBJECT_NAME.search('/sqlh/') === -1 && resObjects[ll].OBJECT_NAME.search('/hier/') === -1)) {
-              thisgen.log('Ignoring Calculation View hierarchy:', resObjects[ll].OBJECT_NAME);
+              thisgen.log("Ignoring Calculation View hierarchy: " + resObjects[ll].OBJECT_NAME);
               resObjects.splice(ll, 1);
             }
           }
