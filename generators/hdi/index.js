@@ -8,7 +8,7 @@ module.exports = class extends Generator {
         if (this.config.get("hanaTargetHDI") !== "") {
             this.log("Refreshing existing SAP HANA Cloud HDI Container:", this.config.get("hanaTargetHDI"));
         } else {
-            this.log("No existing SAP HANA Cloud HDI Container was defined for this project.");
+            this.log("No existing SAP HANA Cloud HDI Container is defined for this project.");
             return;
         }
         this.log("");
@@ -16,7 +16,7 @@ module.exports = class extends Generator {
             {
                 type: "confirm",
                 name: "confirm",
-                message: "The following project files will be replaced: db/src/" + this.config.get("hanaTargetHDI") + ".hdbgrants, db/src/" + this.config.get("hanaTargetHDI") + ".hdbsynonym, db/cfg/" + this.config.get("hanaTargetHDI") + ".hdbsynonymconfig, db/src/" + this.config.get("projectName").replace(/\-/g, "_").toUpperCase() + "_DB_" + this.config.get("hanaTargetHDI").replace(/\-/g, "_").toUpperCase() + "_*.hdbview, db/" + this.config.get("hanaTargetHDI") + ".cds, srv/" + this.config.get("hanaTargetHDI") + "-service.cds. Are you absolutely sure?",
+                message: "The following project files will be replaced: db/src/" + this.config.get("hanaTargetHDI") + ".hdbgrants, db/src/" + this.config.get("hanaTargetHDI") + ".hdbsynonym, db/cfg/" + this.config.get("hanaTargetHDI") + ".hdbsynonymconfig, db/src/" + this.config.get("projectName").replace(/\-/g, "_").toUpperCase() + "_DB_" + this.config.get("hanaTargetHDI").replace(/\-/g, "_").toUpperCase() + "_*.hdbview, db/" + this.config.get("hanaTargetHDI") + ".cds, srv/" + this.config.get("hanaTargetHDI") + "-service.cds. Are you really sure you want to do this?",
                 default: false
             },
         ]).then((answers) => {
@@ -27,7 +27,7 @@ module.exports = class extends Generator {
     async writing() {
         var answers = this.config;
         if (answers.get("confirm")) {
-            hanaUtils.targetHDI2Schema(this, answers);
+            hanaUtils.hanaTargetHDI2Schema(this, answers);
             hanaUtils.processSchema(this, answers);
             this.log("");
             this.log("Project files have been replaced.");

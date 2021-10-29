@@ -8,7 +8,7 @@ module.exports = class extends Generator {
         if (this.config.get("schemaName") !== "" && this.config.get("hanaTargetHDI") === "") {
             this.log("Refreshing existing SAP HANA Cloud schema:", this.config.get("schemaName"));
         } else {
-            this.log("No existing SAP HANA Cloud schema was defined for this project.");
+            this.log("No existing SAP HANA Cloud schema is defined for this project.");
             return;
         }
         this.log("");
@@ -35,7 +35,7 @@ module.exports = class extends Generator {
             {
                 type: "confirm",
                 name: "confirm",
-                message: "The following project files will be replaced: db/src/" + this.config.get("schemaName") + ".hdbgrants, db/src/" + this.config.get("schemaName") + ".hdbsynonym, db/src/" + this.config.get("schemaName") + "-*.hdbview, db/" + this.config.get("schemaName") + ".cds, srv/" + this.config.get("schemaName") + "-service.cds. Are you absolutely sure?",
+                message: "The following project files will be replaced: db/src/" + this.config.get("schemaName") + ".hdbgrants, db/src/" + this.config.get("schemaName") + ".hdbsynonym, db/src/" + this.config.get("schemaName") + "-*.hdbview, db/" + this.config.get("schemaName") + ".cds, srv/" + this.config.get("schemaName") + "-service.cds. Are you really sure you want to do this?",
                 default: false
             },
         ]).then((answers) => {

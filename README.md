@@ -31,8 +31,6 @@ To generate your new project:
 yo saphanaacademy-cap
 ```
 
-![SAP Business Application Studio](demo.gif)
-
 To refresh project files for an existing SAP HANA Cloud schema:
 
 ```bash
@@ -46,6 +44,8 @@ To refresh project files for an existing SAP HANA Cloud HDI Container:
 cd <project-folder>
 yo saphanaacademy-cap:hdi
 ```
+
+![SAP Business Application Studio](demo.gif)
 
 ## Video Tutorials
 
