@@ -33,6 +33,20 @@ yo saphanaacademy-cap
 
 ![SAP Business Application Studio](demo.gif)
 
+To refresh project files for an existing SAP HANA Cloud schema:
+
+```bash
+cd <project-folder>
+yo saphanaacademy-cap:schema
+```
+
+To refresh project files for an existing SAP HANA Cloud HDI Container:
+
+```bash
+cd <project-folder>
+yo saphanaacademy-cap:hdi
+```
+
 ## Video Tutorials
 
 For hands-on video tutorials click [here](https://www.youtube.com/playlist?list=PLkzo92owKnVwQ-0oT78691fqvHrYXd5oN).
