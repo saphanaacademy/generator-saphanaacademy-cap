@@ -16,7 +16,7 @@ module.exports = class extends Generator {
             {
                 type: "confirm",
                 name: "confirm",
-                message: "The following project files will be replaced: db/src/" + this.config.get("hanaTargetHDI") + ".hdbgrants, db/src/" + this.config.get("hanaTargetHDI") + ".hdbsynonym, db/cfg/" + this.config.get("hanaTargetHDI") + ".hdbsynonymconfig, db/src/" + this.config.get("projectName").replace(/\-/g, "_").toUpperCase() + "_DB_" + this.config.get("hanaTargetHDI").replace(/\-/g, "_").toUpperCase() + "_*.hdbview, db/" + this.config.get("hanaTargetHDI") + ".cds, srv/" + this.config.get("hanaTargetHDI") + "-service.cds. Are you really sure you want to do this?",
+                message: "The following project files will be replaced: db/src/" + this.config.get("hanaTargetHDI") + ".hdbgrants, db/src/" + this.config.get("hanaTargetHDI") + ".hdbsynonym, db/cfg/" + this.config.get("hanaTargetHDI") + ".hdbsynonymconfig, db/src/" + this.config.get("projectName").replace(/\-/g, "_").toUpperCase() + "_DB_" + this.config.get("hanaTargetHDI").replace(/\-/g, "_").toUpperCase() + "_*.hdbview, db/" + this.config.get("hanaTargetHDI") + ".cds, db/undeploy.json, srv/" + this.config.get("hanaTargetHDI") + "-service.cds. Are you really sure you want to do this?",
                 default: false
             },
         ]).then((answers) => {

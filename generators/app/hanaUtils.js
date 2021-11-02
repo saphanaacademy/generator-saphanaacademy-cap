@@ -412,6 +412,8 @@ function processSchema(thisf, answers) {
                         });
                     });
                     // remove any obsolete .hdbview files (with same prefix)
+                    // https://www.npmjs.com/package/@sap/hdi-deploy#delta-deployment-and-undeploy-allowlist
+                    var undeployJSON = "[";
                     fs2.readdir(destinationRoot + "/db/src/", (err, files) => {
                         if (err) {
                             thisf.log(err.message);
@@ -432,6 +434,7 @@ function processSchema(thisf, answers) {
                                     }
                                 });
                                 if (!isFound) {
+                                    undeployJSON += '"src/' + file + '",';
                                     fileDest = destinationRoot + "/db/src/" + file;
                                     thisf.log("Deleting", "/db/src/" + file);
                                     fs2.unlink(path.join(destinationRoot + "/db/src/", file), err => {
@@ -443,6 +446,13 @@ function processSchema(thisf, answers) {
                                 }
                             }
                         }
+                        undeployJSON += '"src/gen/*.hdbview"]';
+                        fs2.writeFile(destinationRoot + "/db/undeploy.json", undeployJSON, 'utf8', function (err) {
+                            if (err) {
+                                thisf.log(err.message);
+                                return;
+                            }
+                        });
                     });
                     if (!fs2.existsSync(destinationRoot + "/srv")) {
                         fs2.mkdirSync(destinationRoot + "/srv");

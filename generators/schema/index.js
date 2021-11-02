@@ -35,7 +35,7 @@ module.exports = class extends Generator {
             {
                 type: "confirm",
                 name: "confirm",
-                message: "The following project files will be replaced: db/src/" + this.config.get("schemaName") + ".hdbgrants, db/src/" + this.config.get("schemaName") + ".hdbsynonym, db/src/" + this.config.get("schemaName") + "-*.hdbview, db/" + this.config.get("schemaName") + ".cds, srv/" + this.config.get("schemaName") + "-service.cds. Are you really sure you want to do this?",
+                message: "The following project files will be replaced: db/src/" + this.config.get("schemaName") + ".hdbgrants, db/src/" + this.config.get("schemaName") + ".hdbsynonym, db/src/" + this.config.get("schemaName") + "-*.hdbview, db/" + this.config.get("schemaName") + ".cds, db/undeploy.json, srv/" + this.config.get("schemaName") + "-service.cds. Are you really sure you want to do this?",
                 default: false
             },
         ]).then((answers) => {
