@@ -1,42 +1,37 @@
-# Project configuration
+---
 general:
-  inferBuildTool: true
-  productiveBranch: 'main'
+  buildTool: "mta"
 
-# Stage configuration
 stages:
-  'Confirm':
-    manualConfirmation: false
+  Build:
+    mavenExecuteStaticCodeChecks: false
+    npmExecuteLint: false
+  Additional Unit Tests:
+    npmExecuteScripts: false
+    karmaExecuteTests: false
+  Acceptance:
+    cloudFoundryDeploy: false
+#   cfApiEndpoint: "<%= cfapi %>"
+#   cfOrg: "<%= cforg %>"
+#   cfSpace: "<%= cfspace %>"
+#   cfAppName: "<%= projectName %>"
+#   cfCredentialsId: "deploy-to-cf"
+    uiVeri5ExecuteTests: false
+  Release:
+    cloudFoundryDeploy: true
+    cfApiEndpoint: "<%= cfapi %>"
+    cfOrg: "<%= cforg %>"
+    cfSpace: "<%= cfspace %>"
+    cfAppName: "<%= projectName %>"
+    cfCredentialsId: "deploy-to-cf"
+    tmsUpload: true
 
-#  npmAudit:
-#    auditedAdvisories:
-
-#  lint:
-#    ui5BestPractices:
-#      failThreshold:
-#        error: <THRESHOLD>
-#        warning: <THRESHOLD>
-#        info: <THRESHOLD>
-
-# deploy to Cloud Foundry
-  productionDeployment:
-    cfTargets:
-      - appName: '<%= projectName %>'
-        org: '<%= cforg %>'
-        space: '<%= cfspace %>'
-        apiEndpoint: '<%= cfapi %>'
-        credentialsId: 'deploy-to-cf'
-
-# Step configuration
 steps:
-  mavenExecute:
-    dockerImage: devxci/mbtci:1.0.14
-
   artifactPrepareVersion:
-    versioningType: cloud_noTag
-
-# transport management upload
-#  tmsUpload:
-#    nodeName: '<%= cfspace %>'
-#    credentialsId: 'tms-sk'
-#    customDescription: '<%= projectName %> <%= cfspace %>'
+    versioningType: "cloud_noTag"
+  cloudFoundryDeploy:
+    mtaDeployParameters: "-f --version-rule ALL"
+  tmsUpload:
+    nodeName: "<%= cfspace %>"
+    credentialsId: "tms-sk"
+    customDescription: "<%= projectName %> : <%= displayName %>"
