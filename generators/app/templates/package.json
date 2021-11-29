@@ -166,7 +166,7 @@
       ,
 <% } -%>
       "API_SALES_ORDER_SRV": {
-        "kind": "odata",
+        "kind": "odata-v2",
         "model": "srv/external/API_SALES_ORDER_SRV",
         "credentials": {
           "[production]": {
@@ -184,7 +184,7 @@
       ,
 <% } -%>
       "API_BUSINESS_PARTNER": {
-        "kind": "odata",
+        "kind": "odata-v2",
         "model": "srv/external/API_BUSINESS_PARTNER",
         "credentials": {
           "[production]": {
@@ -202,7 +202,7 @@
       ,
 <% } -%>
       "RCMCandidate": {
-        "kind": "odata",
+        "kind": "odata-v2",
         "model": "srv/external/RCMCandidate",
         "credentials": {
           "[production]": {
@@ -220,7 +220,7 @@
       ,
 <% } -%>
       "ECEmploymentInformation": {
-        "kind": "odata",
+        "kind": "odata-v2",
         "model": "srv/external/ECEmploymentInformation",
           "credentials": {
             "[production]": {
