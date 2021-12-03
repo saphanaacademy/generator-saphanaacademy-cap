@@ -24,7 +24,7 @@ stages:
     cfSpace: "<%= cfspace %>"
     cfAppName: "<%= projectName %>"
     cfCredentialsId: "deploy-to-cf"
-    tmsUpload: true
+    tmsUpload: false
 
 steps:
   artifactPrepareVersion:
@@ -32,6 +32,5 @@ steps:
   cloudFoundryDeploy:
     mtaDeployParameters: "-f --version-rule ALL"
   tmsUpload:
-    nodeName: "<%= cfspace %>"
+    nodeName: "node"
     credentialsId: "tms-sk"
-    customDescription: "<%= projectName %> : <%= displayName %>"
