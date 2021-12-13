@@ -169,6 +169,7 @@
                             "entitySet": "Sales",
 <% } -%>
                             "variantManagement": "Page",
+                            "initialLoad": "Enabled",
                             "navigation": {
 <% if(apiS4HCBP && em){ -%>
                                 "CustomerProcesses": {
