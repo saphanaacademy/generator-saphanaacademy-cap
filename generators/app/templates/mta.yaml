@@ -171,8 +171,10 @@ modules:
 <% if(customDomain !== ""){ -%>
 <% if(multiTenant){ -%>
       host: <%= projectName %>
-<% } -%>
       domain: <%= customDomain %>
+<% } -%>
+<% } else if(multiTenant){ -%>
+      keep-existing-routes: true
 <% } -%>
 <% if(multiTenant || haa){ -%>
     properties:
