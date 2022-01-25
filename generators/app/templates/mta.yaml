@@ -81,7 +81,7 @@ modules:
 <% if (!((em && !multiTenant && apiS4HCBP) || apiFGCN)){ -%>
     properties:
 <% } -%>
-<% if(apiSAP && !(apiFGCN || apiFGAP)){ -%>
+<% if(ApplicationInterfaceKey !== ""){ -%>
       ApplicationInterfaceKey: <%= ApplicationInterfaceKey %>
 <% } -%>
 <% if(APIKeyHubSandbox !== ""){ -%>
@@ -90,9 +90,6 @@ modules:
 <% if(apiARIBPO){ -%>
       AribaNetworkId: <%= AribaNetworkId %>
       APIKeyAriba: <%= APIKeyAriba %>
-<% } -%>
-<% if(apiGRAPH){ -%>
-      APIKeyGraph: <%= APIKeyGraph %>
 <% } -%>
 <% if(apiHERE){ -%>
       APIKeyHERE: <%= APIKeyHERE %>
@@ -301,7 +298,7 @@ modules:
     parameters:
       content:
         instance:
-          existing_destinations_policy: update
+          existing_destinations_policy: ignore
           destinations:
             - Name: <%= projectName %>-service-<%= projectName %>-uaa
               ServiceInstanceName: <%= projectName %>-uaa
@@ -356,8 +353,21 @@ resources:
 <% if(api || html5repo){ -%>
         init_data:
           instance:
-            existing_destinations_policy: update
+            existing_destinations_policy: ignore
             destinations:
+<% } -%>
+<% if(apiGRAPH){ -%>
+              - Name: <%= projectName %>-graph-api
+                Description: SAP Graph
+                URL: <%= GraphURL %>/<%= GraphId %>
+                URL.headers.Application-Interface-Key: <SetValueInCockpit>
+                Type: HTTP
+                ProxyType: Internet
+                Authentication: OAuth2ClientCredentials
+                tokenServiceURL: <%= GraphTokenURL %>/oauth/token
+                clientId: <SetValueInCockpit>
+                clientSecret: <SetValueInCockpit>
+                HTML5.DynamicDestination: true
 <% } -%>
 <% if(apiS4HCSO){ -%>
               - Name: <%= projectName %>-API_SALES_ORDER_SRV
@@ -427,15 +437,6 @@ resources:
                 client_id: <SetValueInCockpit>
                 client_secret: <SetValueInCockpit>
                 refresh_token: <SetValueInCockpit>
-                HTML5.DynamicDestination: true
-<% } -%>
-<% if(apiGRAPH){ -%>
-              - Name: <%= projectName %>-graph-api
-                Description: SAP Graph
-                URL: https://sandbox.graph.sap
-                Type: HTTP
-                ProxyType: Internet
-                Authentication: NoAuthentication
                 HTML5.DynamicDestination: true
 <% } -%>
 <% if(apiHERE){ -%>

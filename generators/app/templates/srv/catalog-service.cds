@@ -39,7 +39,9 @@ using { Concur } from './external/Concur.csn';
 <% } -%>
 
 <% if(apiGRAPH){ -%>
-using { sap.odm.workforce as ODMworkforce } from '@sap/odm/dist/workforce/WorkforcePerson';
+<% graphDataSources.forEach(element => { -%>
+using {<%= element.name %> as <%= element.shortName %>} from './external/<%= element.name %>';
+<% }); -%>
 <% } -%>
 
 <% if(apiHERE){ -%>
@@ -317,12 +319,15 @@ service CatalogService @(path : '/catalog')
 <% } -%>
 
 <% if(apiGRAPH){ -%>
+<% graphDataSources.forEach(element => { -%>
     @readonly
-    entity WorkforcePersons
+    entity <%= element.entity %>
 <% if(authorization){ -%>
       @(restrict: [{ to: 'Viewer' }])
 <% } -%>
-      as projection on ODMworkforce.WorkforcePerson;
+      as projection on <%= element.shortName %>.<%= element.entity %>;
+
+<% }); -%>
 <% } -%>
 
 <% if(apiHERE){ -%>

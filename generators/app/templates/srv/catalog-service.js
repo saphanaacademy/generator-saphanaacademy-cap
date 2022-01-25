@@ -48,7 +48,9 @@ module.exports = cds.service.impl(async function () {
     const conc = await cds.connect.to('Concur');
 <% } -%>
 <% if(apiGRAPH){ -%>
-    const graph = await cds.connect.to('GraphWorkforce');
+<% graphDataSources.forEach(element => { -%>
+    const <%= element.shortName %> = await cds.connect.to('<%= element.name %>');
+<% }); -%>
 <% } -%>
 <% if(apiHERE){ -%>
     const HERE = await cds.connect.to('HERELocationServices');
@@ -138,7 +140,14 @@ module.exports = cds.service.impl(async function () {
 <% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP || apiCONC){ -%>
             ,
 <% } -%>
-            WorkforcePersons
+<% let i = 0 -%>
+<% graphDataSources.forEach(element => { -%>
+            <%= element.entity %>
+<% i = i + 1 -%>
+<% if(i !== graphDataSources.length){ -%>
+            ,
+<% } -%>
+<% }); -%>
 <% } -%>
 <% if(apiHERE){ -%>
 <% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP || apiCONC || apiGRAPH){ -%>
@@ -678,21 +687,19 @@ module.exports = cds.service.impl(async function () {
 <% } -%>
 
 <% if(apiGRAPH){ -%>
-    this.on('READ', WorkforcePersons, async (req) => {
+<% graphDataSources.forEach(element => { -%>
+    this.on('READ', [<%= element.entity %>], async (req) => {
         try {
-            const tx = graph.transaction(req);
+            const tx = <%= element.shortName %>.transaction(req);
             return await tx.send({
-                query: req.query,
-                headers: {
-                    'Application-Interface-Key': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'ApplicationInterfaceKey')<% } else { -%>process.env.ApplicationInterfaceKey<% } -%>,
-                    Authorization: 'Bearer ' + <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'APIKeyGraph')<% } else { -%>process.env.APIKeyGraph<% } -%>
-
-                }
+                query: req.query
             })
         } catch (err) {
             req.reject(err);
         }
     });
+
+<% }); -%>
 <% } -%>
 
 <% if(apiHERE){ -%>

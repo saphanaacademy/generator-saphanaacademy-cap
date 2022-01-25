@@ -194,11 +194,13 @@ Authorization: Basic joe:
 ###
 <% } -%>
 <% if(apiGRAPH){ -%>
-GET http://localhost:4004/catalog/WorkforcePersons?$top=1
+<% graphDataSources.forEach(element => { -%>
+GET http://localhost:4004/catalog/<%= element.entity %>?$top=3
 <% if(authentication){ -%>
 Authorization: Basic joe:
 <% } -%>
 ###
+<% }); -%>
 <% } -%>
 <% if(apiHERE){ -%>
 GET http://localhost:4004/catalog/Geocodes?$filter=title%20eq%20%27France%27
@@ -385,11 +387,13 @@ Authorization: Basic joe:
 ###
 <% } -%>
 <% if(apiGRAPH){ -%>
-GET http://localhost:4004/v2/catalog/WorkforcePersons?$top=1
+<% graphDataSources.forEach(element => { -%>
+GET http://localhost:4004/v2/catalog/<%= element.entity %>?$top=3
 <% if(authentication){ -%>
 Authorization: Basic joe:
 <% } -%>
 ###
+<% }); -%>
 <% } -%>
 <% if(apiHERE){ -%>
 GET http://localhost:4004/v2/catalog/Geocodes?$filter=title%20eq%20%27France%27

@@ -190,7 +190,9 @@
     <a href="<%= srvPath %>catalog/ExpenseReports?$top=3">Expense Reports</a><br />
 <% } -%>
 <% if(apiGRAPH){ -%>
-    <a href="<%= srvPath %>catalog/WorkforcePersons?$top=1">Workforce Persons</a><br />
+<% graphDataSources.forEach(element => { -%>
+    <a href="<%= srvPath %>catalog/<%= element.entity %>?$top=3"><%= element.entity %> (<%= element.name %>)</a><br />
+<% }); -%>
 <% } -%>
 <% if(apiHERE){ -%>
     <a href="<%= srvPath %>catalog/Geocodes?$filter=title%20eq%20%27France%27">Geocodes</a><br />
@@ -262,7 +264,9 @@
     <a href="<%= srvPath %>v2/catalog/ExpenseReports?$top=3">Expense Reports</a><br />
 <% } -%>
 <% if(apiGRAPH){ -%>
-    <a href="<%= srvPath %>v2/catalog/WorkforcePersons?$top=1">Workforce Persons</a><br />
+<% graphDataSources.forEach(element => { -%>
+    <a href="<%= srvPath %>v2/catalog/<%= element.entity %>?$top=3"><%= element.entity %> (<%= element.name %>)</a><br />
+<% }); -%>
 <% } -%>
 <% if(apiHERE){ -%>
     <a href="<%= srvPath %>v2/catalog/Geocodes?$filter=title%20eq%20%27France%27">Geocodes</a><br />

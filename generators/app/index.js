@@ -4,6 +4,7 @@ const path = require("path");
 const glob = require("glob");
 const credStore = require('./credStore');
 const hanaUtils = require('./hanaUtils');
+const graphUtils = require('./graphUtils');
 
 module.exports = class extends Generator {
   prompting() {
@@ -111,8 +112,44 @@ module.exports = class extends Generator {
         type: "checkbox",
         name: "apiLoB",
         message: "Which external API(s) would you like to use?",
-        choices: ["SAP S/4HANA Cloud Sales Order (A2X)", "SAP S/4HANA Cloud Business Partner (A2X)", "SAP SuccessFactors Recruiting", "SAP SuccessFactors Employee Central", "SAP Ariba Network Purchase Orders Buyer", "SAP Ariba Web Services", "SAP Fieldglass Connectors", "SAP Fieldglass Approvals", "SAP Concur", "SAP Graph Workforce", "HERE Location Services", "NASA Near Earth Object Web Service"],
+        choices: ["SAP S/4HANA Cloud Sales Order (A2X)", "SAP S/4HANA Cloud Business Partner (A2X)", "SAP SuccessFactors Recruiting", "SAP SuccessFactors Employee Central", "SAP Ariba Network Purchase Orders Buyer", "SAP Ariba Web Services", "SAP Fieldglass Connectors", "SAP Fieldglass Approvals", "SAP Concur", "SAP Graph", "HERE Location Services", "NASA Near Earth Object Web Service"],
         default: ["SAP S/4HANA Cloud Sales Order (A2X)"]
+      },
+      {
+        when: response => response.api === true && response.apiLoB.includes("SAP Graph"),
+        type: "input",
+        name: "GraphURL",
+        message: "What is your SAP Graph URL?",
+        default: "https://<region>.graph.sap/api"
+      },
+      {
+        when: response => response.api === true && response.apiLoB.includes("SAP Graph"),
+        type: "input",
+        name: "GraphId",
+        message: "What is your SAP Graph Business Data Graph Identifier?",
+        default: "v1"
+      },
+      {
+        when: response => response.api === true && response.apiLoB.includes("SAP Graph"),
+        type: "input",
+        name: "GraphTokenURL",
+        message: "What is your SAP Graph Token URL?",
+        default: "https://<subdomain>.authentication.<region>.hana.ondemand.com"
+      },
+      {
+        when: response => response.api === true && response.apiLoB.includes("SAP Graph"),
+        type: "input",
+        name: "GraphClientId",
+        message: "What is your SAP Graph Client Id?",
+        default: ""
+      },
+      {
+        when: response => response.api === true && response.apiLoB.includes("SAP Graph"),
+        type: "password",
+        name: "GraphClientSecret",
+        message: "What is your SAP Graph Client Secret?",
+        mask: "*",
+        default: ""
       },
       {
         when: response => response.api === true && (response.apiLoB.includes("SAP SuccessFactors Recruiting") || response.apiLoB.includes("SAP SuccessFactors Employee Central")),
@@ -200,14 +237,6 @@ module.exports = class extends Generator {
         default: "https://us.api.concursolutions.com"
       },
       {
-        when: response => response.api === true && response.apiLoB.includes("SAP Graph Workforce"),
-        type: "password",
-        name: "APIKeyGraph",
-        message: "What is your access token for SAP Graph API sandbox? Leave blank to use a read-only public access token.",
-        mask: "*",
-        default: ""
-      },
-      {
         when: response => response.api === true && response.apiLoB.includes("HERE Location Services"),
         type: "password",
         name: "APIKeyHERE",
@@ -223,16 +252,6 @@ module.exports = class extends Generator {
         mask: "*",
         default: ""
       },
-      /*
-      {
-        when: response => response.api === true && (response.apiLoB.includes("SAP S/4HANA Cloud Sales Order (A2X)") || response.apiLoB.includes("SAP S/4HANA Cloud Business Partner (A2X)") || response.apiLoB.includes("SAP SuccessFactors Recruiting") || response.apiLoB.includes("SAP SuccessFactors Employee Central") || response.apiLoB.includes("SAP Ariba Network Purchase Orders Buyer") || response.apiLoB.includes("SAP Ariba Web Services") || response.apiLoB.includes("SAP Fieldglass Connectors") || response.apiLoB.includes("SAP Fieldglass Approvals") || response.apiLoB.includes("SAP Concur") || response.apiLoB.includes("SAP Graph Workforce")),
-        type: "password",
-        name: "ApplicationInterfaceKey",
-        message: "What is your Partner Application Interface Key? Leave blank to use the default for dev/test scenarios.",
-        mask: "*",
-        default: "saptest0"
-      },
-      */
       {
         when: response => response.api === true && (response.apiLoB.includes("SAP S/4HANA Cloud Sales Order (A2X)") || response.apiLoB.includes("SAP S/4HANA Cloud Business Partner (A2X)") || response.apiLoB.includes("SAP SuccessFactors Recruiting") || response.apiLoB.includes("SAP SuccessFactors Employee Central") || response.apiLoB.includes("SAP Ariba Network Purchase Orders Buyer") || response.apiLoB.includes("SAP Fieldglass Approvals")),
         type: "password",
@@ -469,7 +488,11 @@ module.exports = class extends Generator {
         answers.FGCNJobSeekerUpload = "";
         answers.FGCNWorkOrderAcceptUpload = "";
         answers.ConcurGeolocation = "";
-        answers.APIKeyGraph = "";
+        answers.GraphURL = "";
+        answers.GraphId = "";
+        answers.GraphTokenURL = "";
+        answers.GraphClientId = "";
+        answers.GraphClientSecret = "";
         answers.APIKeyHERE = "";
         answers.APIKeyNASA = "";
         answers.credStore = "";
@@ -483,14 +506,12 @@ module.exports = class extends Generator {
       answers.apiFGCN = answers.apiLoB.includes("SAP Fieldglass Connectors");
       answers.apiFGAP = answers.apiLoB.includes("SAP Fieldglass Approvals");
       answers.apiCONC = answers.apiLoB.includes("SAP Concur");
-      answers.apiGRAPH = answers.apiLoB.includes("SAP Graph Workforce");
+      answers.apiGRAPH = answers.apiLoB.includes("SAP Graph");
       answers.apiHERE = answers.apiLoB.includes("HERE Location Services");
       answers.apiNeoWs = answers.apiLoB.includes("NASA Near Earth Object Web Service");
-      answers.apiSAP = false;
       answers.ApplicationInterfaceKey = "";
       if (answers.api) {
-        if (answers.apiS4HCSO || answers.apiS4HCBP || answers.apiSFSFRC || answers.apiSFSFEC || answers.apiARIBPO || answers.apiARIBWS || answers.apiFGCN || answers.apiFGAP || answers.apiCONC || answers.apiGRAPH) {
-          answers.apiSAP = true;
+        if (answers.apiS4HCSO || answers.apiS4HCBP || answers.apiSFSFRC || answers.apiSFSFEC || answers.apiARIBPO || answers.apiARIBWS || answers.apiCONC) {
           answers.ApplicationInterfaceKey = "saptest0";
         }
         if (!(answers.apiS4HCSO || answers.apiS4HCBP || answers.apiSFSFRC || answers.apiSFSFEC || answers.apiARIBPO || answers.apiFGAP)) {
@@ -522,9 +543,11 @@ module.exports = class extends Generator {
         answers.ConcurGeolocation = "";
       }
       if (answers.apiGRAPH === false) {
-        answers.APIKeyGraph = "";
-      } else if (answers.APIKeyGraph === "") {
-        answers.APIKeyGraph = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiIiLCJ6aWQiOiJlMjYzMTNkZi0yNDgzLTRjNWItOTg5Yi03ZWQwOGJmMjk3YzMiLCJhdWQiOiJkZW1vLmFwaS5ncmFwaC5zYXAiLCJleHAiOjQ2ODg2MDkyMjEsImlhdCI6MTYwMzg3ODE0MiwiaXNzIjoiZGVtby5hcGkuZ3JhcGguc2FwIiwic3ViIjoiZGVtb0BncmFwaC5zYXAifQ.1nJljCX2HTUv9swW4a7HgYhxQGfH_DBTRqHrw66Xwv_oPC8bEFo5LpVqXCUrGCuCBLVr-1vrUhBKlfvZD9lg7D3z2Xc70PrmKcUEufa0m6my61QUprYuwMmN89yzsnQSUVwIikm4Po6Xo_cfWOXVDzr0WCjGaG_PAnikHMWFHhHbGpc3X1u-ATFw7Rq0oiulXWfavWBEKKB1zFxQ91dC1T103X4sYk3A2fk-dII8zL2XZ1CeOTi4_ntAYjJ5mm71jN0CwTrUWsLGOGe3aevcIw2QLqH44z96ZRy43LdOr8FzHaATwpd-i9FwQ7HlH8ZDqfHu-6FxBpiI29tT5CfwIQ";
+        answers.GraphURL = "";
+        answers.GraphId = "";
+        answers.GraphTokenURL = "";
+        answers.GraphClientId = "";
+        answers.GraphClientSecret = "";
       }
       if (answers.apiHERE === false) {
         answers.APIKeyHERE = "";
@@ -595,6 +618,15 @@ module.exports = class extends Generator {
       hanaUtils.hanaTargetHDI2Schema(this, answers);
     }
 
+    let graphDataSources = [];
+    if (answers.get('apiGRAPH')) {
+      graphDataSources = await graphUtils.getgraphDataSources(this, answers);
+      if (!graphDataSources) {
+        this.env.error("Unable to obtain SAP Graph Data Sources.");
+      }
+    }
+    answers.set('graphDataSources', graphDataSources);
+
     if (answers.get('cicd') === true) {
       answers.set('cforg', 'org');
       answers.set('cfspace', 'space');
@@ -657,13 +689,12 @@ module.exports = class extends Generator {
       credsBinding = JSON.parse(credsBinding.substring(credsBinding.indexOf('{')));
       this.log("Writing credentials...");
       const credsNS = answers.get('credStoreNS');
-      if (answers.get('apiSAP') && !(answers.get('apiFGCN') || answers.get('apiFGAP'))) resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'ApplicationInterfaceKey', answers.get('ApplicationInterfaceKey'));
+      if (answers.get('ApplicationInterfaceKey') !== '') resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'ApplicationInterfaceKey', answers.get('ApplicationInterfaceKey'));
       if (answers.get('APIKeyHubSandbox') !== '') resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'APIKeyHubSandbox', answers.get('APIKeyHubSandbox'));
       if (answers.get('apiARIBPO')) {
         resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'AribaNetworkId', answers.get('AribaNetworkId'));
         resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'APIKeyAriba', answers.get('APIKeyAriba'));
       }
-      if (answers.get('apiGRAPH')) resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'APIKeyGraph', answers.get('APIKeyGraph'));
       if (answers.get('apiHERE')) resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'APIKeyHERE', answers.get('APIKeyHERE'));
       if (answers.get('apiNeoWs')) resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'APIKeyNASA', answers.get('APIKeyNASA'));
       if (answers.get('routes')) {
@@ -828,16 +859,21 @@ module.exports = class extends Generator {
     answers.delete('FGCNclientId');
     answers.delete('FGCNsupplierId');
     answers.delete('ConcurGeolocation');
-    answers.delete('APIKeyGraph');
+    answers.delete('GraphTokenURL');
+    answers.delete('GraphClientId');
+    answers.delete('GraphClientSecret');
     answers.delete('APIKeyHERE');
     answers.delete('APIKeyNASA');
     answers.delete('ApplicationInterfaceKey');
 
   }
 
-  install() {
-    // build and deploy if requested
+  async install() {
     var answers = this.config;
+    if (answers.get("apiGRAPH")) {
+      await graphUtils.graphImport(this, answers);
+    }
+    // build and deploy if requested
     var mta = "mta_archives/" + answers.get("projectName") + "_0.0.1.mtar";
     if (answers.get("buildDeploy")) {
       let opt = { "cwd": this.destinationPath() };

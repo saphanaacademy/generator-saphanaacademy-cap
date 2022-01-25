@@ -5,7 +5,7 @@
   "license": "UNLICENSED",
   "description": "<%= description %>",
   "engines": {
-    "node": "12.x"
+    "node": "14.x"
   },
   "dependencies": {
     "@sap/cds": "^5",
@@ -21,9 +21,6 @@
 <% if(apiS4HCBP){ -%>
     "@sap/cloud-sdk-vdm-business-partner-service": "^1.24",
 <% } -%>
-<% } -%>
-<% if(apiGRAPH){ -%>
-    "@sap/odm": "^2",
 <% } -%>
 <% if(authentication || credStore !== ""){ -%>
     "@sap/xsenv": "^3",
@@ -309,18 +306,27 @@
 <% if(authentication || hana || schemaName !== '' || hanaTargetHDI !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP || apiCONC){ -%>
       ,
 <% } -%>
-      "GraphWorkforce": {
+<% let i = 0 -%>
+<% graphDataSources.forEach(element => { -%>
+      "<%= element.name %>": {
         "kind": "odata",
+        "model": "srv/external/<%= element.name %>",
         "credentials": {
           "[production]": {
             "destination": "<%= projectName %>-graph-api",
-            "path": "api/beta/sap.odm.workforce"
+            "path": "<%= element.url %>"
           },
           "[development]": {
-            "url": "https://sandbox.graph.sap/api/beta/sap.odm.workforce"
+            "destination": "<%= projectName %>-graph-api",
+            "path": "<%= element.url %>"
           }
         }
       }
+<% i = i + 1 -%>
+<% if(i !== graphDataSources.length){ -%>
+      ,
+<% } -%>
+<% }); -%>
 <% } -%>
 <% if(apiHERE){ -%>
 <% if(authentication || hana || schemaName !== '' || hanaTargetHDI !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP || apiCONC || apiGRAPH){ -%>

@@ -7,7 +7,7 @@ FGCNclientId=<%= FGCNclientId %>
 FGCNsupplierId=<%= FGCNsupplierId %>
 <% } -%>
 <% if(credStore === ""){ -%>
-<% if(apiSAP && !(apiFGCN || apiFGAP)){ -%>
+<% if(ApplicationInterfaceKey !== ""){ -%>
 ApplicationInterfaceKey=<%= ApplicationInterfaceKey %>
 <% } -%>
 <% if (APIKeyHubSandbox !== ""){ -%>
@@ -16,9 +16,6 @@ APIKeyHubSandbox=<%= APIKeyHubSandbox %>
 <% if(apiARIBPO){ -%>
 AribaNetworkId=<%= AribaNetworkId %>
 APIKeyAriba=<%= APIKeyHubSandbox %>
-<% } -%>
-<% if(apiGRAPH){ -%>
-APIKeyGraph=<%= APIKeyGraph %>
 <% } -%>
 <% if(apiHERE){ -%>
 APIKeyHERE=<%= APIKeyHERE %>
