@@ -103,7 +103,7 @@ modules:
 <% if(authentication || api){ -%>
       - name: <%= projectName %>-uaa
 <% } -%>
-<% if(api){ -%>
+<% if(api || routes){ -%>
       - name: <%= projectName %>-dest
 <% } -%>
 <% if(em){ -%>
@@ -334,7 +334,7 @@ resources:
 <% } -%>
 <% } -%>
 
-<% if(api || html5repo){ -%>
+<% if(api || html5repo || routes){ -%>
   # -------------------- DESTINATION SERVICE -------------------
   - name: <%= projectName %>-dest
   # ------------------------------------------------------------
@@ -350,20 +350,33 @@ resources:
 <% if(html5repo){ -%>
         HTML5Runtime_enabled: true
 <% } -%>
-<% if(api || html5repo){ -%>
+<% if(api || html5repo || routes){ -%>
         init_data:
           instance:
             existing_destinations_policy: ignore
             destinations:
 <% } -%>
+<% if(routes){ -%>
+              - Name: <%= projectName %>-cfapi
+                Description: CF Cloud Controller API
+                URL: ${controller-url}
+                Type: HTTP
+                ProxyType: Internet
+                Authentication: OAuth2Password
+                tokenServiceURL: ${authorization-url}/oauth/token
+                clientId: cf
+                clientSecret:
+                User: <SetValueInCockpit>
+                Password: <SetValueInCockpit>
+<% } -%>
 <% if(apiGRAPH){ -%>
               - Name: <%= projectName %>-graph-api
                 Description: SAP Graph
-                URL: <%= GraphURL %>/<%= GraphId %>
+                URL: <%= GraphURL %>
                 URL.headers.Application-Interface-Key: <SetValueInCockpit>
                 Type: HTTP
                 ProxyType: Internet
-                Authentication: OAuth2ClientCredentials
+                Authentication: OAuth2JWTBearer
                 tokenServiceURL: <%= GraphTokenURL %>/oauth/token
                 clientId: <SetValueInCockpit>
                 clientSecret: <SetValueInCockpit>

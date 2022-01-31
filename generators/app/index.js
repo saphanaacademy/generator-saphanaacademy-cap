@@ -387,7 +387,7 @@ module.exports = class extends Generator {
         default: false
       },
       {
-        when: response => response.api === true || (response.multiTenant === true && response.routes === true),
+        when: response => response.api === true,
         type: "input",
         name: "credStore",
         message: "What is the name of your SAP Credential Store service instance? Leave blank to use environment variables instead.",
@@ -598,7 +598,7 @@ module.exports = class extends Generator {
       if (answers.customDomain !== "") {
         answers.routes = false;
       }
-      if (!(answers.api === true || (answers.multiTenant === true && answers.routes === true))) {
+      if (answers.api === false) {
         answers.credStore = "";
       }
       answers.credStoreNS = answers.projectName;
@@ -859,7 +859,6 @@ module.exports = class extends Generator {
     answers.delete('FGCNclientId');
     answers.delete('FGCNsupplierId');
     answers.delete('ConcurGeolocation');
-    answers.delete('GraphTokenURL');
     answers.delete('GraphClientId');
     answers.delete('GraphClientSecret');
     answers.delete('APIKeyHERE');
@@ -897,15 +896,7 @@ module.exports = class extends Generator {
       this.log("  cf map-route " + this.config.get('projectName') + " " + this.config.get('customDomain') + ' --hostname "*"');
     }
     if (this.config.get('routes')) {
-      let projectName = this.config.get('projectName');
-      if (this.config.get('credStore') !== '') {
-        this.log("Important: The CF API is being used so please be sure to set CFAPI in the SAP Credential Store service instance!");
-      } else {
-        this.log("Important: The CF API is being used so please be sure to issue the following CF CLI commands after deployment to set credentials:");
-        this.log("  cf set-env " + projectName + "-srv CFAPIUser '<email>'");
-        this.log("  cf set-env " + projectName + "-srv CFAPIPassword '<password>'");
-        this.log("  cf restage " + projectName + "-srv");
-      }
+      this.log("Important: The CF API is being used so please be sure to update the destination " + this.config.get('projectName') + "-cfapi - Token Service URL (replace login with uaa) and set User & Password. Client Secret needs to be empty.");
     }
     if (this.config.get('multiTenant') && this.config.get('api')) {
       this.log("Don't forget to configure the destination for each subscriber.");

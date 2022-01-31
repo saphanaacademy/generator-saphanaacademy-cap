@@ -16,6 +16,9 @@
 <% if(v2support){ -%>
     "@sap/cds-odata-v2-adapter-proxy": "^1",
 <% } -%>
+<% if(routes){ -%>
+    "@sap-cloud-sdk/core": "^1.53",
+<% } -%>
 <% if(em){ -%>
     "@sap/xb-msg-amqp-v100": "^0.9.51",
 <% if(apiS4HCBP){ -%>
@@ -37,7 +40,7 @@
     "@sap/cds-mtx": "^2",
     "cfenv": "^1",
 <% } -%>
-<% if(routes || apiARIBWS || apiCONC){ -%>
+<% if(apiARIBWS || apiCONC){ -%>
     "axios": "^0.21.1",
     "qs": "^6",
 <% } %>
@@ -314,11 +317,11 @@
         "credentials": {
           "[production]": {
             "destination": "<%= projectName %>-graph-api",
-            "path": "<%= element.url %>"
+            "path": "/<%= GraphId %>/<%= element.url %>"
           },
           "[development]": {
             "destination": "<%= projectName %>-graph-api",
-            "path": "<%= element.url %>"
+            "path": "/<%= GraphId %>/<%= element.url %>"
           }
         }
       }

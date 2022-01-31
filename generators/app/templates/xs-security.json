@@ -14,6 +14,10 @@
             "name": "$XSAPPNAME.mtdeployment",
             "description": "SaaS Model Upgrade"
         },
+        {
+            "name": "$XSAPPNAME.MtxDiagnose",
+            "description": "SaaS Diagnose"
+        },
 <% } else { -%>
     "tenant-mode": "dedicated",
     "scopes": [
@@ -89,6 +93,15 @@
 <% if(multiTenant){ -%>
         ,
         {
+            "name": "SaaSAdmin",
+            "description": "SaaS Administrator",
+            "scope-references": [
+                "$XSAPPNAME.mtcallback",
+                "$XSAPPNAME.mtdeployment",
+                "$XSAPPNAME.MtxDiagnose"
+            ]
+        },
+        {
             "name": "ExtendCDS",
             "description": "Extension Developer",
             "scope-references": [
@@ -131,6 +144,13 @@
         ,
 <% } -%>
         {
+            "name": "<%= projectName %>_SaaS_Administrator",
+            "description": "SaaS Administrative access",
+            "role-template-references": [
+                "$XSAPPNAME.SaaSAdmin"
+            ]
+        },
+        {
             "name": "<%= projectName %>_Extension_Developer",
             "description": "Extension development access",
             "role-template-references": [
@@ -151,7 +171,9 @@
 <% if(multiTenant){ -%>
     ,
     "authorities": [
-        "$XSAPPNAME.mtdeployment"
+        "$XSAPPNAME.mtcallback",
+        "$XSAPPNAME.mtdeployment",
+        "$XSAPPNAME.MtxDiagnose"
     ]
 <% } -%>
     ,

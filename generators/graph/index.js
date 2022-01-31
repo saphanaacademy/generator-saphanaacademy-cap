@@ -90,11 +90,11 @@ module.exports = class extends Generator {
                     "credentials": {
                         "[production]": {
                             "destination": answers.get("projectName") + "-graph-api",
-                            "path": element.url
+                            "path": "/" + answers.get("GraphId") + "/" + element.url
                         },
                         "[development]": {
                             "destination": answers.get("projectName") + "-graph-api",
-                            "path": element.url
+                            "path": "/" + answers.get("GraphId") + "/" + element.url
                         }
                     }
                 };
@@ -118,7 +118,6 @@ module.exports = class extends Generator {
             this.log("Project files have not been refreshed.");
             this.log("");
         }
-        answers.delete('GraphTokenURL');
         answers.delete('GraphClientId');
         answers.delete('GraphClientSecret');
         answers.delete('confirm');
