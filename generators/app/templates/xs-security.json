@@ -152,14 +152,14 @@
         },
         {
             "name": "<%= projectName %>_Extension_Developer",
-            "description": "Extension development access",
+            "description": "Extension Development access",
             "role-template-references": [
                 "$XSAPPNAME.ExtendCDS"
             ]
         },
         {
             "name": "<%= projectName %>_Extension_Developer_Delete",
-            "description": "Extension development delete access",
+            "description": "Extension Development Delete access",
             "role-template-references": [
                 "$XSAPPNAME.ExtendCDSdelete"
             ]

@@ -376,7 +376,11 @@ resources:
                 URL.headers.Application-Interface-Key: <SetValueInCockpit>
                 Type: HTTP
                 ProxyType: Internet
+<% if(authentication){ -%>
                 Authentication: OAuth2JWTBearer
+<% }else{ -%>
+                Authentication: OAuth2ClientCredentials
+<% } -%>
                 tokenServiceURL: <%= GraphTokenURL %>/oauth/token
                 clientId: <SetValueInCockpit>
                 clientSecret: <SetValueInCockpit>
