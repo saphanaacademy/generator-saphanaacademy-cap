@@ -106,6 +106,9 @@ modules:
 <% if(api || routes){ -%>
       - name: <%= projectName %>-dest
 <% } -%>
+<% if(connectivity){ -%>
+      - name: <%= projectName %>-conn
+<% } -%>
 <% if(em){ -%>
       - name: <%= projectName %>-em
 <% } -%>
@@ -373,17 +376,33 @@ resources:
               - Name: <%= projectName %>-graph-api
                 Description: SAP Graph
                 URL: <%= GraphURL %>
-                URL.headers.Application-Interface-Key: <SetValueInCockpit>
                 Type: HTTP
                 ProxyType: Internet
 <% if(authentication){ -%>
+<% if(GraphSameSubaccount){ -%>
                 Authentication: OAuth2JWTBearer
-<% }else{ -%>
-                Authentication: OAuth2ClientCredentials
-<% } -%>
                 tokenServiceURL: <%= GraphTokenURL %>/oauth/token
                 clientId: <SetValueInCockpit>
                 clientSecret: <SetValueInCockpit>
+<% }else{ -%>
+                Authentication: OAuth2SAMLBearerAssertion
+                audience: <%= GraphTokenURL %>
+                authnContextClassRef: urn:oasis:names:tc:SAML:2.0:ac:classes:PreviousSession
+                clientKey: <SetValueInCockpit>
+                tokenServiceURL: <%= GraphTokenURL %>/oauth/token/alias/<SetValueInCockpit>
+                tokenServiceUser: <SetValueInCockpit>
+                tokenServicePassword: <SetValueInCockpit>
+                nameIdFormat: urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress
+                userIdSource: email
+<% } -%>
+<% }else{ -%>
+                Authentication: OAuth2ClientCredentials
+                tokenServiceURL: <%= GraphTokenURL %>/oauth/token
+                clientId: <SetValueInCockpit>
+                clientSecret: <SetValueInCockpit>
+<% } -%>
+                tokenServiceURLType: Dedicated
+                URL.headers.Application-Interface-Key: <SetValueInCockpit>
                 HTML5.DynamicDestination: true
 <% } -%>
 <% if(apiS4HCSO){ -%>
@@ -522,6 +541,16 @@ resources:
       service-plan: api-access
       config:
         systemName: <%= SFSystemName %>
+<% } -%>
+
+<% if(connectivity){ -%>
+  # ------------------- CONNECTIVITY SERVICE -------------------
+  - name: <%= projectName %>-conn
+  # ------------------------------------------------------------
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: connectivity
+      service-plan: lite
 <% } -%>
 
 <% if(em){ -%>

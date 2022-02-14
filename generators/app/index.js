@@ -261,6 +261,13 @@ module.exports = class extends Generator {
         default: ""
       },
       {
+        when: response => response.api === true,
+        type: "confirm",
+        name: "connectivity",
+        message: "Will you be accessing on-premise systems via the Cloud Connector?",
+        default: false
+      },
+      {
         type: "confirm",
         name: "authentication",
         message: "Would you like authentication?",
@@ -279,6 +286,13 @@ module.exports = class extends Generator {
         name: "attributes",
         message: "Would you like to use role attributes?",
         default: false
+      },
+      {
+        when: response => response.authentication === true && response.api === true && response.apiLoB.includes("SAP Graph"),
+        type: "confirm",
+        name: "GraphSameSubaccount",
+        message: "Will you be deploying to the subaccount of the SAP Graph service instance?",
+        default: true
       },
       {
         type: "confirm",
@@ -517,6 +531,9 @@ module.exports = class extends Generator {
         if (!(answers.apiS4HCSO || answers.apiS4HCBP || answers.apiSFSFRC || answers.apiSFSFEC || answers.apiARIBPO || answers.apiFGAP)) {
           answers.APIKeyHubSandbox = "";
         }
+      } else {
+        answers.GraphSameSubaccount = false;
+        answers.connectivity = false;
       }
       if (answers.apiSFSFRC === false && answers.apiSFSFEC === false) {
         answers.SFSystemName = "";
@@ -548,6 +565,7 @@ module.exports = class extends Generator {
         answers.GraphTokenURL = "";
         answers.GraphClientId = "";
         answers.GraphClientSecret = "";
+        answers.GraphSameSubaccount = false;
       }
       if (answers.apiHERE === false) {
         answers.APIKeyHERE = "";
@@ -563,6 +581,7 @@ module.exports = class extends Generator {
       }
       if (answers.authentication === false) {
         answers.haa = false;
+        answers.GraphSameSubaccount = false;
       }
       if (answers.authentication === false || answers.authorization === false) {
         answers.attributes = false;
@@ -891,6 +910,9 @@ module.exports = class extends Generator {
 
   end() {
     this.log("");
+    if (this.config.get('authentication') && this.config.get('apiGRAPH') && this.config.get('GraphSameSubaccount') === false) {
+      this.log("Important: Trust needs to be configured when not deploying to the subaccount of the SAP Graph service instance!");
+    }
     if (this.config.get('customDomain') !== "" && this.config.get('multiTenant')) {
       this.log("Important: The wildcard custom domain route needs be mapped via the following CF CLI command after deployment:");
       this.log("  cf map-route " + this.config.get('projectName') + " " + this.config.get('customDomain') + ' --hostname "*"');
