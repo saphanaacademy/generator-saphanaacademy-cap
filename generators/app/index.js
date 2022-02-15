@@ -680,10 +680,12 @@ module.exports = class extends Generator {
         this.log("Service instance does not exist. Will try to create it. Checking available service plans...");
         resCreds = this.spawnCommandSync('cf', ['marketplace', '-e', 'credStore'], { stdio: 'pipe' });
         let credsPlans = resCreds.stdout.toString('utf8');
-        // best guess typically trial or standard - for other plans create the service instance before running the generator
+        // best guess for service plan - typically trial, free or standard - for other plans create the service instance before running the generator
         let credsPlan = '';
         if (credsPlans.search('standard') >= 0) {
           credsPlan = 'standard';
+        } else if (credsPlans.search('free') >= 0) {
+          credsPlan = 'free';
         } else if (credsPlans.search('trial') >= 0) {
           credsPlan = 'trial';
         }
