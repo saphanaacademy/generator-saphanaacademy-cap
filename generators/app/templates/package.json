@@ -61,7 +61,19 @@
   },
   "devDependencies": {
     "sqlite3": "^5"
+<% if(hana && ui){ -%>
+    ,"@sap/ux-specification": "^1.96.4"
+<% } -%>
   },
+<% if(hana && ui){ -%>
+  "sapux": [
+<% if(html5repo){ -%>
+    "app/fiori"
+<% }else{ -%>
+    "app/resources/fiori"
+<% } -%>
+  ],
+<% } -%>
   "scripts": {
     "start": "npx cds run"
   },
