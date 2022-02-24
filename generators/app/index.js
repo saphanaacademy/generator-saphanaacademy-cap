@@ -893,10 +893,12 @@ module.exports = class extends Generator {
     if (answers.get("apiGRAPH")) {
       await graphUtils.graphImport(this, answers);
     }
+    // install dev dependencies
+    let opt = { "cwd": this.destinationPath() };
+    this.spawnCommandSync("npm", ["install", "--only=dev"], opt);
     // build and deploy if requested
     var mta = "mta_archives/" + answers.get("projectName") + "_0.0.1.mtar";
     if (answers.get("buildDeploy")) {
-      let opt = { "cwd": this.destinationPath() };
       let resBuild = this.spawnCommandSync("mbt", ["build"], opt);
       if (resBuild.status === 0) {
         this.spawnCommandSync("cf", ["deploy", mta], opt);
