@@ -1,6 +1,5 @@
 mta_archives/
 node_modules/
-package-lock.json
 default-*.json
 .env
 .yo-rc.json
@@ -8,7 +7,6 @@ default-*.json
 coverage/
 gen/
 dist/
-app/*/package-lock.json
 *-content.zip
 manifest-bundle.zip
 connection.properties
