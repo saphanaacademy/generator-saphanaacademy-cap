@@ -1,6 +1,5 @@
 mta_archives/
 node_modules/
-package-lock.json
 default-env.json
 .env
 .yo-rc.json
