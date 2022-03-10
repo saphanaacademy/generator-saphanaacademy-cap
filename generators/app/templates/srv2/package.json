@@ -1,0 +1,19 @@
+{
+    "name": "<%= projectName %>-srv2",
+    "engines": {
+        "node": "14.x"
+    },
+    "dependencies": {
+        "express": "latest",
+        "body-parser": "latest",
+        "@sap/xsenv": "latest",
+<% if(authentication){ -%>
+        "@sap/xssec": "latest",
+        "passport": "latest",
+<% } -%>
+        "@sap/hdbext": "latest"
+    },
+    "scripts": {
+        "start": "node server.js"
+    }
+}

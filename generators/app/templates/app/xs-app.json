@@ -28,6 +28,19 @@
 <% } -%>
             "destination": "srv"
         }
+<% if(srv2){ -%>
+        ,
+        {
+            "source": "^/srv2/(.*)$",
+<% if(authentication){ -%>
+            "authenticationType": "xsuaa",
+<% } -%>
+<% if(authorization){ -%>
+            "scope": "$XSAPPNAME.Viewer",
+<% } -%>
+            "destination": "srv2"
+        }
+<% } -%>
 <% if(swagger){ -%>
         ,
         {

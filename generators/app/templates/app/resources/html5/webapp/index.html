@@ -206,6 +206,11 @@
 <% if((hana || api) && authentication){ -%>
     <a href="<%= srvPath %>catalog/userInfo()">User Info</a><br />
 <% } -%>
+<% if(srv2){ -%>
+    <h3>Additional Service</h3>
+    <a href="<%= srvPath %>srv2/info">User Info</a><br />
+    <a href="<%= srvPath %>srv2/database">Database Query</a><br />
+<% } -%>
 <% if(v2support){ -%>
 <% if(hana || api){ -%>
     <h3>v2</h3>

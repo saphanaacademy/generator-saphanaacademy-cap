@@ -129,6 +129,25 @@ modules:
         properties:
           srv-url: ${default-url}
 
+<% if(srv2){ -%>
+  # ------------------- ADDITIONAL SERVER MODULE ---------------
+  - name: <%= projectName %>-srv2
+  # ------------------------------------------------------------
+    type: nodejs
+    path: srv2
+    parameters:
+        buildpack: nodejs_buildpack
+        memory: 512M
+        disk-quota: 1024M
+    requires:
+        - name: <%= projectName %>-uaa
+        - name: <%= projectName %>-sm
+    provides:
+        - name: srv2-api
+          properties:
+            srv2-url: ${default-url}
+<% } -%>
+
 <% if(haa){ -%>
   # -------------- HANA ANALYTICS ADAPTER MODULE ---------------
   - name: <%= projectName %>-haa
@@ -204,6 +223,17 @@ modules:
         properties:
           name: srv
           url: ~{srv-url}
+          timeout: 60000
+<% if(authentication){ -%>
+          forwardAuthToken: true
+<% } -%>
+<% } -%>
+<% if(srv2){ -%>
+      - name: srv2-api
+        group: destinations
+        properties:
+          name: srv2
+          url: ~{srv2-url}
           timeout: 60000
 <% if(authentication){ -%>
           forwardAuthToken: true
