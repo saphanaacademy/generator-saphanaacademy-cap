@@ -208,8 +208,16 @@
 <% } -%>
 <% if(srv2){ -%>
     <h3>Additional Service</h3>
-    <a href="<%= srvPath %>srv2/info">User Info</a><br />
-    <a href="<%= srvPath %>srv2/database">Database Query</a><br />
+    <a href="<%= srvPath %>srv2/">Home</a><br />
+<% if(authentication){ -%>
+    <a href="<%= srvPath %>srv2/info">Info</a><br />
+<% } -%>
+<% if(api){ -%>
+    <a href="<%= srvPath %>srv2/dest<% if(apiNW){ -%>?destination=<%= projectName %>-nw&path=Shippers?$top=1<% } -%>">Destination</a><br />
+<% } -%>
+<% if(hana){ -%>
+    <a href="<%= srvPath %>srv2/database">Database</a><br />
+<% } -%>
 <% } -%>
 <% if(v2support){ -%>
 <% if(hana || api){ -%>

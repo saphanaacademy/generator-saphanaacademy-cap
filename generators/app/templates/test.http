@@ -230,6 +230,16 @@ Authorization: Basic joe:
 <% } -%>
 ###
 <% } -%>
+<% if(srv2){ -%>
+GET http://localhost:5002/srv2/
+GET http://localhost:5002/srv2/info
+<% if(api){ -%>
+GET http://localhost:5002/srv2/dest<% if(apiNW){ -%>?destination=<%= projectName %>-nw&path=Shippers?$top=1<% } -%>
+<% } -%>
+<% if(hana){ -%>
+GET http://localhost:5002/srv2/database
+<% } -%>
+<% } -%>
 <% if(v2support){ -%>
 <% if(hana || api){ -%>
 GET http://localhost:4004/v2/catalog

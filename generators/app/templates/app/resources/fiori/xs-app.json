@@ -83,6 +83,19 @@
             "destination": "<%= projectName %>-srv"
         }
 <% } -%>
+<% if(srv2){ -%>
+        ,{
+            "source": "^/srv2/(.*)$",
+            "csrfProtection": false,
+<% if(authentication){ -%>
+            "authenticationType": "xsuaa",
+<% } -%>
+<% if(authorization){ -%>
+            "scope": "$XSAPPNAME.Viewer",
+<% } -%>
+            "destination": "<%= projectName %>-srv2"
+        }
+<% } -%>
         ,{
             "source": "^/resources/(.*)$",
             "target": "/resources/$1",

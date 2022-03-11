@@ -6,12 +6,17 @@
     "dependencies": {
         "express": "latest",
         "body-parser": "latest",
-        "@sap/xsenv": "latest",
 <% if(authentication){ -%>
         "@sap/xssec": "latest",
         "passport": "latest",
 <% } -%>
-        "@sap/hdbext": "latest"
+<% if(api){ -%>
+        "@sap-cloud-sdk/core": "latest",
+<% } -%>
+<% if(hana){ -%>
+        "@sap/hdbext": "latest",
+<% } -%>
+        "@sap/xsenv": "latest"
     },
     "scripts": {
         "start": "node server.js"

@@ -96,6 +96,22 @@
 <% if(hana || api || (schemaName !== '' && hanaTargetHDI === '') || hanaTargetHDI !== ''){ -%>
         ,
 <% } -%>
+<% if(srv2){ -%>
+        {
+            "source": "^/srv2/(.*)$",
+            "csrfProtection": false,
+<% if(authentication){ -%>
+            "authenticationType": "xsuaa",
+<% } -%>
+<% if(authorization){ -%>
+            "scope": "$XSAPPNAME.Viewer",
+<% } -%>
+            "destination": "<%= projectName %>-srv2"
+        }
+<% } -%>
+<% if(hana || api || (schemaName !== '' && hanaTargetHDI === '') || hanaTargetHDI !== '' || srv2){ -%>
+        ,
+<% } -%>
         {
             "source": "^/(.*)$",
 <% if(authentication){ -%>
