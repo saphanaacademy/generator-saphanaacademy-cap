@@ -50,9 +50,6 @@
 <% if(applicationLogging){ -%>
     "cf-nodejs-logging-support": "^6",
 <% } -%>
-<% if(swagger){ -%>
-    "cds-swagger-ui-express": "^0.1",
-<% } -%>
 <% if(apiFGCN){ -%>
     "uuid": "^8.3",
 <% } -%>
@@ -63,6 +60,9 @@
     "sqlite3": "^5"
 <% if(hana && ui){ -%>
     ,"@sap/ux-specification": "^1.96.4"
+<% } -%>
+<% if(swagger){ -%>
+    ,"cds-swagger-ui-express": "^0.1"
 <% } -%>
   },
 <% if(hana && ui){ -%>
