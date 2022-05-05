@@ -109,7 +109,7 @@
             "destination": "<%= projectName %>-srv2"
         }
 <% } -%>
-<% if(hana || api || (schemaName !== '' && hanaTargetHDI === '') || hanaTargetHDI !== '' || srv2){ -%>
+<% if((hana || api || (schemaName !== '' && hanaTargetHDI === '') || hanaTargetHDI !== '') && srv2){ -%>
         ,
 <% } -%>
         {

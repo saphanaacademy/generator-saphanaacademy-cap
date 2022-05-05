@@ -26,6 +26,11 @@ modules:
   # ------------------------------------------------------------
     type: hdb
     path: gen/db
+    build-parameters:
+      ignore:
+        - default-*.json
+        - .env
+        - "*node_modules*"
     parameters:
       buildpack: nodejs_buildpack
       memory: 256M
@@ -55,6 +60,11 @@ modules:
   # ------------------------------------------------------------
     type: nodejs
     path: gen/srv
+    build-parameters:
+      ignore:
+        - default-*.json
+        - .env
+        - "*node_modules*"
     parameters:
       buildpack: nodejs_buildpack
       memory: 512M
@@ -135,6 +145,11 @@ modules:
   # ------------------------------------------------------------
     type: nodejs
     path: srv2
+    build-parameters:
+      ignore:
+        - default-*.json
+        - .env
+        - "*node_modules*"
     parameters:
         buildpack: nodejs_buildpack
         memory: 512M
@@ -173,9 +188,9 @@ modules:
         - mvn -B package
       build-result: target/*.war
     parameters:
+      buildpack: sap_java_buildpack
       memory: 1024M
       disk-quota: 1024M
-      buildpack: sap_java_buildpack
     properties:
       TARGET_RUNTIME: tomee
       JBP_CONFIG_RESOURCE_CONFIGURATION: "['tomee/webapps/ROOT/WEB-INF/resources.xml': {'xsahaa-hdi-container':'<%= projectName %>-db'}]"
@@ -197,6 +212,11 @@ modules:
   # ------------------------------------------------------------
     type: approuter.nodejs
     path: app
+    build-parameters:
+      ignore:
+        - default-*.json
+        - .env
+        - "*node_modules*"
     parameters:
       memory: 256M
       disk-quota: 1024M

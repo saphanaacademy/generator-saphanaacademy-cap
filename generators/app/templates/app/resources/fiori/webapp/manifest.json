@@ -2,7 +2,7 @@
     "_version": "",
 <% if(html5repo){ -%>
     "sap.cloud": {
-<% if(!authentication){ -%>
+<% if(managedAppRouter){ -%>
         "public": true,
 <% } -%>
         "service": "<%= projectName %>-service"

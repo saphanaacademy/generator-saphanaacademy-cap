@@ -1,7 +1,7 @@
 {
     "_version": "",
     "sap.cloud": {
-<% if(!authentication){ -%>
+<% if(managedAppRouter){ -%>
         "public": true,
 <% } -%>
         "service": "<%= projectName %>-service"
