@@ -260,7 +260,6 @@ modules:
 <% if(authentication){ -%>
           forwardAuthToken: true
 <% } -%>
-<% } -%>
 <% if(srv2){ -%>
       - name: srv2-api
         group: destinations
@@ -270,6 +269,7 @@ modules:
           timeout: 60000
 <% if(authentication){ -%>
           forwardAuthToken: true
+<% } -%>
 <% } -%>
 <% } -%>
 <% if(haa){ -%>
@@ -361,6 +361,10 @@ modules:
         parameters:
           service-key:
             name: <%= projectName %>-html5repo-sk
+      - name: srv-api
+<% if(srv2){ -%>
+      - name: srv2-api
+<% } -%>
     parameters:
       content:
         instance:
@@ -375,6 +379,22 @@ modules:
               ServiceInstanceName: <%= projectName %>-html5repo
               ServiceKeyName: <%= projectName %>-html5repo-sk
               sap.cloud.service: <%= projectName %>-service
+            - Name: <%= projectName %>-srv
+              Description: <%= displayName %> - Server Module
+              URL: ~{srv-api/srv-url}
+              TokenServiceInstanceName: <%= projectName %>-uaa
+              TokenServiceKeyName: <%= projectName %>-uaa-sk
+              Authentication: OAuth2UserTokenExchange
+              sap.cloud.service: <%= projectName %>-service
+<% if(srv2){ -%>
+            - Name: <%= projectName %>-srv2
+              Description: <%= displayName %> - Additional Server Module
+              URL: ~{srv2-api/srv2-url}
+              TokenServiceInstanceName: <%= projectName %>-uaa
+              TokenServiceKeyName: <%= projectName %>-uaa-sk
+              Authentication: OAuth2UserTokenExchange
+              sap.cloud.service: <%= projectName %>-service
+<% } -%>
     build-parameters:
       no-source: true
 <% } -%>
@@ -569,28 +589,6 @@ resources:
                 HTML5.DynamicDestination: true
 <% } -%>
 <% if(html5repo){ -%>
-              - Name: <%= projectName %>-srv
-                Description: <%= displayName %> - Server Module
-                URL: ~{srv-api/srv-url}
-                Type: HTTP
-                ProxyType: Internet
-                Authentication: NoAuthentication
-                HTML5.DynamicDestination: true
-<% if(authentication){ -%>
-                HTML5.ForwardAuthToken: true
-<% } -%>
-<% if(srv2){ -%>
-              - Name: <%= projectName %>-srv2
-                Description: <%= displayName %> - Additional Server Module
-                URL: ~{srv2-api/srv2-url}
-                Type: HTTP
-                ProxyType: Internet
-                Authentication: NoAuthentication
-                HTML5.DynamicDestination: true
-<% if(authentication){ -%>
-                HTML5.ForwardAuthToken: true
-<% } -%>
-<% } -%>
               - Name: ui5
                 Description: SAPUI5
                 URL: https://ui5.sap.com
