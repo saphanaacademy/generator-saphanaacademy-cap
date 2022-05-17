@@ -353,7 +353,7 @@ service CatalogService @(path : '/catalog')
 <% if(attributes){ -%>
     type userAttrs { Region: many String; };
 <% } -%>
-    type user { user: String; locale: String; <% if(multiTenant){ -%>tenant: String; <% } -%>scopes: userScopes; <% if(attributes){ -%>attrs: userAttrs; <% } -%>};
-    function userInfo() returns user;
+    type userType { user: String; locale: String; <% if(multiTenant){ -%>tenant: String; <% } -%>scopes: userScopes; <% if(attributes){ -%>attrs: userAttrs; <% } -%>};
+    function userInfo() returns userType;
 <% } -%>
 };

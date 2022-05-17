@@ -230,14 +230,21 @@ Authorization: Basic joe:
 <% } -%>
 ###
 <% } -%>
-<% if(srv2){ -%>
-GET http://localhost:5002/srv2/
-GET http://localhost:5002/srv2/info
+<% if(hana && srv2){ -%>
+GET http://localhost:4004/catalog2/Students?$top=10
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
+<% if(srvjs){ -%>
+GET http://localhost:5002/srvjs/
+GET http://localhost:5002/srvjs/info
 <% if(api){ -%>
-GET http://localhost:5002/srv2/dest<% if(apiNW){ -%>?destination=<%= projectName %>-nw&path=Shippers?$top=1<% } -%>
+GET http://localhost:5002/srvjs/dest<% if(apiNW){ -%>?destination=<%= projectName %>-nw&path=Shippers?$top=1<% } -%>
 <% } -%>
 <% if(hana){ -%>
-GET http://localhost:5002/srv2/database
+GET http://localhost:5002/srvjs/database
 <% } -%>
 <% } -%>
 <% if(v2support){ -%>

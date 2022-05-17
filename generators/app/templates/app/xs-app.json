@@ -31,7 +31,7 @@
 <% if(srv2){ -%>
         ,
         {
-            "source": "^/srv2/(.*)$",
+            "source": "^/catalog2/(.*)$",
 <% if(authentication){ -%>
             "authenticationType": "xsuaa",
 <% } -%>
@@ -39,6 +39,19 @@
             "scope": "$XSAPPNAME.Viewer",
 <% } -%>
             "destination": "srv2"
+        }
+<% } -%>
+<% if(srvjs){ -%>
+        ,
+        {
+            "source": "^/srvjs/(.*)$",
+<% if(authentication){ -%>
+            "authenticationType": "xsuaa",
+<% } -%>
+<% if(authorization){ -%>
+            "scope": "$XSAPPNAME.Viewer",
+<% } -%>
+            "destination": "srvjs"
         }
 <% } -%>
 <% if(swagger){ -%>

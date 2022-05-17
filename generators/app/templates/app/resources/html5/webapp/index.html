@@ -206,17 +206,23 @@
 <% if((hana || api) && authentication){ -%>
     <a href="<%= srvPath %>catalog/userInfo()">User Info</a><br />
 <% } -%>
-<% if(srv2){ -%>
-    <h3>Additional Service</h3>
-    <a href="<%= srvPath %>srv2/">Home</a><br />
+<% if(hana && srv2){ -%>
+    <h3>Additional Service - CAP</h3>
+    <a href="<%= srvPath %>catalog2/">Catalog2</a><br />
+    <a href="<%= srvPath %>catalog2/$metadata">Metadata</a><br />
+    <a href="<%= srvPath %>catalog2/Students">Students</a><br />
+<% } -%>
+<% if(srvjs){ -%>
+    <h3>Additional Service - Node.js</h3>
+    <a href="<%= srvPath %>srvjs/">Home</a><br />
 <% if(authentication){ -%>
-    <a href="<%= srvPath %>srv2/info">Info</a><br />
+    <a href="<%= srvPath %>srvjs/info">Info</a><br />
 <% } -%>
 <% if(api){ -%>
-    <a href="<%= srvPath %>srv2/dest<% if(apiNW){ -%>?destination=<%= projectName %>-nw&path=Shippers?$top=1<% } -%>">Destination</a><br />
+    <a href="<%= srvPath %>srvjs/dest<% if(apiNW){ -%>?destination=<%= projectName %>-nw&path=Shippers?$top=1<% } -%>">Destination</a><br />
 <% } -%>
 <% if(hana){ -%>
-    <a href="<%= srvPath %>srv2/database">Database</a><br />
+    <a href="<%= srvPath %>srvjs/database">Database</a><br />
 <% } -%>
 <% } -%>
 <% if(v2support){ -%>

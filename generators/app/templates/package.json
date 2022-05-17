@@ -64,6 +64,9 @@
 <% if(hana && ui){ -%>
     ,"@sap/ux-specification": "^1.96.4"
 <% } -%>
+<% if(v2support){ -%>
+    ,"@sap/cds-odata-v2-adapter-proxy": "^1"
+<% } -%>
   },
 <% if(hana && ui){ -%>
   "sapux": [
@@ -83,6 +86,85 @@
       "flavor": "x4"
     },
 <% } -%>
+    "build": {
+      "target": "gen",
+      "tasks": [
+<% if(hana || schemaName !== '' || hanaTargetHDI !== ''){ -%>
+        {
+          "for": "hana",
+          "src": "db",
+          "options": {
+            "model": [
+              "db",
+<% if(srv2){ -%>
+              "srv2",
+<% } -%>
+<% if(ui || authentication){ -%>
+              "app",
+<% } -%>
+              "srv"
+            ]
+          }
+        },
+<% } -%>
+        {
+          "for": "node-cf",
+          "src": "srv",
+          "options": {
+            "model": [
+<% if(hana || schemaName !== '' || hanaTargetHDI !== ''){ -%>
+              "db",
+<% } -%>
+<% if(ui || authentication){ -%>
+              "app",
+<% } -%>
+              "srv"
+            ]
+          }
+        }
+<% if(srv2){ -%>
+        ,
+        {
+          "for": "node-cf",
+          "src": "srv2",
+          "options": {
+            "model": [
+<% if(hana || schemaName !== '' || hanaTargetHDI !== ''){ -%>
+              "db",
+<% } -%>
+<% if(ui || authentication){ -%>
+              "app",
+<% } -%>
+              "srv2"
+            ]
+          }
+        }
+<% } -%>
+<% if(multiTenant){ -%>
+        ,
+        {
+          "for": "mtx",
+          "src": ".",
+          "dest": "srv",
+          "options": {
+            "model": [
+<% if(hana){ -%>
+              "db",
+<% } -%>
+<% if(ui || authentication){ -%>
+              "app",
+<% } -%>
+<% if(srv2){ -%>
+              "srv2",
+<% } -%>
+              "srv",
+              "."
+            ]
+          }
+        }
+<% } -%>
+      ]
+    },
     "requires": {
 <% if(authentication){ -%>
       "uaa": {
@@ -160,6 +242,9 @@
         "model": [
           "db",
           "srv"
+<% if(srv2){ -%>
+          ,"srv2"
+<% } -%>
         ]
 <% if(multiTenant){ -%>
         ,

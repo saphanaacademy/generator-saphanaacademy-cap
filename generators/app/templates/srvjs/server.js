@@ -53,7 +53,7 @@ app.use(hdbext.middleware(services.hana));
 app.use(bodyParser.json());
 
 // app home
-app.get('/srv2', function (req, res) {
+app.get('/srvjs', function (req, res) {
 <% if(authorization){ -%>
     if (req.authInfo.checkScope('$XSAPPNAME.Viewer')) {
 <% } -%>
@@ -67,7 +67,7 @@ app.get('/srv2', function (req, res) {
 
 <% if(authentication){ -%>
 // app user info
-app.get('/srv2/info', function (req, res) {
+app.get('/srvjs/info', function (req, res) {
 <% if(authorization){ -%>
     if (req.authInfo.checkScope('$XSAPPNAME.Viewer')) {
 <% } -%>
@@ -94,7 +94,7 @@ const core = require('@sap-cloud-sdk/core');
 <% if(authentication){ -%>
 const { retrieveJwt } = require('@sap-cloud-sdk/core');
 <% } -%>
-app.get('/srv2/dest', async function (req, res) {
+app.get('/srvjs/dest', async function (req, res) {
 <% if(authorization){ -%>
     if (req.authInfo.checkScope('$XSAPPNAME.Viewer')) {
 <% } -%>
@@ -127,7 +127,7 @@ app.get('/srv2/dest', async function (req, res) {
 
 <% if(hana){ -%>
 // app database
-app.get('/srv2/database', async function (req, res) {
+app.get('/srvjs/database', async function (req, res) {
 <% if(authorization){ -%>
     if (req.authInfo.checkScope('$XSAPPNAME.Viewer')) {
 <% } -%>

@@ -21,6 +21,16 @@ entity Sales {
       comments    : String(100);
       criticality : Integer;
 };
+<% if(srv2){ -%>
+entity Students {
+  key ID          : Integer;
+      name        : String(100);
+      site        : String(100);
+      gender      : String(100);
+      age         : String(100);
+      score       : Integer;
+};
+<% } -%>
 <% } -%>
 
 <% if(em){ -%>
