@@ -590,6 +590,8 @@ module.exports = class extends Generator {
       }
       if (answers.multiTenant === true && answers.authentication == false) {
         answers.authentication = true;
+        answers.authorization = false;
+        answers.attributes = false;
       }
       if (answers.authentication === false) {
         answers.authorization = false;
