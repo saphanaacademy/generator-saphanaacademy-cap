@@ -1,6 +1,6 @@
 {
     "dependencies": {
-        "@sap/approuter": "^10.4"
+        "@sap/approuter": "^11"
     },
     "scripts": {
 <% if(multiTenant){ -%>

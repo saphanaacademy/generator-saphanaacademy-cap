@@ -336,7 +336,7 @@ module.exports = class extends Generator {
         default: ""
       },
       {
-        when: response => response.hana === true && response.authentication === true && response.schemaName === "" && response.hanaTargetHDI === "" && response.html5repo === false,
+        when: response => response.hana === true && response.schemaName === "" && response.hanaTargetHDI === "" && response.html5repo === false,
         type: "confirm",
         name: "multiTenant",
         message: "Would you like to create a SaaS multitenant app?",
@@ -588,11 +588,11 @@ module.exports = class extends Generator {
       } else if (answers.APIKeyNASA === "") {
         answers.APIKeyNASA = "DEMO_KEY";
       }
-      if (answers.authentication === false) {
-        answers.authorization = false;
-        answers.multiTenant = false;
+      if (answers.multiTenant === true && answers.authentication == false) {
+        answers.authentication = true;
       }
       if (answers.authentication === false) {
+        answers.authorization = false;
         answers.haa = false;
         answers.GraphSameSubaccount = false;
       }

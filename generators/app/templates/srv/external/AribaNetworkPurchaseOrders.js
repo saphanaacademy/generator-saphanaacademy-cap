@@ -1,3 +1,5 @@
+const cds = require('@sap/cds');
+
 class AribaNetworkPurchaseOrders extends cds.RemoteService {
     async init() {
 

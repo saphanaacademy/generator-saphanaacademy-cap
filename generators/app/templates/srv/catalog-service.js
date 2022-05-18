@@ -1,3 +1,4 @@
+const cds = require('@sap/cds');
 const debug = require('debug')('srv:catalog-service');
 <% if(applicationLogging){ -%>
 const log = require('cf-nodejs-logging-support');

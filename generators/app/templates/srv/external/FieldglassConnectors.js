@@ -1,3 +1,4 @@
+const cds = require('@sap/cds');
 const debug = require('debug')('srv:FieldglassConnectors');
 
 class FieldglassConnectors extends cds.RemoteService {

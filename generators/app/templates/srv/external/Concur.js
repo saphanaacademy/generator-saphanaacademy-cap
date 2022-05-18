@@ -1,3 +1,5 @@
+const cds = require('@sap/cds');
+
 class Concur extends cds.RemoteService {
     async init() {
 

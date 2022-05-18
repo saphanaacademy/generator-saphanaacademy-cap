@@ -1,3 +1,5 @@
+const cds = require('@sap/cds');
+
 class FieldglassApprovals extends cds.RemoteService {
     async init() {
 

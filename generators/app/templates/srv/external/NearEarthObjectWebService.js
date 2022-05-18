@@ -1,3 +1,4 @@
+const cds = require('@sap/cds');
 <% if(credStore !== ''){ -%>
 const credStore = require('./../lib/credStore');
 <% } -%>

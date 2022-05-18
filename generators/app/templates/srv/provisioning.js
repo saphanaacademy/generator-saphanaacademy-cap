@@ -1,3 +1,4 @@
+const cds = require('@sap/cds');
 const debug = require('debug')('srv:provisioning');
 <% if(credStore !== ''){ -%>
 const credStore = require('./lib/credStore');
