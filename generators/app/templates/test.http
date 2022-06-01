@@ -1,4 +1,4 @@
-<% if(hana || api){ -%>
+<% if(hana || api || app2appType === "access"){ -%>
 GET http://localhost:4004/catalog/
 <% if(authentication){ -%>
 Authorization: Basic joe:
@@ -31,6 +31,19 @@ Content-Type: application/json
 
 {}
 ###
+<% if(apiAICORE){ -%>
+GET http://localhost:4004/catalog/Anomalies?$top=3
+Authorization: Basic joe:
+###
+POST http://localhost:4004/catalog/Anomalies(101)/CatalogService.predict
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+Content-Type: application/json
+
+{}
+###
+<% } -%>
 GET http://localhost:4004/catalog/Sales?$apply=filter(amount%20gt%20500)/groupby((region),aggregate($count%20as%20nrCountries))
 <% if(authentication){ -%>
 Authorization: Basic joe:
@@ -223,12 +236,22 @@ Authorization: Basic joe:
 <% } -%>
 ###
 <% } -%>
-<% if((hana || api) && authentication){ -%>
-GET http://localhost:4004/catalog/userInfo()
 <% if(authentication){ -%>
+GET http://localhost:4004/catalog/userInfo()
 Authorization: Basic joe:
-<% } -%>
 ###
+<% } -%>
+<% if(app2appType === "access"){ -%>
+<% if(app2appMethod.includes("user")){ -%>
+GET http://localhost:4004/catalog/<%= app2appName %>User()
+Authorization: Basic joe:
+###
+<% } -%>
+<% if(app2appMethod.includes("machine")){ -%>
+GET http://localhost:4004/catalog/<%= app2appName %>Tech()
+Authorization: Basic joe:
+###
+<% } -%>
 <% } -%>
 <% if(hana && srv2){ -%>
 GET http://localhost:4004/catalog2/Students?$top=10
@@ -248,7 +271,7 @@ GET http://localhost:5002/srvjs/database
 <% } -%>
 <% } -%>
 <% if(v2support){ -%>
-<% if(hana || api){ -%>
+<% if(hana || api || app2appType === "access"){ -%>
 GET http://localhost:4004/v2/catalog
 <% if(authentication){ -%>
 Authorization: Basic joe:
@@ -274,6 +297,19 @@ Content-Type: application/json
 
 {}
 ###
+<% if(apiAICORE){ -%>
+GET http://localhost:4004/v2/catalog/Anomalies?$top=3
+Authorization: Basic joe:
+###
+POST http://localhost:4004/v2/catalog/Anomalies_predict?ID=101
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+Content-Type: application/json
+
+{}
+###
+<% } -%>
 GET http://localhost:4004/v2/catalog/Sales?$apply=filter(amount%20gt%20500)/groupby((region),aggregate($count%20as%20nrCountries))
 <% if(authentication){ -%>
 Authorization: Basic joe:
@@ -433,12 +469,22 @@ Authorization: Basic joe:
 <% } -%>
 ###
 <% } -%>
-<% if((hana || api) && authentication){ -%>
-GET http://localhost:4004/v2/catalog/userInfo()
 <% if(authentication){ -%>
+GET http://localhost:4004/v2/catalog/userInfo()
 Authorization: Basic joe:
-<% } -%>
 ###
+<% } -%>
+<% if(app2appType === "access"){ -%>
+<% if(app2appMethod.includes("user")){ -%>
+GET http://localhost:4004/v2/catalog/<%= app2appName %>User()
+Authorization: Basic joe:
+###
+<% } -%>
+<% if(app2appMethod.includes("machine")){ -%>
+GET http://localhost:4004/v2/catalog/<%= app2appName %>Tech()
+Authorization: Basic joe:
+###
+<% } -%>
 <% } -%>
 <% } -%>
 <% if(schemaName !== '' && hanaTargetHDI === ''){ -%>

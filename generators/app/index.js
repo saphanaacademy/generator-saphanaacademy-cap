@@ -112,7 +112,7 @@ module.exports = class extends Generator {
         type: "checkbox",
         name: "apiLoB",
         message: "Which external API(s) would you like to use?",
-        choices: ["SAP S/4HANA Cloud Sales Order (A2X)", "SAP S/4HANA Cloud Business Partner (A2X)", "SAP SuccessFactors Recruiting", "SAP SuccessFactors Employee Central", "SAP Ariba Network Purchase Orders Buyer", "SAP Ariba Web Services", "SAP Fieldglass Connectors", "SAP Fieldglass Approvals", "SAP Concur", "SAP Graph", "HERE Location Services", "NASA Near Earth Object Web Service", "Northwind"],
+        choices: ["SAP S/4HANA Cloud Sales Order (A2X)", "SAP S/4HANA Cloud Business Partner (A2X)", "SAP SuccessFactors Recruiting", "SAP SuccessFactors Employee Central", "SAP Ariba Network Purchase Orders Buyer", "SAP Ariba Web Services", "SAP Fieldglass Connectors", "SAP Fieldglass Approvals", "SAP Concur", "SAP Graph", "SAP AI Core", "HERE Location Services", "NASA Near Earth Object Web Service", "Northwind"],
         default: ["SAP S/4HANA Cloud Sales Order (A2X)"]
       },
       {
@@ -237,6 +237,50 @@ module.exports = class extends Generator {
         default: "https://us.api.concursolutions.com"
       },
       {
+        when: response => response.api === true && response.apiLoB.includes("SAP AI Core"),
+        type: "input",
+        name: "AICoreURL",
+        message: "What is your SAP AI Core URL?",
+        default: "https://api.ai.<service>.<region>.<provider>.ml.hana.ondemand.com"
+      },
+      {
+        when: response => response.api === true && response.apiLoB.includes("SAP AI Core"),
+        type: "input",
+        name: "AICoreTokenURL",
+        message: "What is your SAP AI Core Token URL?",
+        default: "https://ai.authentication.<region>.hana.ondemand.com"
+      },
+      {
+        when: response => response.api === true && response.apiLoB.includes("SAP AI Core"),
+        type: "input",
+        name: "AICoreResourceGroup",
+        message: "What is your SAP AI Core Resource Group name?",
+        default: "<resourceGroupName>"
+
+      },
+      {
+        when: response => response.api === true && response.apiLoB.includes("SAP AI Core"),
+        type: "input",
+        name: "AICoreDeploymentId",
+        message: "What is your SAP AI Core Deployment ID?",
+        default: "<deploymentId>"
+      },
+      {
+        when: response => response.api === true && response.apiLoB.includes("SAP AI Core"),
+        type: "input",
+        name: "AICoreModel",
+        message: "What is your SAP AI Core Model name?",
+        default: "<modelName>"
+      },
+      {
+        when: response => response.api === true && response.apiLoB.includes("SAP AI Core"),
+        type: "list",
+        name: "AICoreModelType",
+        message: "What is your SAP AI Core Model type?",
+        choices: [{ name: "Image", value: "image" }, { name: "Sound", value: "sound" }],
+        default: "image"
+      },
+      {
         when: response => response.api === true && response.apiLoB.includes("HERE Location Services"),
         type: "password",
         name: "APIKeyHERE",
@@ -281,7 +325,7 @@ module.exports = class extends Generator {
         default: true
       },
       {
-        when: response => response.authentication === true && response.authorization === true,
+        when: response => response.hana === true && response.authentication === true && response.authorization === true,
         type: "confirm",
         name: "attributes",
         message: "Would you like to use role attributes?",
@@ -293,6 +337,36 @@ module.exports = class extends Generator {
         name: "GraphSameSubaccount",
         message: "Will you be deploying to the subaccount of the SAP Graph service instance?",
         default: true
+      },
+      {
+        when: response => response.authentication === true && response.authorization === true,
+        type: "confirm",
+        name: "app2app",
+        message: "Would you like to configure an App2App authorization scenario?",
+        default: false
+      },
+      {
+        when: response => response.authentication === true && response.authorization === true && response.app2app === true,
+        type: "list",
+        name: "app2appType",
+        message: "Which App2App authorization scenario would you like to configure?",
+        choices: [{ name: "Authorize another app to use this app", value: "authorize" }, { name: "Access another app from this app", value: "access" }],
+        default: "authorize"
+      },
+      {
+        when: response => response.authentication === true && response.authorization === true && response.app2app === true,
+        type: "input",
+        name: "app2appName",
+        message: "What is the name of the other app (deployed to same BTP subaccount)?",
+        default: ""
+      },
+      {
+        when: response => response.authentication === true && response.authorization === true && response.app2app === true,
+        type: "checkbox",
+        name: "app2appMethod",
+        message: "What type of App2App authentication would you like?",
+        choices: [{ name: "Principal Propagation of Business User", value: "user", checked: true }, { name: "Technical Communication", value: "machine" }],
+        default: ["user"]
       },
       {
         type: "confirm",
@@ -519,6 +593,13 @@ module.exports = class extends Generator {
         answers.GraphTokenURL = "";
         answers.GraphClientId = "";
         answers.GraphClientSecret = "";
+        answers.apiAICORE = "";
+        answers.AICoreURL = "";
+        answers.AICoreTokenURL = "";
+        answers.AICoreResourceGroup = "";
+        answers.AICoreDeploymentId = "";
+        answers.AICoreModel = "";
+        answers.AICoreModelType = "";
         answers.APIKeyHERE = "";
         answers.APIKeyNASA = "";
         answers.credStore = "";
@@ -533,6 +614,7 @@ module.exports = class extends Generator {
       answers.apiFGAP = answers.apiLoB.includes("SAP Fieldglass Approvals");
       answers.apiCONC = answers.apiLoB.includes("SAP Concur");
       answers.apiGRAPH = answers.apiLoB.includes("SAP Graph");
+      answers.apiAICORE = answers.apiLoB.includes("SAP AI Core");
       answers.apiHERE = answers.apiLoB.includes("HERE Location Services");
       answers.apiNeoWs = answers.apiLoB.includes("NASA Near Earth Object Web Service");
       answers.apiNW = answers.apiLoB.includes("Northwind");
@@ -580,6 +662,14 @@ module.exports = class extends Generator {
         answers.GraphClientSecret = "";
         answers.GraphSameSubaccount = false;
       }
+      if (answers.apiAICORE === false) {
+        answers.AICoreURL = "";
+        answers.AICoreTokenURL = "";
+        answers.AICoreResourceGroup = "";
+        answers.AICoreDeploymentId = "";
+        answers.AICoreModel = "";
+        answers.AICoreModelType = "";
+      }
       if (answers.apiHERE === false) {
         answers.APIKeyHERE = "";
       }
@@ -591,15 +681,25 @@ module.exports = class extends Generator {
       if (answers.multiTenant === true && answers.authentication == false) {
         answers.authentication = true;
         answers.authorization = false;
+        answers.app2app = false;
         answers.attributes = false;
       }
       if (answers.authentication === false) {
         answers.authorization = false;
+        answers.app2app = false;
         answers.haa = false;
         answers.GraphSameSubaccount = false;
       }
-      if (answers.authentication === false || answers.authorization === false) {
+      if (answers.hana === false || answers.authentication === false || answers.authorization === false) {
         answers.attributes = false;
+      }
+      if (answers.authentication === false || answers.authorization === false) {
+        answers.app2app = false;
+      }
+      if (answers.app2app === false) {
+        answers.app2appType = "";
+        answers.app2appName = "";
+        answers.app2appMethod = "";
       }
       if (answers.ui === false) {
         answers.html5repo = false;
@@ -661,10 +761,11 @@ module.exports = class extends Generator {
     }
     answers.set('graphDataSources', graphDataSources);
 
-    if (answers.get('cicd') === true) {
+    if (answers.get('cicd') === true || answers.get('app2appType') === "access") {
       answers.set('cforg', 'org');
       answers.set('cfspace', 'space');
-      answers.set('cfapi', 'https://api.cf.region.hana.ondemand.com');
+      answers.set('cfapi', 'https://api.cf.<region>.hana.ondemand.com');
+      answers.set('cfregion', '<region>');
       // try to identify the targeted api, org & space
       const resTarget = this.spawnCommandSync('cf', ['target'], { stdio: 'pipe' });
       const stdoutTarget = resTarget.stdout.toString('utf8');
@@ -678,6 +779,7 @@ module.exports = class extends Generator {
           var keyvalue = props_strings[j].split(':');
           if (keyvalue[0].toUpperCase() === 'API ENDPOINT') {
             answers.set('cfapi', keyvalue[1].trim() + ':' + keyvalue[2].trim());
+            answers.set('cfregion', keyvalue[2].split('.')[2]);
           } else if (keyvalue[0] === 'org') {
             answers.set('cforg', keyvalue[1].trim());
           } else if (keyvalue[0] === 'space') {
@@ -755,7 +857,7 @@ module.exports = class extends Generator {
                 if (!((file === 'Jenkinsfile' || file.substring(0, 9) === '.pipeline') && answers.get('cicd') === false)) {
                   if (!(file.substring(0, 3) === 'haa' && answers.get('haa') === false)) {
                     if (!(file.substring(0, 3) === 'tpl' && (answers.get('hana') === false || answers.get('multiTenant') === false))) {
-                      if (!(file.substring(0, 19) === 'srv/catalog-service' && answers.get('hana') === false && answers.get('api') === false)) {
+                      if (!(file.substring(0, 19) === 'srv/catalog-service' && answers.get('hana') === false && answers.get('api') === false && answers.get('app2app') === false)) {
                         if (!(file === 'srv/lib/credStore.js' && answers.get('credStore') === '')) {
                           if (!(file === 'srv/lib/utils.js' && (answers.get('apiARIBWS') === false && answers.get('apiCONC') === false))) {
                             if (!((file === 'srv/provisioning.js' || file === 'app/custom.js') && answers.get('multiTenant') === false)) {
@@ -778,42 +880,46 @@ module.exports = class extends Generator {
                                                               if (!((file.substring(0, 15) === 'app/xs-app.json' || file.substring(0, 16) === 'app/package.json') && (answers.get('managedAppRouter') === true || (answers.get('authentication') === false && answers.get('ui') === false)))) {
                                                                 if (!((file.substring(0, 13) === 'app/resources' || file.includes('i18n') || file.includes('index.cds')) && answers.get('ui') === false)) {
                                                                   if (!((file.substring(0, 19) === 'app/resources/fiori' || file.includes('i18n') || file.includes('index.cds')) && answers.get('hana') === false)) {
-                                                                    if (!((file.substring(0, 24) === 'app/resources/index.html') && answers.get('html5repo') === true)) {
-                                                                      if (!((file.substring(0, 31) === 'app/resources/fiori/xs-app.json' || file.substring(0, 32) === 'app/resources/fiori/package.json' || file.substring(0, 35) === 'app/resources/fiori/ui5-deploy.yaml') && answers.get('html5repo') === false)) {
-                                                                        if (!((file.substring(0, 31) === 'app/resources/html5/xs-app.json' || file.substring(0, 32) === 'app/resources/html5/package.json' || file.substring(0, 35) === 'app/resources/html5/ui5-deploy.yaml' || file.substring(0, 40) === 'app/resources/html5/webapp/manifest.json') && answers.get('html5repo') === false)) {
-                                                                          if (!(file.substring(0, 2) === 'db' && answers.get('hana') === false && answers.get('schemaName') === "" && answers.get('hanaTargetHDI') === "")) {
-                                                                            if (!((file.substring(0, 17) === 'db/data-model.cds' || file.substring(0, 7) === 'db/data' || file.substring(0, 6) === 'db/csv') && answers.get('hana') === false)) {
-                                                                              if (!(file.substring(0, 31) === 'db/data/_PROJECT_NAME_.db.Sales' && answers.get('hana') === false)) {
-                                                                                if (!(file.substring(0, 34) === 'db/data/_PROJECT_NAME_.db.Students' && (answers.get('hana') === false || answers.get('srv2') === false))) {
-                                                                                  if (!((file.substring(0, 39) === 'db/src/_PROJECT_NAME_DB_EXTERNAL_ACCESS') && answers.get('hanaExternalHDI') === false)) {
-                                                                                    if (!((file.substring(0, 35) === 'db/csv/_PROJECT_NAME_.db.Conditions' || file.substring(0, 43) === 'db/data/_PROJECT_NAME_.db.CustomerProcesses' || file.substring(0, 31) === 'db/csv/_PROJECT_NAME_.db.Status') && (answers.get('apiS4HCBP') === false || answers.get('em') === false))) {
-                                                                                      if (!(file.substring(0, 7) === 'db/src/' && answers.get('hanaNative') === false && answers.get('hanaExternalHDI') === false && answers.get('hanaTargetHDI') === "" && answers.get('schemaName') === "")) {
-                                                                                        if (!((file.substring(0, 10) === 'db/src/SP_' || file.substring(0, 10) === 'db/src/TT_' || file.substring(0, 10) === 'db/src/CV_' || file.substring(0, 10) === 'db/src/TF_' || file.substring(0, 10) === 'db/src/SYS') && answers.get('hanaNative') === false)) {
-                                                                                          const sOrigin = this.templatePath(file);
-                                                                                          let fileDest = file;
-                                                                                          if (fileDest.includes('_PROJECT_NAME_.db')) {
-                                                                                            let folder = 'db/data';
-                                                                                            if (fileDest.substring(0, 6) === 'db/csv') folder = fileDest.substring(0, 6);
-                                                                                            fileDest = folder + '/' + answers.get('projectName') + '.db-' + fileDest.split(".", 3)[2] + '.csv';
-                                                                                          }
-                                                                                          if (fileDest.includes('_PROJECT_NAME_DB_EXTERNAL_ACCESS')) {
-                                                                                            let tempDest = 'db/src/' + answers.get('projectName').toUpperCase() + '_DB_EXTERNAL_ACCESS';
-                                                                                            if (fileDest.includes('EXTERNAL_ACCESS_G')) {
-                                                                                              tempDest += '_G';
+                                                                    if (!(file.includes('MediaSection.fragment.xml') && answers.get('apiAICORE') === false)) {
+                                                                      if (!((file.substring(0, 24) === 'app/resources/index.html') && answers.get('html5repo') === true)) {
+                                                                        if (!((file.substring(0, 31) === 'app/resources/fiori/xs-app.json' || file.substring(0, 32) === 'app/resources/fiori/package.json' || file.substring(0, 35) === 'app/resources/fiori/ui5-deploy.yaml') && answers.get('html5repo') === false)) {
+                                                                          if (!((file.substring(0, 31) === 'app/resources/html5/xs-app.json' || file.substring(0, 32) === 'app/resources/html5/package.json' || file.substring(0, 35) === 'app/resources/html5/ui5-deploy.yaml' || file.substring(0, 40) === 'app/resources/html5/webapp/manifest.json') && answers.get('html5repo') === false)) {
+                                                                            if (!(file.substring(0, 2) === 'db' && answers.get('hana') === false && answers.get('schemaName') === "" && answers.get('hanaTargetHDI') === "")) {
+                                                                              if (!((file.substring(0, 17) === 'db/data-model.cds' || file.substring(0, 7) === 'db/data' || file.substring(0, 6) === 'db/csv') && answers.get('hana') === false)) {
+                                                                                if (!(file.substring(0, 31) === 'db/data/_PROJECT_NAME_.db.Sales' && answers.get('hana') === false)) {
+                                                                                  if (!(file.substring(0, 40) === 'db/data/_PROJECT_NAME_.db.Anomalies' && answers.get('apiAICORE') === false)) {
+                                                                                    if (!(file.substring(0, 34) === 'db/data/_PROJECT_NAME_.db.Students' && (answers.get('hana') === false || answers.get('srv2') === false))) {
+                                                                                      if (!((file.substring(0, 39) === 'db/src/_PROJECT_NAME_DB_EXTERNAL_ACCESS') && answers.get('hanaExternalHDI') === false)) {
+                                                                                        if (!((file.substring(0, 35) === 'db/csv/_PROJECT_NAME_.db.Conditions' || file.substring(0, 43) === 'db/data/_PROJECT_NAME_.db.CustomerProcesses' || file.substring(0, 31) === 'db/csv/_PROJECT_NAME_.db.Status') && (answers.get('apiS4HCBP') === false || answers.get('em') === false))) {
+                                                                                          if (!(file.substring(0, 7) === 'db/src/' && answers.get('hanaNative') === false && answers.get('hanaExternalHDI') === false && answers.get('hanaTargetHDI') === "" && answers.get('schemaName') === "")) {
+                                                                                            if (!((file.substring(0, 10) === 'db/src/SP_' || file.substring(0, 10) === 'db/src/TT_' || file.substring(0, 10) === 'db/src/CV_' || file.substring(0, 10) === 'db/src/TF_' || file.substring(0, 10) === 'db/src/SYS') && answers.get('hanaNative') === false)) {
+                                                                                              const sOrigin = this.templatePath(file);
+                                                                                              let fileDest = file;
+                                                                                              if (fileDest.includes('_PROJECT_NAME_.db')) {
+                                                                                                let folder = 'db/data';
+                                                                                                if (fileDest.substring(0, 6) === 'db/csv') folder = fileDest.substring(0, 6);
+                                                                                                fileDest = folder + '/' + answers.get('projectName') + '.db-' + fileDest.split(".", 3)[2] + '.csv';
+                                                                                              }
+                                                                                              if (fileDest.includes('_PROJECT_NAME_DB_EXTERNAL_ACCESS')) {
+                                                                                                let tempDest = 'db/src/' + answers.get('projectName').toUpperCase() + '_DB_EXTERNAL_ACCESS';
+                                                                                                if (fileDest.includes('EXTERNAL_ACCESS_G')) {
+                                                                                                  tempDest += '_G';
+                                                                                                }
+                                                                                                fileDest = tempDest + '.' + fileDest.split(".", 3)[1];
+                                                                                              }
+                                                                                              if (fileDest.includes('app/resources/') && answers.get('html5repo')) {
+                                                                                                fileDest = 'app/' + fileDest.substring(14);
+                                                                                              }
+                                                                                              if (fileDest === 'dotenv') {
+                                                                                                fileDest = '.env';
+                                                                                              }
+                                                                                              if (fileDest === 'dotgitignore') {
+                                                                                                fileDest = '.gitignore';
+                                                                                              }
+                                                                                              const sTarget = this.destinationPath(fileDest);
+                                                                                              this.fs.copyTpl(sOrigin, sTarget, this.config.getAll());
                                                                                             }
-                                                                                            fileDest = tempDest + '.' + fileDest.split(".", 3)[1];
                                                                                           }
-                                                                                          if (fileDest.includes('app/resources/') && answers.get('html5repo')) {
-                                                                                            fileDest = 'app/' + fileDest.substring(14);
-                                                                                          }
-                                                                                          if (fileDest === 'dotenv') {
-                                                                                            fileDest = '.env';
-                                                                                          }
-                                                                                          if (fileDest === 'dotgitignore') {
-                                                                                            fileDest = '.gitignore';
-                                                                                          }
-                                                                                          const sTarget = this.destinationPath(fileDest);
-                                                                                          this.fs.copyTpl(sOrigin, sTarget, this.config.getAll());
                                                                                         }
                                                                                       }
                                                                                     }
@@ -905,6 +1011,8 @@ module.exports = class extends Generator {
     answers.delete('ConcurGeolocation');
     answers.delete('GraphClientId');
     answers.delete('GraphClientSecret');
+    answers.delete('AICoreResourceGroup');
+    answers.delete('AICoreDeploymentId');
     answers.delete('APIKeyHERE');
     answers.delete('APIKeyNASA');
     answers.delete('ApplicationInterfaceKey');

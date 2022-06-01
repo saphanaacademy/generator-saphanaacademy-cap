@@ -30,6 +30,14 @@
         ,
         {
             "name": "$XSAPPNAME.Viewer",
+<% if(app2appType === "authorize"){ -%>
+<% if(app2appMethod.includes("user")){ -%>
+            "granted-apps": ["$XSAPPNAME(application,<%= app2appName %>)"],
+<% } -%>
+<% if(app2appMethod.includes("machine")){ -%>
+            "grant-as-authority-to-apps": ["$XSAPPNAME(application,<%= app2appName %>)"],
+<% } -%>
+<% } -%>
             "description": "Viewer"
         },
         {
@@ -49,6 +57,14 @@
         }
 <% } -%>
     ],
+<% if(app2appType === "access"){ -%>
+<% if(app2appMethod.includes("user")){ -%>
+    "foreign-scope-references": ["$ACCEPT_GRANTED_SCOPES"],
+<% } -%>
+<% if(app2appMethod.includes("machine")){ -%>
+    "authorities": ["$ACCEPT_GRANTED_AUTHORITIES"],
+<% } -%>
+<% } -%>
 <% if(attributes){ -%>
     "attributes": [
         {

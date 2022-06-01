@@ -92,9 +92,30 @@ service CatalogService @(path : '/catalog')
 <% if(authorization){ -%>
         @(restrict: [{ to: 'Admin' }])
 <% } -%>
-        action boost();
+        action boost() returns Sales;
       }
     ;
+
+<% if(apiAICORE){ -%>
+    entity Anomalies
+<% if(authorization){ -%>
+      @(restrict: [{ grant: ['READ'],
+                     to: 'Viewer'
+                   },
+                   { grant: ['WRITE'],
+                     to: 'Admin' 
+                   }
+                  ])
+<% } -%>
+      as select * from db.Anomalies
+      actions {
+<% if(authorization){ -%>
+        @(restrict: [{ to: 'Admin' }])
+<% } -%>
+        action predict() returns Anomalies;
+      }
+    ;
+<% } -%>
 <% } -%>
 
 <% if(hanaNative){ -%>
@@ -356,4 +377,21 @@ service CatalogService @(path : '/catalog')
     type userType { user: String; locale: String; <% if(multiTenant){ -%>tenant: String; <% } -%>scopes: userScopes; <% if(attributes){ -%>attrs: userAttrs; <% } -%>};
     function userInfo() returns userType;
 <% } -%>
+
+<% if(app2appType === "access"){ -%>
+<% if(app2appMethod.includes("user")){ -%>
+<% if(authorization){ -%>
+    @(restrict: [{ to: 'Viewer' }])
+<% } -%>
+    function <%= app2appName %>User() returns String;
+<% } -%>
+
+<% if(app2appMethod.includes("machine")){ -%>
+<% if(authorization){ -%>
+    @(restrict: [{ to: 'Viewer' }])
+<% } -%>
+    function <%= app2appName %>Tech() returns String;
+<% } -%>
+<% } -%>
+
 };

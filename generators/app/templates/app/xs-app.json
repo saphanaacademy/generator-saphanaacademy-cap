@@ -17,7 +17,7 @@
     "authenticationMethod": "none",
 <% } -%>
     "routes": [
-<% if(hana || api){ -%>
+<% if(hana || api || app2appType === "access"){ -%>
         {
             "source": "^/catalog/(.*)$",
 <% if(authentication){ -%>
@@ -175,7 +175,7 @@
         }
 <% } -%>
 <% if(haa){ -%>
-<% if(hana || api || (schemaName !== '' && hanaTargetHDI === '') || hanaTargetHDI !== '' || multiTenant){ -%>
+<% if((hana || api || app2appType === "access") || (schemaName !== '' && hanaTargetHDI === '') || hanaTargetHDI !== '' || multiTenant){ -%>
         ,
 <% } -%>
         {
@@ -195,7 +195,7 @@
         }
 <% } -%>
 <% if(ui){ -%>
-<% if(hana || api || (schemaName !== '' && hanaTargetHDI === '') || hanaTargetHDI !== '' || multiTenant || haa){ -%>
+<% if((hana || api || app2appType === "access") || (schemaName !== '' && hanaTargetHDI === '') || hanaTargetHDI !== '' || multiTenant || haa){ -%>
         ,
 <% } -%>
         {

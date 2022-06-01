@@ -54,7 +54,9 @@
                     "action": "display",
                     "title": "<%= displayName %>-Fiori",
                     "subTitle": "<%= description %> Fiori",
-<% if(apiS4HCBP && em){ -%>
+<% if(apiAICORE){ -%>
+                    "icon": "sap-icon://quality-issue",
+<% } else if(apiS4HCBP && em){ -%>
                     "icon": "sap-icon://customer",
 <% } else if(apiSFSFRC && em){ -%>
                     "icon": "sap-icon://employee",
@@ -65,7 +67,9 @@
 <% } -%>
                     "indicatorDataSource": {
                         "dataSource": "indicatorService",
-<% if(apiS4HCBP && em){ -%>
+<% if(apiAICORE){ -%>
+                        "path": "Anomalies/$count",
+<% } else if(apiS4HCBP && em){ -%>
                         "path": "CustomerProcesses/$count",
 <% } else if(apiS4HCSO && em){ -%>
                         "path": "SalesOrdersLog/$count",
@@ -135,7 +139,9 @@
                     "target": "List"
                 },
                 {
-<% if(apiS4HCBP && em){ -%>
+<% if(apiAICORE){ -%>
+                    "pattern": "Anomalies({key}):?query:",
+<% } else if(apiS4HCBP && em){ -%>
                     "pattern": "CustomerProcesses({key}):?query:",
 <% } else if(apiS4HCSO && em){ -%>
                     "pattern": "SalesOrdersLog({key}):?query:",
@@ -157,7 +163,9 @@
                     "name": "sap.fe.templates.ListReport",
                     "options": {
                         "settings": {
-<% if(apiS4HCBP && em){ -%>
+<% if(apiAICORE){ -%>
+                            "entitySet": "Anomalies",
+<% } else if(apiS4HCBP && em){ -%>
                             "entitySet": "CustomerProcesses",
 <% } else if(apiS4HCSO && em){ -%>
                             "entitySet": "SalesOrdersLog",
@@ -171,7 +179,9 @@
                             "variantManagement": "Page",
                             "initialLoad": "Enabled",
                             "navigation": {
-<% if(apiS4HCBP && em){ -%>
+<% if(apiAICORE){ -%>
+                                "Anomalies": {
+<% } else if(apiS4HCBP && em){ -%>
                                 "CustomerProcesses": {
 <% } else if(apiS4HCSO && em){ -%>
                                 "SalesOrdersLog": {
@@ -196,7 +206,24 @@
                     "name": "sap.fe.templates.ObjectPage",
                     "options": {
                         "settings": {
-<% if(apiS4HCBP && em){ -%>
+<% if(apiAICORE){ -%>
+                            "entitySet": "Anomalies",
+                            "content": {
+                                "body": {
+                                    "sections": {
+                                        "media": {
+                                            "type": "XMLFragment",
+                                            "name": "<%= projectName %>-fiori.custom.MediaSection",
+                                            "title": "{i18n>mediaSection}",
+                                            "position": {
+                                                "placement": "After",
+                                                "anchor": "General"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+<% } else if(apiS4HCBP && em){ -%>
                             "entitySet": "CustomerProcesses"
 <% } else if(apiS4HCSO && em){ -%>
                             "entitySet": "SalesOrdersLog"

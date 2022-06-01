@@ -23,6 +23,9 @@
 <% if(hana){ -%>
     <a href="<%= srvPath %>catalog/Sales">Sales</a><br />
     <a href="<%= srvPath %>catalog/Sales?$apply=filter(amount%20gt%20700)/groupby((region),aggregate($count%20as%20nrCountries))">Top Sales Count</a><br />
+<% if(apiAICORE){ -%>
+    <a href="<%= srvPath %>catalog/Anomalies?$top=3">Anomalies</a><br />
+<% } -%>
 <% } -%>
 <% if(hanaNative){ -%>
     <a href="<%= srvPath %>catalog/topSales(amount=700)">Top Sales</a><br />
@@ -203,8 +206,16 @@
 <% if(apiNeoWs){ -%>
     <a href="<%= srvPath %>catalog/Asteroids">Near Earth Objects</a><br />
 <% } -%>
-<% if((hana || api) && authentication){ -%>
+<% if(authentication){ -%>
     <a href="<%= srvPath %>catalog/userInfo()">User Info</a><br />
+<% } -%>
+<% if(app2appType === "access"){ -%>
+<% if(app2appMethod.includes("user")){ -%>
+    <a href="<%= srvPath %>catalog/<%= app2appName %>User()"><%= app2appName %> - Principal Propagation of Business User</a><br />
+<% } -%>
+<% if(app2appMethod.includes("machine")){ -%>
+    <a href="<%= srvPath %>catalog/<%= app2appName %>Tech()"><%= app2appName %> - Technical Communication</a><br />
+<% } -%>
 <% } -%>
 <% if(hana && srv2){ -%>
     <h3>Additional Service - CAP</h3>
@@ -234,6 +245,9 @@
 <% if(hana){ -%>
     <a href="<%= srvPath %>v2/catalog/Sales">Sales</a><br />
     <a href="<%= srvPath %>v2/catalog/Sales?$apply=filter(amount%20gt%20700)/groupby((region),aggregate($count%20as%20nrCountries))">Top Sales Count</a><br />
+<% if(apiAICORE){ -%>
+    <a href="<%= srvPath %>v2/catalog/Anomalies?$top=3">Anomalies</a><br />
+<% } -%>
 <% } -%>
 <% if(hanaNative){ -%>
     <a href="<%= srvPath %>v2/catalog/topSales()?amount=700">Top Sales</a><br />
@@ -296,8 +310,16 @@
 <% if(apiNeoWs){ -%>
     <a href="<%= srvPath %>v2/catalog/Asteroids">Near Earth Objects</a><br />
 <% } -%>
-<% if((hana || api) && authentication){ -%>
+<% if(authentication){ -%>
     <a href="<%= srvPath %>v2/catalog/userInfo()">User Info</a><br />
+<% } -%>
+<% if(app2appType === "access"){ -%>
+<% if(app2appMethod.includes("user")){ -%>
+    <a href="<%= srvPath %>v2/catalog/<%= app2appName %>User()"><%= app2appName %> - Principal Propagation of Business User</a><br />
+<% } -%>
+<% if(app2appMethod.includes("machine")){ -%>
+    <a href="<%= srvPath %>v2/catalog/<%= app2appName %>Tech()"><%= app2appName %> - Technical Communication</a><br />
+<% } -%>
 <% } -%>
 <% } -%>
 <% if(schemaName !== '' && hanaTargetHDI === ''){ -%>

@@ -1,0 +1,31 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:l="sap.ui.layout">
+    <l:VerticalLayout class="sapUiTinyMargin" width="">
+        <l:content>
+            <l:HorizontalLayout>
+                <l:content>
+<% if(AICoreModelType === 'image'){ -%>
+                    <l:VerticalLayout class="sapUiSmallMargin" width="320px">
+                        <l:content>
+                            <Title level="H3" titleStyle="H3" text="{i18n>original}" class="sapUiSmallMarginTopBottom sapUiSmallMarginBegin"/>
+                            <Image src="{image}" width="300px"/>
+                        </l:content>
+                    </l:VerticalLayout>
+                    <l:VerticalLayout class="sapUiSmallMargin" width="320px">
+                        <l:content>
+                            <Title level="H3" titleStyle="H3" text="{i18n>segmentedImage}" class="sapUiSmallMarginTopBottom sapUiSmallMarginBegin"/>
+                            <Image src="{segmentedImage}" width="300px"/>
+                        </l:content>
+                    </l:VerticalLayout>
+<% } else if(AICoreModelType === 'sound'){ -%>
+                    <l:VerticalLayout class="sapUiSmallMargin" width="320px">
+                        <l:content>
+                            <core:HTML content='&lt;audio controls&gt;&lt;source src=&quot;{sound}&quot; type=&quot;audio/wav&quot;&gt;&lt;/audio&gt;'>
+                            </core:HTML>
+                        </l:content>
+                    </l:VerticalLayout>
+<% } -%>
+                </l:content>
+            </l:HorizontalLayout>
+        </l:content>
+    </l:VerticalLayout>
+</core:FragmentDefinition>

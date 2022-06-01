@@ -10,6 +10,12 @@ log.registerCustomFields(["country", "amount"]);
 <% if(credStore !== ''){ -%>
 const credStore = require('./lib/credStore');
 <% } -%>
+<% if(app2appType === "access" /*|| apiAICORE*/){ -%>
+const core = require('@sap-cloud-sdk/core');
+<% } -%>
+<% if(app2appType === "access" && app2appMethod.includes("machine")){ -%>
+const axios = require('axios');
+<% } -%>
 <% if(apiARIBWS){ -%>
 const fs = require('fs');
 const path = require('path');
@@ -69,6 +75,10 @@ module.exports = cds.service.impl(async function () {
     const {
 <% if(hana){ -%>
             Sales
+<% if(apiAICORE){ -%>
+            ,
+            Anomalies
+<% } -%>
 <% } -%>
 <% if(apiS4HCSO){ -%>
 <% if(hana){ -%>
@@ -184,7 +194,7 @@ module.exports = cds.service.impl(async function () {
         }
     });
 
-    this.on('boost', async req => {
+    this.on('boost', Sales, async req => {
         try {
             const ID = req.params[0];
             const tx = cds.tx(req);
@@ -196,10 +206,11 @@ module.exports = cds.service.impl(async function () {
 <% if(em){ -%>
             em.tx(req).emit('<%= emNamespace %>/<%= projectName %>/topic/boost', { "ID": ID });
 <% } -%>
-            return {};
+            const cs = await cds.connect.to('CatalogService');
+            let results = await cs.read(SELECT.from(Sales, ID));
+            return results;
         } catch (err) {
-            console.error(err);
-            return {};
+            req.reject(err);
         }
     });
 <% if(em && !multiTenant){ -%>
@@ -212,6 +223,89 @@ module.exports = cds.service.impl(async function () {
             );
         } catch (err) {
             console.error(err);
+        }
+    });
+<% } -%>
+<% if(apiAICORE){ -%>
+
+    this.after('READ', Anomalies, (each) => {
+<% if(AICoreModelType === 'image'){ -%>
+        if (each.confidence === null) {
+            each.criticality = 0;
+        } else if (each.confidence == 0) {
+            each.criticality = 3;
+        } else if (each.confidence > 0.2) {
+            each.criticality = 1;
+        } else {
+            each.criticality = 2;
+        }
+<% } else if(AICoreModelType === 'sound'){ -%>
+        if (each.anomalyType === null) {
+            each.criticality = 0;
+        } else if (each.anomalyType === 'OK') {
+            each.criticality = 3;
+        } else {
+            each.criticality = 2;
+        }
+<% } -%>
+    });
+
+    this.on('predict', Anomalies, async (req) => {
+        try {
+            const ID = req.params[0];
+            let headers = {
+                'Content-Type': 'application/json'
+            };
+            const tx = cds.tx(req);
+            let data = await tx.read(Anomalies)
+                .byKey(ID)
+                .columns(['<%= AICoreModelType %>'])
+                ;
+            data['<%= AICoreModelType %>'] = data['<%= AICoreModelType %>'].substring(22);
+            const AICore = await cds.connect.to("AICore");
+            const res = await AICore
+                .tx(req)
+                .send("POST", process.env.AICoreDeploymentId + '/v1/models/' + process.env.AICoreModel + ':predict', data, headers)
+                ;
+            debug('predict ID:', ID, res);
+            var confidence;
+<% if(AICoreModelType === 'image'){ -%>
+            var segmentedImage;
+            if (res.defected_area != 0) {
+                confidence = res.defected_area * 100;
+                segmentedImage = 'data:image/bmp;base64,' + res.segmented_image;
+            } else {
+                confidence = 0.000;
+            }
+<% } else if(AICoreModelType === 'sound'){ -%>
+            var anomalyType;
+            if (res.hasOwnProperty('ok')) {
+                confidence = res.ok;
+                anomalyType = 'OK';
+            } else if (res.hasOwnProperty('Slow_Sound')) {
+                confidence = res.Slow_Sound;
+                anomalyType = 'Slow sound with under perfomance';
+            } else if (res.hasOwnProperty('Damage_Noise')) {
+                confidence = res.Damage_Noise;
+                anomalyType = 'Damage noise with cracking';
+            }
+<% } -%>
+            await tx.update(Anomalies, ID)
+                .with({
+                    detectedAt: new Date(),
+                    confidence: confidence,
+<% if(AICoreModelType === 'image'){ -%>
+                    segmentedImage: segmentedImage
+<% } else if(AICoreModelType === 'sound'){ -%>
+                    anomalyType: anomalyType
+<% } -%>
+                })
+                ;
+            const cs = await cds.connect.to('CatalogService');
+            let results = await cs.read(SELECT.from(Anomalies, ID));
+            return results;
+        } catch (err) {
+            req.reject(err);
         }
     });
 <% } -%>
@@ -481,10 +575,9 @@ module.exports = cds.service.impl(async function () {
         try {
             const tx = cds.tx(req);
             const results = await tx.run(`CALL "<%= projectName.toUpperCase() %>_DB_SP_TopSales"(?,?)`, [req.data.amount]);
-            return results;
+            return results.RESULT;
         } catch (err) {
-            console.error(err);
-            return {};
+            req.reject(err);
         }
     });
 <% } -%>
@@ -793,6 +886,70 @@ module.exports = cds.service.impl(async function () {
     em.on('<%= emNamespace %>/<%= projectName %>/topic/user', async msg => {
         debug('Event Mesh: User:', msg.data);
     });
+<% } -%>
+
+<% if(app2appType === "access"){ -%>
+<% if(app2appMethod.includes("user")){ -%>
+    this.on('<%= app2appName %>User', async req => {
+        try {
+            let res = await core.executeHttpRequest({ destinationName: '<%= projectName %>-<%= app2appName %>'}, {
+                method: 'GET',
+                url: 'catalog/',
+                headers: {
+                    Authorization: req.headers.authorization
+                }
+            });
+            /*
+            options = {
+                method: 'GET',
+                url: 'https://<%= cforg %>-<%= cfspace %>-<%= app2appName %>-srv.cfapps.<%= cfregion %>.hana.ondemand.com/catalog/',
+                headers: {
+                    Authorization: req.headers.authorization
+                }
+            };
+            let res = await axios(options);
+            */
+            return res.data;
+        } catch (err) {
+            req.reject(err);
+        }
+    });
+<% } -%>
+
+<% if(app2appMethod.includes("machine")){ -%>
+    this.on('<%= app2appName %>Tech', async req => {
+        try {
+            let options1 = {
+                method: 'POST',
+                url: cds.env.requires.auth.credentials.url + '/oauth/token?grant_type=client_credentials',
+                headers: {
+                    Authorization: 'Basic ' + Buffer.from(cds.env.requires.auth.credentials.clientid + ':' + cds.env.requires.auth.credentials.clientsecret).toString('base64')
+                }
+            };
+            let res1 = await axios(options1);
+            let res2 = await core.executeHttpRequest({ destinationName: '<%= projectName %>-<%= app2appName %>'}, {
+                method: 'GET',
+                url: 'catalog/',
+                headers: {
+                    Authorization: 'Bearer ' + res1.data.access_token
+                }
+            });
+            /*
+            let options2 = {
+                method: 'GET',
+                url: 'https://<%= cforg %>-<%= cfspace %>-<%= app2appName %>-srv.cfapps.<%= cfregion %>.hana.ondemand.com/catalog/',
+                headers: {
+                    Authorization: 'Bearer ' + res1.data.access_token
+                }
+            };
+            let res2 = await axios(options2);
+            */
+            return res2.data;
+        } catch (err) {
+            req.reject(err);
+        }
+    });
+<% } -%>
 <% } -%>
 <% } -%>
 

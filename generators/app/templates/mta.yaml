@@ -76,7 +76,7 @@ modules:
       domain: <%= customDomain %>
 <% } -%>
 <% if(api){ -%>
-<% if((em && !multiTenant && apiS4HCBP) || apiFGCN){ -%>
+<% if((em && !multiTenant && apiS4HCBP) || apiFGCN || apiAICORE){ -%>
     properties:
 <% } -%>
 <% if(em && !multiTenant && apiS4HCBP){ -%>
@@ -87,8 +87,12 @@ modules:
       FGCNclientId: <%= FGCNclientId %>
       FGCNsupplierId: <%= FGCNsupplierId %>
 <% } -%>
+<% if(apiAICORE){ -%>
+      AICoreDeploymentId: <%= AICoreDeploymentId %>
+      AICoreModel: "<%= AICoreModel %>"
+<% } -%>
 <% if(credStore === ""){ -%>
-<% if (!((em && !multiTenant && apiS4HCBP) || apiFGCN)){ -%>
+<% if (!((em && !multiTenant && apiS4HCBP) || apiFGCN || apiAICORE)){ -%>
     properties:
 <% } -%>
 <% if(ApplicationInterfaceKey !== ""){ -%>
@@ -109,11 +113,13 @@ modules:
 <% } -%>
 <% } -%>
 <% } -%>
+<% if(authentication || api || routes || connectivity || em || applicationLogging || multiTenant || hana || schemaName !== '' || hanaTargetHDI !== '' || credStore !== "" || app2appType === "access"){ -%>
     requires:
+<% } -%>
 <% if(authentication || api){ -%>
       - name: <%= projectName %>-uaa
 <% } -%>
-<% if(api || routes){ -%>
+<% if(api || routes || app2appType === "access"){ -%>
       - name: <%= projectName %>-dest
 <% } -%>
 <% if(connectivity){ -%>
@@ -229,7 +235,7 @@ modules:
       memory: 1024M
       disk-quota: 1024M
     properties:
-      TARGET_RUNTIME: tomee
+      TARGET_RUNTIME: tomee7
       JBP_CONFIG_RESOURCE_CONFIGURATION: "['tomee/webapps/ROOT/WEB-INF/resources.xml': {'xsahaa-hdi-container':'<%= projectName %>-db'}]"
       PERSONALIZE_JWT: <%= haaPersonalizeJWT %>
       USE_NAMED_USER: <%= haaUseNamedUser %>
@@ -459,7 +465,9 @@ modules:
       no-source: true
 <% } -%>
 
+<% if(hana || authentication || api || html5repo || multiTenant || routes || schemaName !== '' || applicationLogging || hanaTargetHDI !== '' || em || credStore !== ""  || connectivity){ -%>
 resources:
+<% } -%>
 <% if(authentication || api || html5repo){ -%>
   # ----------------------- UAA SERVICE ------------------------
   - name: <%= projectName %>-uaa
@@ -480,7 +488,7 @@ resources:
 <% } -%>
 <% } -%>
 
-<% if(api || html5repo || routes){ -%>
+<% if(api || html5repo || routes || app2appType === "access"){ -%>
   # -------------------- DESTINATION SERVICE -------------------
   - name: <%= projectName %>-dest
   # ------------------------------------------------------------
@@ -502,7 +510,7 @@ resources:
 <% if(html5repo){ -%>
         HTML5Runtime_enabled: true
 <% } -%>
-<% if(api || html5repo || routes){ -%>
+<% if(api || html5repo || routes || app2appType === "access"){ -%>
         init_data:
           instance:
             existing_destinations_policy: ignore
@@ -624,6 +632,19 @@ resources:
                 refresh_token: <SetValueInCockpit>
                 HTML5.DynamicDestination: true
 <% } -%>
+<% if(apiAICORE){ -%>
+              - Name: <%= projectName %>-aicore-api
+                Description: SAP AI Core
+                URL: <%= AICoreURL %>
+                URL.headers.AI-Resource-Group: <%= AICoreResourceGroup %>
+                Type: HTTP
+                ProxyType: Internet
+                Authentication: OAuth2ClientCredentials
+                tokenServiceURL: <%= AICoreTokenURL %>/oauth/token
+                clientId: <SetValueInCockpit>
+                clientSecret: <SetValueInCockpit>
+                HTML5.DynamicDestination: true
+<% } -%>
 <% if(apiHERE){ -%>
               - Name: <%= projectName %>-HERE-api
                 Description: HERE Location Services
@@ -650,6 +671,14 @@ resources:
                 ProxyType: Internet
                 Authentication: NoAuthentication
                 HTML5.DynamicDestination: true
+<% } -%>
+<% if(app2appType === "access"){ -%>
+              - Name: <%= projectName %>-<%= app2appName %>
+                Description: <%= displayName %> - App2App <%= app2appName %>
+                URL: https://${org}-${space}-<%= app2appName %>-srv.${default-domain}
+                Type: HTTP
+                ProxyType: Internet
+                Authentication: NoAuthentication
 <% } -%>
 <% if(html5repo){ -%>
               - Name: ui5

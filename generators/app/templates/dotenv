@@ -6,6 +6,10 @@ BusinessPartnerRole=FLCU01
 FGCNclientId=<%= FGCNclientId %>
 FGCNsupplierId=<%= FGCNsupplierId %>
 <% } -%>
+<% if(apiAICORE){ -%>
+AICoreDeploymentId=<%= AICoreDeploymentId %>
+AICoreModel=<%= AICoreModel %>
+<% } -%>
 <% if(credStore === ""){ -%>
 <% if(ApplicationInterfaceKey !== ""){ -%>
 ApplicationInterfaceKey=<%= ApplicationInterfaceKey %>

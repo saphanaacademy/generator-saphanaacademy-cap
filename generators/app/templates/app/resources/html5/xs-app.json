@@ -6,7 +6,7 @@
     "authenticationMethod": "none",
 <% } -%>
     "routes": [
-<% if(hana || api){ -%>
+<% if(hana || api || app2appType === "access"){ -%>
         {
             "source": "^/catalog/(.*)$",
             "csrfProtection": false,
@@ -107,10 +107,10 @@
             "destination": "<%= projectName %>-srv"
         }
 <% } -%>
-<% if(hana || api || (schemaName !== '' && hanaTargetHDI === '') || hanaTargetHDI !== ''){ -%>
+<% if(srvjs){ -%>
+<% if((hana || api || app2appType === "access") || (schemaName !== '' && hanaTargetHDI === '') || hanaTargetHDI !== ''){ -%>
         ,
 <% } -%>
-<% if(srvjs){ -%>
         {
             "source": "^/srvjs/(.*)$",
             "csrfProtection": false,
@@ -123,7 +123,7 @@
             "destination": "<%= projectName %>-srvjs"
         }
 <% } -%>
-<% if((hana || api || (schemaName !== '' && hanaTargetHDI === '') || hanaTargetHDI !== '') && srvjs){ -%>
+<% if((hana || api || app2appType === "access") || (schemaName !== '' && hanaTargetHDI === '') || hanaTargetHDI !== '' || srvjs){ -%>
         ,
 <% } -%>
         {

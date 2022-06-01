@@ -21,6 +21,7 @@ entity Sales {
       comments    : String(100);
       criticality : Integer;
 };
+
 <% if(srv2){ -%>
 entity Students {
   key ID          : Integer;
@@ -29,6 +30,25 @@ entity Students {
       gender      : String(100);
       age         : String(100);
       score       : Integer;
+};
+<% } -%>
+
+<% if(apiAICORE){ -%>
+entity Anomalies {
+  key ID             : Integer;
+      detectedAt     : Timestamp;
+      plant          : String(4);
+      plantSection   : String(3);
+      itemId         : String(20);
+      confidence     : Decimal(9, 3);
+<% if(AICoreModelType === 'image'){ -%>
+      image          : LargeString;
+      segmentedImage : LargeString;
+<% } else if(AICoreModelType === 'sound'){ -%>
+      sound          : LargeString;
+      anomalyType    : String(50);
+<% } -%>
+      criticality    : Integer;
 };
 <% } -%>
 <% } -%>

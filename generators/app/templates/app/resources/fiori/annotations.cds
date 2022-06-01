@@ -29,6 +29,69 @@ annotate catalog.Sales with {
     comments @title:'{i18n>comments}';
 };
 
+<% if(apiAICORE){ -%>
+annotate catalog.Anomalies with @(
+    UI: {
+        Identification: [
+            {Value: ID},
+            {$Type: 'UI.DataFieldForAction', Label: '{i18n>predict}', Action: 'CatalogService.predict', Inline: true}
+        ],
+        SelectionFields: [
+        ],
+        LineItem: [
+            {Value: ID},
+            {Value: detectedAt},
+            {Value: plant},
+            {Value: plantSection},
+            {Value: itemId},
+<% if(AICoreModelType === 'sound'){ -%>
+            {Value: anomalyType, Criticality: criticality},
+            {Value: confidence}
+<% } else { -%>
+            {Value: confidence, Criticality: criticality}
+<% } -%>
+
+        ],
+        HeaderInfo: {
+            TypeName: '{i18n>Anomalies}',
+            TypeNamePlural: '{i18n>Anomalies}',
+            Title: {Value: ID},
+            Description: {Value: itemId}
+        },
+        Facets: [
+            {$Type: 'UI.ReferenceFacet', Label: '{i18n>general}', Target: '@UI.FieldGroup#General'}
+        ],
+        FieldGroup#General: {
+            Data: [
+                {Value: ID},
+                {Value: detectedAt},
+                {Value: plant},
+                {Value: plantSection},
+                {Value: itemId},
+<% if(AICoreModelType === 'sound'){ -%>
+                {Value: anomalyType, Criticality: criticality},
+                {Value: confidence}
+<% } else { -%>
+                {Value: confidence, Criticality: criticality}
+<% } -%>
+            ]
+        }
+    }
+);
+
+annotate catalog.Anomalies with {
+    ID             @title:'{i18n>ID}' @UI.HiddenFilter;
+    detectedAt     @title:'{i18n>detectedAt}';
+    plant          @title:'{i18n>plant}';
+    plantSection   @title:'{i18n>plantSection}';
+    itemId         @title:'{i18n>itemId}';
+<% if(AICoreModelType === 'sound'){ -%>
+    anomalyType    @title:'{i18n>anomalyType}';
+<% } -%>
+    confidence     @title:'{i18n>confidence}';
+};
+<% } -%>
+
 <% if(apiS4HCSO && em){ -%>
 annotate catalog.SalesOrdersLog with @(
     UI: {
