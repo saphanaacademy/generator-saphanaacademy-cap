@@ -410,7 +410,7 @@ module.exports = class extends Generator {
         default: ""
       },
       {
-        when: response => response.hana === true && response.schemaName === "" && response.hanaTargetHDI === "" && response.html5repo === false,
+        when: response => response.hana === true && response.schemaName === "" && response.hanaTargetHDI === "" && response.ui === true && response.html5repo === false,
         type: "confirm",
         name: "multiTenant",
         message: "Would you like to create a SaaS multitenant app?",
@@ -704,9 +704,7 @@ module.exports = class extends Generator {
       if (answers.ui === false) {
         answers.html5repo = false;
         answers.managedAppRouter = false;
-        if (answers.authentication === true) {
-          answers.multiTenant = false;
-        }
+        answers.multiTenant = false;
       }
       if (answers.html5repo === true) {
         answers.srvPath = "";
