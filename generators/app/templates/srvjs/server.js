@@ -27,7 +27,7 @@ const services = xsenv.getServices({
 <% if(hana){ -%>
 const hdbext = require('@sap/hdbext');
 <% if(multiTenant){ -%>
-const lib = require('./library');
+const createInstanceManager = require('@sap/instance-manager').create;
 <% } -%>
 <% if(attributes === false && multiTenant === false){ -%>    
 // placed before authentication - business user info from the JWT will not be set as HANA session variables (XS_)
@@ -144,29 +144,42 @@ app.get('/srvjs/database', async function (req, res) {
         let sqlstmt = 'SELECT * FROM TENANT_UPDATES';
         */
         // get DB instance
-        let serviceBinding = await lib.getSMInstance(services.sm, tenantId);
-        if (!serviceBinding.hasOwnProperty('error')) {
-            // connect to DB instance
-            let hanaOptions = serviceBinding.credentials;
-            hdbext.createConnection(hanaOptions, function (err, db) {
+        createInstanceManager(services.sm, async function (err, serviceManager) {
+            if (err) {
+                console.log(err.message);
+                res.status(500).send(err.message);
+                return;
+            }
+            serviceManager.get(tenantId, async function (err, serviceBinding) {
                 if (err) {
                     console.log(err.message);
                     res.status(500).send(err.message);
                     return;
                 }
-                // query
-                db.exec(sqlstmt, function (err, results) {
-                    if (err) {
-                        console.log(err.message);
-                        res.status(500).send(err.message);
-                        return;
-                    }
-                    res.status(200).json(results);
-                });
+                if (!serviceBinding.hasOwnProperty('error')) {
+                    // connect to DB instance
+                    let hanaOptions = serviceBinding.credentials;
+                    hdbext.createConnection(hanaOptions, function (err, db) {
+                        if (err) {
+                            console.log(err.message);
+                            res.status(500).send(err.message);
+                            return;
+                        }
+                        // query
+                        db.exec(sqlstmt, function (err, results) {
+                            if (err) {
+                                console.log(err.message);
+                                res.status(500).send(err.message);
+                                return;
+                            }
+                            res.status(200).json(results);
+                        });
+                    });
+                } else {
+                    res.status(500).send(serviceBinding);
+                }
             });
-        } else {
-            res.status(500).send(serviceBinding);
-        }
+        });
 <% } else { -%>
         let sql = 'SELECT * FROM "CATALOGSERVICE_SALES"';
         req.db.exec(sql, function (err, results) {

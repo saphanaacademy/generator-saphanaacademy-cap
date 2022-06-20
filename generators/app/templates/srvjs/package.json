@@ -15,6 +15,9 @@
 <% } -%>
 <% if(hana){ -%>
         "@sap/hdbext": "latest",
+<% if(multiTenant){ -%>
+        "@sap/instance-manager": "latest",
+<% } -%>
 <% } -%>
         "@sap/xsenv": "latest"
     },
