@@ -1,6 +1,9 @@
 {
+    "engines": {
+        "node": "14.x"
+    },
     "dependencies": {
-        "@sap/approuter": "^11"
+        "@sap/approuter": "latest"
     },
     "scripts": {
 <% if(multiTenant){ -%>
