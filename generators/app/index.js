@@ -112,7 +112,7 @@ module.exports = class extends Generator {
         type: "checkbox",
         name: "apiLoB",
         message: "Which external API(s) would you like to use?",
-        choices: ["SAP S/4HANA Cloud Sales Order (A2X)", "SAP S/4HANA Cloud Business Partner (A2X)", "SAP SuccessFactors Recruiting", "SAP SuccessFactors Employee Central", "SAP Ariba Network Purchase Orders Buyer", "SAP Ariba Web Services", "SAP Fieldglass Connectors", "SAP Fieldglass Approvals", "SAP Concur", "SAP Graph", "SAP AI Core", "HERE Location Services", "NASA Near Earth Object Web Service", "Northwind"],
+        choices: ["SAP S/4HANA Cloud Sales Order (A2X)", "SAP S/4HANA Cloud Business Partner (A2X)", "SAP SuccessFactors Recruiting", "SAP SuccessFactors Employee Central", "SAP Ariba Network Purchase Orders Buyer", "SAP Ariba Web Services", "SAP Fieldglass Connectors", "SAP Fieldglass Approvals", "SAP Concur", "SAP Graph", "SAP AI Core", "SAP Analytics Cloud Tenant API", "HERE Location Services", "NASA Near Earth Object Web Service", "Northwind"],
         default: ["SAP S/4HANA Cloud Sales Order (A2X)"]
       },
       {
@@ -279,6 +279,29 @@ module.exports = class extends Generator {
         message: "What is your SAP AI Core Model type?",
         choices: [{ name: "Image", value: "image" }, { name: "Sound", value: "sound" }],
         default: "image"
+      },
+      {
+        when: response => response.api === true && response.apiLoB.includes("SAP Analytics Cloud Tenant API"),
+        type: "input",
+        name: "SACHost",
+        message: "What is your SAP Analytics Cloud Host?",
+        default: "https://dpe.us10.hcs.cloud.sap"
+      },
+      {
+        when: response => response.api === true && response.apiLoB.includes("SAP Analytics Cloud Tenant API"),
+        type: "input",
+        name: "SACTokenURL",
+        message: "What is your SAP Analytics Cloud OAuth2SAML Token URL?",
+        //        default: "https://<tenant>.authentication.<region>.hana.ondemand.com/oauth/token/alias/<alias>"
+        default: "https://dpe.authentication.us10.hana.ondemand.com/oauth/token/alias/dpe.aws-live"
+      },
+      {
+        when: response => response.api === true && response.apiLoB.includes("SAP Analytics Cloud Tenant API"),
+        type: "input",
+        name: "SACAudience",
+        message: "What is your SAP Analytics Cloud OAuth2SAML Audience?",
+        //        default: " https://<tenant>.authentication.<region>.hana.ondemand.com"
+        default: " https://dpe.authentication.us10.hana.ondemand.com"
       },
       {
         when: response => response.api === true && response.apiLoB.includes("HERE Location Services"),
@@ -600,6 +623,9 @@ module.exports = class extends Generator {
         answers.AICoreDeploymentId = "";
         answers.AICoreModel = "";
         answers.AICoreModelType = "";
+        answers.SACHost = "";
+        answers.SACTokenURL = "";
+        answers.SACAudience = "";
         answers.APIKeyHERE = "";
         answers.APIKeyNASA = "";
         answers.credStore = "";
@@ -615,12 +641,13 @@ module.exports = class extends Generator {
       answers.apiCONC = answers.apiLoB.includes("SAP Concur");
       answers.apiGRAPH = answers.apiLoB.includes("SAP Graph");
       answers.apiAICORE = answers.apiLoB.includes("SAP AI Core");
+      answers.apiSACTenant = answers.apiLoB.includes("SAP Analytics Cloud Tenant API");
       answers.apiHERE = answers.apiLoB.includes("HERE Location Services");
       answers.apiNeoWs = answers.apiLoB.includes("NASA Near Earth Object Web Service");
       answers.apiNW = answers.apiLoB.includes("Northwind");
       answers.ApplicationInterfaceKey = "";
       if (answers.api) {
-        if (answers.apiS4HCSO || answers.apiS4HCBP || answers.apiSFSFRC || answers.apiSFSFEC || answers.apiARIBPO || answers.apiARIBWS || answers.apiCONC) {
+        if (answers.apiS4HCSO || answers.apiS4HCBP || answers.apiSFSFRC || answers.apiSFSFEC || answers.apiARIBPO || answers.apiARIBWS || answers.apiCONC || answers.apiSACTenant) {
           answers.ApplicationInterfaceKey = "saptest0";
         }
         if (!(answers.apiS4HCSO || answers.apiS4HCBP || answers.apiSFSFRC || answers.apiSFSFEC || answers.apiARIBPO || answers.apiFGAP)) {
@@ -669,6 +696,11 @@ module.exports = class extends Generator {
         answers.AICoreDeploymentId = "";
         answers.AICoreModel = "";
         answers.AICoreModelType = "";
+      }
+      if (answers.apiSACTenant === false) {
+        answers.SACHost = "";
+        answers.SACTokenURL = "";
+        answers.SACAudience = "";
       }
       if (answers.apiHERE === false) {
         answers.APIKeyHERE = "";
@@ -872,49 +904,51 @@ module.exports = class extends Generator {
                                                   if (!(file.substring(0, 34) === 'srv/templates/FieldglassConnectors' && answers.get('apiFGCN') === false)) {
                                                     if (!((file.substring(0, 32) === 'srv/external/FieldglassApprovals') && answers.get('apiFGAP') === false)) {
                                                       if (!((file.substring(0, 19) === 'srv/external/Concur') && answers.get('apiCONC') === false)) {
-                                                        if (!((file.substring(0, 33) === 'srv/external/HERELocationServices') && answers.get('apiHERE') === false)) {
-                                                          if (!((file.substring(0, 38) === 'srv/external/NearEarthObjectWebService') && answers.get('apiNeoWs') === false)) {
-                                                            if (!((file.substring(0, 15) === 'app/xs-app.json' || file.substring(0, 16) === 'app/package.json') && (answers.get('managedAppRouter') === true || (answers.get('authentication') === false && answers.get('ui') === false)))) {
-                                                              if (!((file.substring(0, 13) === 'app/resources' || file.includes('i18n') || file.includes('index.cds')) && answers.get('ui') === false)) {
-                                                                if (!((file.substring(0, 19) === 'app/resources/fiori' || file.includes('i18n') || file.includes('index.cds')) && answers.get('hana') === false)) {
-                                                                  if (!(file.includes('MediaSection.fragment.xml') && answers.get('apiAICORE') === false)) {
-                                                                    if (!((file.substring(0, 24) === 'app/resources/index.html') && answers.get('html5repo') === true)) {
-                                                                      if (!((file.substring(0, 31) === 'app/resources/fiori/xs-app.json' || file.substring(0, 32) === 'app/resources/fiori/package.json' || file.substring(0, 35) === 'app/resources/fiori/ui5-deploy.yaml') && answers.get('html5repo') === false)) {
-                                                                        if (!((file.substring(0, 31) === 'app/resources/html5/xs-app.json' || file.substring(0, 32) === 'app/resources/html5/package.json' || file.substring(0, 35) === 'app/resources/html5/ui5-deploy.yaml' || file.substring(0, 40) === 'app/resources/html5/webapp/manifest.json') && answers.get('html5repo') === false)) {
-                                                                          if (!(file.substring(0, 2) === 'db' && answers.get('hana') === false && answers.get('schemaName') === "" && answers.get('hanaTargetHDI') === "")) {
-                                                                            if (!((file.substring(0, 17) === 'db/data-model.cds' || file.substring(0, 7) === 'db/data' || file.substring(0, 6) === 'db/csv') && answers.get('hana') === false)) {
-                                                                              if (!(file.substring(0, 31) === 'db/data/_PROJECT_NAME_.db.Sales' && answers.get('hana') === false)) {
-                                                                                if (!(file.substring(0, 35) === 'db/data/_PROJECT_NAME_.db.Anomalies' && answers.get('apiAICORE') === false)) {
-                                                                                  if (!(file.substring(0, 34) === 'db/data/_PROJECT_NAME_.db.Students' && (answers.get('hana') === false || answers.get('srv2') === false))) {
-                                                                                    if (!((file.substring(0, 39) === 'db/src/_PROJECT_NAME_DB_EXTERNAL_ACCESS') && answers.get('hanaExternalHDI') === false)) {
-                                                                                      if (!((file.substring(0, 35) === 'db/csv/_PROJECT_NAME_.db.Conditions' || file.substring(0, 43) === 'db/data/_PROJECT_NAME_.db.CustomerProcesses' || file.substring(0, 31) === 'db/csv/_PROJECT_NAME_.db.Status') && (answers.get('apiS4HCBP') === false || answers.get('em') === false))) {
-                                                                                        if (!(file.substring(0, 7) === 'db/src/' && answers.get('hanaNative') === false && answers.get('hanaExternalHDI') === false && answers.get('hanaTargetHDI') === "" && answers.get('schemaName') === "")) {
-                                                                                          if (!((file.substring(0, 10) === 'db/src/SP_' || file.substring(0, 10) === 'db/src/TT_' || file.substring(0, 10) === 'db/src/CV_' || file.substring(0, 10) === 'db/src/TF_' || file.substring(0, 10) === 'db/src/SYS') && answers.get('hanaNative') === false)) {
-                                                                                            const sOrigin = this.templatePath(file);
-                                                                                            let fileDest = file;
-                                                                                            if (fileDest.includes('_PROJECT_NAME_.db')) {
-                                                                                              let folder = 'db/data';
-                                                                                              if (fileDest.substring(0, 6) === 'db/csv') folder = fileDest.substring(0, 6);
-                                                                                              fileDest = folder + '/' + answers.get('projectName') + '.db-' + fileDest.split(".", 3)[2] + '.csv';
-                                                                                            }
-                                                                                            if (fileDest.includes('_PROJECT_NAME_DB_EXTERNAL_ACCESS')) {
-                                                                                              let tempDest = 'db/src/' + answers.get('projectName').toUpperCase() + '_DB_EXTERNAL_ACCESS';
-                                                                                              if (fileDest.includes('EXTERNAL_ACCESS_G')) {
-                                                                                                tempDest += '_G';
+                                                        if (!((file.substring(0, 16) === 'srv/external/SAC') && answers.get('apiSACTenant') === false)) {
+                                                          if (!((file.substring(0, 33) === 'srv/external/HERELocationServices') && answers.get('apiHERE') === false)) {
+                                                            if (!((file.substring(0, 38) === 'srv/external/NearEarthObjectWebService') && answers.get('apiNeoWs') === false)) {
+                                                              if (!((file.substring(0, 15) === 'app/xs-app.json' || file.substring(0, 16) === 'app/package.json') && (answers.get('managedAppRouter') === true || (answers.get('authentication') === false && answers.get('ui') === false)))) {
+                                                                if (!((file.substring(0, 13) === 'app/resources' || file.includes('i18n') || file.includes('index.cds')) && answers.get('ui') === false)) {
+                                                                  if (!((file.substring(0, 19) === 'app/resources/fiori' || file.includes('i18n') || file.includes('index.cds')) && answers.get('hana') === false)) {
+                                                                    if (!(file.includes('MediaSection.fragment.xml') && answers.get('apiAICORE') === false)) {
+                                                                      if (!((file.substring(0, 24) === 'app/resources/index.html') && answers.get('html5repo') === true)) {
+                                                                        if (!((file.substring(0, 31) === 'app/resources/fiori/xs-app.json' || file.substring(0, 32) === 'app/resources/fiori/package.json' || file.substring(0, 35) === 'app/resources/fiori/ui5-deploy.yaml') && answers.get('html5repo') === false)) {
+                                                                          if (!((file.substring(0, 31) === 'app/resources/html5/xs-app.json' || file.substring(0, 32) === 'app/resources/html5/package.json' || file.substring(0, 35) === 'app/resources/html5/ui5-deploy.yaml' || file.substring(0, 40) === 'app/resources/html5/webapp/manifest.json') && answers.get('html5repo') === false)) {
+                                                                            if (!(file.substring(0, 2) === 'db' && answers.get('hana') === false && answers.get('schemaName') === "" && answers.get('hanaTargetHDI') === "")) {
+                                                                              if (!((file.substring(0, 17) === 'db/data-model.cds' || file.substring(0, 7) === 'db/data' || file.substring(0, 6) === 'db/csv') && answers.get('hana') === false)) {
+                                                                                if (!(file.substring(0, 31) === 'db/data/_PROJECT_NAME_.db.Sales' && answers.get('hana') === false)) {
+                                                                                  if (!(file.substring(0, 35) === 'db/data/_PROJECT_NAME_.db.Anomalies' && answers.get('apiAICORE') === false)) {
+                                                                                    if (!(file.substring(0, 34) === 'db/data/_PROJECT_NAME_.db.Students' && (answers.get('hana') === false || answers.get('srv2') === false))) {
+                                                                                      if (!((file.substring(0, 39) === 'db/src/_PROJECT_NAME_DB_EXTERNAL_ACCESS') && answers.get('hanaExternalHDI') === false)) {
+                                                                                        if (!((file.substring(0, 35) === 'db/csv/_PROJECT_NAME_.db.Conditions' || file.substring(0, 43) === 'db/data/_PROJECT_NAME_.db.CustomerProcesses' || file.substring(0, 31) === 'db/csv/_PROJECT_NAME_.db.Status') && (answers.get('apiS4HCBP') === false || answers.get('em') === false))) {
+                                                                                          if (!(file.substring(0, 7) === 'db/src/' && answers.get('hanaNative') === false && answers.get('hanaExternalHDI') === false && answers.get('hanaTargetHDI') === "" && answers.get('schemaName') === "")) {
+                                                                                            if (!((file.substring(0, 10) === 'db/src/SP_' || file.substring(0, 10) === 'db/src/TT_' || file.substring(0, 10) === 'db/src/CV_' || file.substring(0, 10) === 'db/src/TF_' || file.substring(0, 10) === 'db/src/SYS') && answers.get('hanaNative') === false)) {
+                                                                                              const sOrigin = this.templatePath(file);
+                                                                                              let fileDest = file;
+                                                                                              if (fileDest.includes('_PROJECT_NAME_.db')) {
+                                                                                                let folder = 'db/data';
+                                                                                                if (fileDest.substring(0, 6) === 'db/csv') folder = fileDest.substring(0, 6);
+                                                                                                fileDest = folder + '/' + answers.get('projectName') + '.db-' + fileDest.split(".", 3)[2] + '.csv';
                                                                                               }
-                                                                                              fileDest = tempDest + '.' + fileDest.split(".", 3)[1];
+                                                                                              if (fileDest.includes('_PROJECT_NAME_DB_EXTERNAL_ACCESS')) {
+                                                                                                let tempDest = 'db/src/' + answers.get('projectName').toUpperCase() + '_DB_EXTERNAL_ACCESS';
+                                                                                                if (fileDest.includes('EXTERNAL_ACCESS_G')) {
+                                                                                                  tempDest += '_G';
+                                                                                                }
+                                                                                                fileDest = tempDest + '.' + fileDest.split(".", 3)[1];
+                                                                                              }
+                                                                                              if (fileDest.includes('app/resources/') && answers.get('html5repo')) {
+                                                                                                fileDest = 'app/' + fileDest.substring(14);
+                                                                                              }
+                                                                                              if (fileDest === 'dotenv') {
+                                                                                                fileDest = '.env';
+                                                                                              }
+                                                                                              if (fileDest === 'dotgitignore') {
+                                                                                                fileDest = '.gitignore';
+                                                                                              }
+                                                                                              const sTarget = this.destinationPath(fileDest);
+                                                                                              this.fs.copyTpl(sOrigin, sTarget, this.config.getAll());
                                                                                             }
-                                                                                            if (fileDest.includes('app/resources/') && answers.get('html5repo')) {
-                                                                                              fileDest = 'app/' + fileDest.substring(14);
-                                                                                            }
-                                                                                            if (fileDest === 'dotenv') {
-                                                                                              fileDest = '.env';
-                                                                                            }
-                                                                                            if (fileDest === 'dotgitignore') {
-                                                                                              fileDest = '.gitignore';
-                                                                                            }
-                                                                                            const sTarget = this.destinationPath(fileDest);
-                                                                                            this.fs.copyTpl(sOrigin, sTarget, this.config.getAll());
                                                                                           }
                                                                                         }
                                                                                       }

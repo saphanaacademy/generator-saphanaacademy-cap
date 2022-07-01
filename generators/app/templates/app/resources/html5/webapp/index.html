@@ -197,6 +197,9 @@
     <a href="<%= srvPath %>catalog/<%= element.entity %>?$top=3"><%= element.entity %> (<%= element.name %>)</a><br />
 <% }); -%>
 <% } -%>
+<% if(apiSACTenant){ -%>
+    <a href="<%= srvPath %>catalog/Stories">Stories</a><br />
+<% } -%>
 <% if(apiHERE){ -%>
     <a href="<%= srvPath %>catalog/Geocodes?$filter=title%20eq%20%27France%27">Geocodes</a><br />
 <% if(hana){ -%>
@@ -300,6 +303,9 @@
 <% graphDataSources.forEach(element => { -%>
     <a href="<%= srvPath %>v2/catalog/<%= element.entity %>?$top=3"><%= element.entity %> (<%= element.name %>)</a><br />
 <% }); -%>
+<% } -%>
+<% if(apiSACTenant){ -%>
+    <a href="<%= srvPath %>v2/catalog/Stories">Stories</a><br />
 <% } -%>
 <% if(apiHERE){ -%>
     <a href="<%= srvPath %>v2/catalog/Geocodes?$filter=title%20eq%20%27France%27">Geocodes</a><br />

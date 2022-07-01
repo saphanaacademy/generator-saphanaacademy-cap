@@ -28,7 +28,7 @@
 <% if(authentication || credStore !== ""){ -%>
     "@sap/xsenv": "^3",
 <% } -%>
-<% if(authentication || hana){ -%>
+<% if(authentication || hana || apiSACTenant){ -%>
     "@sap/xssec": "^3",
     "passport": "^0.4.1",
 <% } -%>
@@ -471,8 +471,27 @@
       }
     }
 <% } -%>
-<% if(apiHERE){ -%>
-<% if(authentication || hana || schemaName !== '' || hanaTargetHDI !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP || apiCONC || apiGRAPH || apiAICORE){ -%>
+<% if(apiSACTenant){ -%>
+  <% if(authentication || hana || schemaName !== '' || hanaTargetHDI !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP || apiCONC || apiGRAPH || apiAICORE){ -%>
+        ,
+  <% } -%>
+      "SACTenant": {
+        "kind": "rest",
+        "impl": "srv/external/SACTenant.js",
+        "credentials": {
+          "[production]": {
+            "destination": "<%= projectName %>-sac-tenant-api",
+            "path": "/api/v1"
+          },
+          "[development]": {
+            "destination": "<%= projectName %>-sac-tenant-api",
+            "path": "/api/v1"
+          }
+        }
+      }
+  <% } -%>
+  <% if(apiHERE){ -%>
+<% if(authentication || hana || schemaName !== '' || hanaTargetHDI !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP || apiCONC || apiGRAPH || apiAICORE || apiSACTenant){ -%>
       ,
 <% } -%>
       "HERELocationServices": {
@@ -490,7 +509,7 @@
       }
 <% } -%>
 <% if(apiNeoWs){ -%>
-<% if(authentication || hana || schemaName !== '' || hanaTargetHDI !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP || apiCONC || apiGRAPH || apiAICORE || apiHERE){ -%>
+<% if(authentication || hana || schemaName !== '' || hanaTargetHDI !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP || apiCONC || apiGRAPH || apiAICORE || apiSACTenant || apiHERE){ -%>
       ,
 <% } -%>
       "NearEarthObjectWebService": {
@@ -508,7 +527,7 @@
       }
 <% } -%>
 <% if(em){ -%>
-<% if(authentication || hana || schemaName !== '' || hanaTargetHDI !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP || apiCONC || apiGRAPH || apiAICORE || apiHERE || apiNeoWs){ -%>
+<% if(authentication || hana || schemaName !== '' || hanaTargetHDI !== '' || apiS4HCSO || apiS4HCBP || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP || apiCONC || apiGRAPH || apiAICORE || apiSACTenant || apiHERE || apiNeoWs){ -%>
       ,
 <% } -%>
       "messaging": {

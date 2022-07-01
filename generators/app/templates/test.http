@@ -215,6 +215,13 @@ Authorization: Basic joe:
 ###
 <% }); -%>
 <% } -%>
+<% if(apiSACTenant){ -%>
+GET http://localhost:4004/catalog/Stories
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% } -%>
 <% if(apiHERE){ -%>
 GET http://localhost:4004/catalog/Geocodes?$filter=title%20eq%20%27France%27
 <% if(authentication){ -%>
@@ -451,6 +458,13 @@ Authorization: Basic joe:
 <% } -%>
 ###
 <% }); -%>
+<% } -%>
+<% if(apiSACTenant){ -%>
+GET http://localhost:4004/v2/catalog/Stories
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
 <% } -%>
 <% if(apiHERE){ -%>
 GET http://localhost:4004/v2/catalog/Geocodes?$filter=title%20eq%20%27France%27

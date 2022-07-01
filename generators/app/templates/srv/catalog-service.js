@@ -59,6 +59,9 @@ module.exports = cds.service.impl(async function () {
     const <%= element.shortName %> = await cds.connect.to('<%= element.name %>');
 <% }); -%>
 <% } -%>
+<% if(apiSACTenant){ -%>
+    const SACTenant = await cds.connect.to('SACTenant');
+<% } -%>
 <% if(apiHERE){ -%>
     const HERE = await cds.connect.to('HERELocationServices');
 <% } -%>
@@ -160,14 +163,20 @@ module.exports = cds.service.impl(async function () {
 <% } -%>
 <% }); -%>
 <% } -%>
+<% if(apiSACTenant){ -%>
+<% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP || apiGRAPH){ -%>
+            ,
+<% } -%>
+            Stories
+<% } -%>
 <% if(apiHERE){ -%>
-<% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP || apiCONC || apiGRAPH){ -%>
+<% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP || apiCONC || apiGRAPH || apiSACTenant){ -%>
             ,
 <% } -%>
             Geocodes
 <% } -%>
 <% if(apiNeoWs){ -%>
-<% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP || apiCONC || apiGRAPH || apiHERE){ -%>
+<% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP || apiCONC || apiGRAPH || apiSACTenant || apiHERE){ -%>
             ,
 <% } -%>
             Asteroids
@@ -794,6 +803,19 @@ module.exports = cds.service.impl(async function () {
     });
 
 <% }); -%>
+<% } -%>
+
+<% if(apiSACTenant){ -%>
+    this.on('READ', Stories, async (req) => {
+        try {
+            const tx = SACTenant.transaction(req);
+            return await tx.send({
+                query: req.query
+            })
+        } catch (err) {
+            req.reject(err);
+        }
+    });
 <% } -%>
 
 <% if(apiHERE){ -%>

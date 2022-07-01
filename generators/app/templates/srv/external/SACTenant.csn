@@ -1,0 +1,42 @@
+{
+    "definitions": {
+        "SACTenant.Stories": {
+            "kind": "entity",
+            "elements": {
+                "name": {
+                    "type": "cds.String"
+                },
+                "description": {
+                    "type": "cds.String"
+                },
+                "createdBy": {
+                    "type": "cds.String"
+                },
+                "changedBy": {
+                    "type": "cds.String"
+                },
+                "id": {
+                    "type": "cds.String"
+                },
+                "created": {
+                    "type": "cds.String"
+                },
+                "changed": {
+                    "type": "cds.String"
+                },
+                "isTemplate": {
+                    "type": "cds.Boolean"
+                },
+                "isSample": {
+                    "type": "cds.Boolean"
+                },
+                "openURL": {
+                    "type": "cds.String"
+                },
+                "models": {
+                    "type": "cds.String"
+                }
+            }
+        }
+    }
+}

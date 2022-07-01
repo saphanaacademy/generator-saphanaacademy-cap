@@ -645,6 +645,32 @@ resources:
                 clientSecret: <SetValueInCockpit>
                 HTML5.DynamicDestination: true
 <% } -%>
+<% if(apiSACTenant){ -%>
+              - Name: <%= projectName %>-sac-tenant-api
+                Description: SAP Analytics Cloud Tenant API
+                URL: <%= SACHost %>
+                Type: HTTP
+                ProxyType: Internet
+<% if(authentication){ -%>
+                Authentication: OAuth2SAMLBearerAssertion
+                audience: <%= SACAudience %>
+                authnContextClassRef: urn:oasis:names:tc:SAML:2.0:ac:classes:PreviousSession
+                clientKey: <SetValueInCockpit>
+                tokenServiceURL: <%= SACTokenURL %>
+                tokenServiceUser: <SetValueInCockpit>
+                tokenServicePassword: <SetValueInCockpit>
+                nameIdFormat: urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress
+                userIdSource: email
+<% } else { -%>
+                Authentication: OAuth2ClientCredentials
+                tokenServiceURL: <%= SACTokenURL %>
+                clientId: <SetValueInCockpit>
+                clientSecret: <SetValueInCockpit>
+                URL.headers.x-sap-sac-custom-auth: true
+<% } -%>
+                URL.headers.Application-Interface-Key: <SetValueInCockpit>
+                HTML5.DynamicDestination: true
+<% } -%>
 <% if(apiHERE){ -%>
               - Name: <%= projectName %>-HERE-api
                 Description: HERE Location Services

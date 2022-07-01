@@ -44,6 +44,10 @@ using {<%= element.name %> as <%= element.shortName %>} from './external/<%= ele
 <% }); -%>
 <% } -%>
 
+<% if(apiSACTenant){ -%>
+using { SACTenant } from './external/SACTenant.csn';
+<% } -%>
+
 <% if(apiHERE){ -%>
 using { HERELocationServices } from './external/HERELocationServices.csn';
 <% } -%>
@@ -349,6 +353,15 @@ service CatalogService @(path : '/catalog')
       as projection on <%= element.shortName %>.<%= element.entity %>;
 
 <% }); -%>
+<% } -%>
+
+<% if(apiSACTenant){ -%>
+    @readonly
+    entity Stories
+<% if(authorization){ -%>
+      @(restrict: [{ to: 'Viewer' }])
+<% } -%>
+      as projection on SACTenant.Stories;
 <% } -%>
 
 <% if(apiHERE){ -%>
