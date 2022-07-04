@@ -285,23 +285,21 @@ module.exports = class extends Generator {
         type: "input",
         name: "SACHost",
         message: "What is your SAP Analytics Cloud Host?",
-        default: "https://dpe.us10.hcs.cloud.sap"
+        default: "https://<tenant>.<region>.hcs.cloud.sap"
       },
       {
         when: response => response.api === true && response.apiLoB.includes("SAP Analytics Cloud Tenant API"),
         type: "input",
         name: "SACTokenURL",
         message: "What is your SAP Analytics Cloud OAuth2SAML Token URL?",
-        //        default: "https://<tenant>.authentication.<region>.hana.ondemand.com/oauth/token/alias/<alias>"
-        default: "https://dpe.authentication.us10.hana.ondemand.com/oauth/token/alias/dpe.aws-live"
+        default: "https://<tenant>.authentication.<region>.hana.ondemand.com/oauth/token/alias/<alias>"
       },
       {
         when: response => response.api === true && response.apiLoB.includes("SAP Analytics Cloud Tenant API"),
         type: "input",
         name: "SACAudience",
         message: "What is your SAP Analytics Cloud OAuth2SAML Audience?",
-        //        default: " https://<tenant>.authentication.<region>.hana.ondemand.com"
-        default: " https://dpe.authentication.us10.hana.ondemand.com"
+        default: "https://<tenant>.authentication.<region>.hana.ondemand.com"
       },
       {
         when: response => response.api === true && response.apiLoB.includes("HERE Location Services"),
