@@ -720,6 +720,9 @@ module.exports = class extends Generator {
         answers.haa = false;
         answers.GraphSameSubaccount = false;
       }
+      if (answers.apiSACTenant === true && answers.authentication == false) {
+        answers.authentication = true;
+      }
       if (answers.hana === false || answers.authentication === false || answers.authorization === false) {
         answers.attributes = false;
       }
