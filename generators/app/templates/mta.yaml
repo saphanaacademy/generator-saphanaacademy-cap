@@ -236,7 +236,7 @@ modules:
       disk-quota: 1024M
     properties:
       TARGET_RUNTIME: tomee7
-      JBP_CONFIG_RESOURCE_CONFIGURATION: "['tomee/webapps/ROOT/WEB-INF/resources.xml': {'xsahaa-hdi-container':'<%= projectName %>-db'}]"
+      JBP_CONFIG_RESOURCE_CONFIGURATION: "['tomee7/webapps/ROOT/WEB-INF/resources.xml': {'xsahaa-hdi-container':'<%= projectName %>-db'}]"
       PERSONALIZE_JWT: <%= haaPersonalizeJWT %>
       USE_NAMED_USER: <%= haaUseNamedUser %>
       SECONDARY_ROUTING_PERCENT: 0
