@@ -283,7 +283,7 @@ modules:
 <% if(haa){ -%>
       CORS: '[{"uriPattern": "^/sap/bc/ina/(.*)$", "allowedOrigin": [{"host":"<%= haaHostname %>", "protocol":"https"}], "allowedMethods": ["GET", "POST", "OPTIONS"], "allowedHeaders": ["Origin", "Accept", "X-Requested-With", "Content-Type", "Access-Control-Request-Method", "Access-Control-Request-Headers", "Authorization", "X-Sap-Cid", "X-Csrf-Token"], "exposeHeaders": ["Accept", "Authorization", "X-Requested-With", "X-Sap-Cid", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials", "X-Csrf-Token", "Content-Type"]}]'
       COOKIES: '{"SameSite": "None"}'
-      INCOMING_CONNECTION_TIMEOUT: 60000
+      INCOMING_CONNECTION_TIMEOUT: 600000
 <% } -%>
 <% } -%>
     requires:
@@ -299,7 +299,7 @@ modules:
         properties:
           name: srv
           url: ~{srv-url}
-          timeout: 60000
+          timeout: 600000
 <% if(authentication){ -%>
           forwardAuthToken: true
 <% } -%>
@@ -309,7 +309,7 @@ modules:
         properties:
           name: srv2
           url: ~{srv2-url}
-          timeout: 60000
+          timeout: 600000
 <% if(authentication){ -%>
           forwardAuthToken: true
 <% } -%>
@@ -320,7 +320,7 @@ modules:
         properties:
           name: srvjs
           url: ~{srvjs-url}
-          timeout: 60000
+          timeout: 600000
 <% if(authentication){ -%>
           forwardAuthToken: true
 <% } -%>
@@ -332,7 +332,7 @@ modules:
         properties:
           name: haa
           url: ~{haa-url}
-          timeout: 60000
+          timeout: 600000
           forwardAuthToken: true
 <% } -%>
 <% if(applicationLogging){ -%>
