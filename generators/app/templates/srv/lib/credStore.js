@@ -10,7 +10,7 @@ const jose = require('node-jose');
 const xsenv = require('@sap/xsenv');
 xsenv.loadEnv();
 const services = xsenv.getServices({
-    credStore: { tag: 'credstore' }
+    credStore: { label: 'credstore' }
 });
 const binding = services.credStore;
 

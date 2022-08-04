@@ -1,18 +1,17 @@
 const express = require('express');
 const app = express();
-const bodyParser = require('body-parser');
 
 const xsenv = require('@sap/xsenv');
 xsenv.loadEnv();
 const services = xsenv.getServices({
 <% if(authentication || api){ -%>
-    uaa: { tag: 'xsuaa' }
+    uaa: { label: 'xsuaa' }
 <% } -%>
 <% if(multiTenant){ -%>
 <% if(authentication || api){ -%>
     ,
 <% } -%>
-    registry: { tag: 'SaaS' }
+    registry: { label: 'saas-registry' }
     ,
     sm: { label: 'service-manager' }
 <% } -%>
@@ -20,7 +19,7 @@ const services = xsenv.getServices({
 <% if(authentication || api){ -%>
     ,
 <% } -%>
-    hana: { tag: 'hana' }
+    hana: { label: 'hana' }
 <% } -%>
 });
 
@@ -45,12 +44,13 @@ app.use(passport.authenticate('JWT', {
 }));
 <% } -%>
 
-<% if(hana && attributes && multiTenant === false){ -%>    
+<% if(hana && attributes && multiTenant === false){ -%>
 // placed after authentication - business user info from the JWT will be set as HANA session variables (XS_)
 app.use(hdbext.middleware(services.hana));
 <% } -%>
 
-app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 // app home
 app.get('/srvjs', function (req, res) {
@@ -90,16 +90,16 @@ app.get('/srvjs/info', function (req, res) {
 
 <% if(api){ -%>
 // app destination
-const core = require('@sap-cloud-sdk/core');
+const httpClient = require('@sap-cloud-sdk/http-client');
 <% if(authentication){ -%>
-const { retrieveJwt } = require('@sap-cloud-sdk/core');
+const { retrieveJwt } = require('@sap-cloud-sdk/connectivity');
 <% } -%>
 app.get('/srvjs/dest', async function (req, res) {
 <% if(authorization){ -%>
     if (req.authInfo.checkScope('$XSAPPNAME.Viewer')) {
 <% } -%>
         try {
-            let res1 = await core.executeHttpRequest(
+            let res1 = await httpClient.executeHttpRequest(
                 {
                     destinationName: req.query.destination || ''
 <% if(authentication){ -%>

@@ -18,6 +18,20 @@
 <% } -%>
             "destination": "<%= projectName %>-srv"
         }
+<% if(graphql){ -%>
+        ,
+        {
+            "source": "^/graphql(.*)$",
+            "csrfProtection": false,
+<% if(authentication){ -%>
+            "authenticationType": "xsuaa",
+<% } -%>
+<% if(authorization){ -%>
+            "scope": "$XSAPPNAME.Viewer",
+<% } -%>
+            "destination": "<%= projectName %>-srv"
+        }
+<% } -%>
 <% if(srv2){ -%>
         ,
         {

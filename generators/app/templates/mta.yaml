@@ -338,13 +338,6 @@ modules:
 <% if(applicationLogging){ -%>
       - name: <%= projectName %>-logging
 <% } -%>
-<% if(multiTenant){ -%>
-    provides:
-      - name: app_api
-        properties:
-          url: ${default-url}
-          application: ${app-name}
-<% } -%>
 <% } -%>
 
 <% if(html5repo){ -%>
@@ -477,15 +470,6 @@ resources:
       service: xsuaa
       service-plan: application
       path: ./xs-security.json
-<% if(multiTenant){ -%>
-      xsuaa-app: ${space}-~{app_api/application}
-      config:
-        xsappname: ${xsuaa-app}
-    properties:
-      XSAPPNAME: ${xsuaa-app}
-    requires: 
-      - name: app_api
-<% } -%>
 <% } -%>
 
 <% if(api || html5repo || routes || app2appType === "access"){ -%>
@@ -794,13 +778,11 @@ resources:
   - name: <%= projectName %>-registry
   # ------------------------------------------------------------
     type: org.cloudfoundry.managed-service
-    requires:
-      - name: <%= projectName %>-uaa
     parameters:
       service: saas-registry
       service-plan: application
       config:
-        xsappname: ~{<%= projectName %>-uaa/XSAPPNAME}
+        xsappname: <%= projectName %>
         appName: <%= projectName %>
         displayName: '<%= displayName %>'
         description: '<%= description %>'

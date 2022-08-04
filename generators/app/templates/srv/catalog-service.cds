@@ -56,6 +56,10 @@ using { HERELocationServices } from './external/HERELocationServices.csn';
 using { NearEarthObjectWebService } from './external/NearEarthObjectWebService.csn';
 <% } -%>
 
+<% if(app2appType === "access"){ -%>
+//using { <%= app2appName %>_CatalogService } from './external/<%= app2appName %>-CatalogService.csn';
+<% } -%>
+
 service CatalogService @(path : '/catalog')
 <% if(authentication){ -%>
 @(requires: 'authenticated-user')

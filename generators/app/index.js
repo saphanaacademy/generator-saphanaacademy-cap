@@ -559,6 +559,12 @@ module.exports = class extends Generator {
       },
       {
         type: "confirm",
+        name: "graphql",
+        message: "Would you like to enable GraphQL?",
+        default: false
+      },
+      {
+        type: "confirm",
         name: "swagger",
         message: "Would you like to enable a Swagger UI?",
         default: false

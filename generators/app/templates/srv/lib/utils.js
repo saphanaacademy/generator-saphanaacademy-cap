@@ -10,8 +10,8 @@ module.exports = {
 
 const xsenv = require('@sap/xsenv');
 const services = xsenv.getServices({
-    uaa: { tag: 'xsuaa' },
-    dest: { tag: 'destination' }
+    uaa: { label: 'xsuaa' },
+    dest: { label: 'destination' }
 });
 
 const axios = require('axios');

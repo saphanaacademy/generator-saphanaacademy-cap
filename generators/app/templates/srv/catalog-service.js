@@ -10,8 +10,8 @@ log.registerCustomFields(["country", "amount"]);
 <% if(credStore !== ''){ -%>
 const credStore = require('./lib/credStore');
 <% } -%>
-<% if(app2appType === "access" /*|| apiAICORE*/){ -%>
-const core = require('@sap-cloud-sdk/core');
+<% if(app2appType === "access"){ -%>
+const httpClient = require('@sap-cloud-sdk/http-client');
 <% } -%>
 <% if(app2appType === "access" && app2appMethod.includes("machine")){ -%>
 const axios = require('axios');
@@ -73,6 +73,10 @@ module.exports = cds.service.impl(async function () {
 <% if(!multiTenant && hana){ -%>
     const db = await cds.connect.to('db'); 
 <% } -%>
+<% } -%>
+<% if(app2appType === "access"){ -%>
+    //const <%= app2appName %>CatalogService = await cds.connect.to('<%= app2appName %>_CatalogService');
+    //const { Sales } = <%= app2appName %>CatalogService.entities;
 <% } -%>
 
     const {
@@ -914,13 +918,15 @@ module.exports = cds.service.impl(async function () {
 <% if(app2appMethod.includes("user")){ -%>
     this.on('<%= app2appName %>User', async req => {
         try {
-            let res = await core.executeHttpRequest({ destinationName: '<%= projectName %>-<%= app2appName %>'}, {
+            debug('TokenPayload:', cds.context.http.req.authInfo.getTokenInfo().getPayload());
+            let res = await httpClient.executeHttpRequest({ destinationName: '<%= projectName %>-<%= app2appName %>'}, {
                 method: 'GET',
                 url: 'catalog/',
                 headers: {
                     Authorization: req.headers.authorization
                 }
             });
+            return res.data;
             /*
             options = {
                 method: 'GET',
@@ -930,8 +936,15 @@ module.exports = cds.service.impl(async function () {
                 }
             };
             let res = await axios(options);
-            */
             return res.data;
+            */
+            /*
+            let res = await <%= app2appName %>CatalogService.tx(req).send({
+                query: SELECT.from(Sales),
+                headers: {'Authorization': req.headers.authorization}
+            });
+            return [res];
+            */
         } catch (err) {
             req.reject(err);
         }
@@ -949,13 +962,15 @@ module.exports = cds.service.impl(async function () {
                 }
             };
             let res1 = await axios(options1);
-            let res2 = await core.executeHttpRequest({ destinationName: '<%= projectName %>-<%= app2appName %>'}, {
+            debug('JWT:', res1.data.access_token);
+            let res2 = await httpClient.executeHttpRequest({ destinationName: '<%= projectName %>-<%= app2appName %>'}, {
                 method: 'GET',
                 url: 'catalog/',
                 headers: {
                     Authorization: 'Bearer ' + res1.data.access_token
                 }
             });
+            return res2.data;
             /*
             let options2 = {
                 method: 'GET',
@@ -965,8 +980,15 @@ module.exports = cds.service.impl(async function () {
                 }
             };
             let res2 = await axios(options2);
-            */
             return res2.data;
+            */
+            /*
+            let res2 = await <%= app2appName %>CatalogService.tx(req).send({
+                query: SELECT.from(Sales),
+                headers: {'Authorization': 'Bearer ' + res1.data.access_token}
+            });
+            return [res2];
+            */
         } catch (err) {
             req.reject(err);
         }

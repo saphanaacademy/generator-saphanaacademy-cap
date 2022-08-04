@@ -16,6 +16,10 @@
     <h3>Catalog</h3>
     <a href="<%= srvPath %>catalog/">Catalog</a><br />
     <a href="<%= srvPath %>catalog/$metadata">Metadata</a><br />
+<% if(graphql){ -%>
+    <a href="<%= srvPath %>graphql?query={CatalogService {Sales {ID region country org amount comments}}}">GraphQL</a><br />
+    <a href="<%= srvPath %>graphql?query={CatalogService {Sales (top: 3 orderBy: {amount: desc} filter: {amount: {gt: 700}}) {country amount}}}">GraphQL - Top Sales</a><br />
+<% } -%>
 <% if(swagger){ -%>
     <a href="<%= srvPath %>swagger/catalog/">Swagger</a><br />
 <% } -%>

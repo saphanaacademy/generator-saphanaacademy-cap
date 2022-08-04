@@ -9,6 +9,68 @@ GET http://localhost:4004/catalog/$metadata
 Authorization: Basic joe:
 <% } -%>
 ###
+<% if(graphql){ -%>
+GET http://localhost:4004/graphql?query={CatalogService {Sales {ID region country org amount comments}}}
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+GET http://localhost:4004/graphql?query={CatalogService {Sales (top: 3 orderBy: {amount: desc} filter: {amount: {gt: 700}}) {country amount}}}
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+POST http://localhost:4004/graphql
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+Content-Type: application/graphql
+
+mutation C1 {
+  CatalogService {
+    Sales {
+      create (input: {ID: 16 region: "Asia" country: "Thailand" org: "TH01" amount: 721}) {
+        ID
+        country
+        amount
+      }
+    }
+  }
+}
+###
+POST http://localhost:4004/graphql
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+Content-Type: application/graphql
+
+mutation U1 {
+  CatalogService {
+    Sales {
+      update (filter: {ID: {eq: 16}} input: {amount: 897}) {
+        ID
+        country
+        amount
+      }
+    }
+  }
+}
+###
+POST http://localhost:4004/graphql
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+Content-Type: application/graphql
+
+mutation D1 {
+  CatalogService {
+    Sales {
+      delete (filter: {ID: {eq: 16}})
+    }
+  }
+}
+###
+<% } -%>
 <% if(swagger){ -%>
 GET http://localhost:4004/swagger/catalog/
 <% if(authentication){ -%>
