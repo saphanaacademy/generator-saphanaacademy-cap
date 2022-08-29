@@ -5,7 +5,6 @@
     },
     "dependencies": {
         "express": "latest",
-        "body-parser": "latest",
 <% if(authentication){ -%>
         "@sap/xssec": "latest",
         "passport": "latest",
