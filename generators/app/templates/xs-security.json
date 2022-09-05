@@ -194,12 +194,13 @@
 <% } -%>
     ,
     "oauth2-configuration": {
-        "token-validity": 3600
-<% if(customDomain !== ""){ -%>
-        ,
+        "token-validity": 3600,
         "redirect-uris": [
-            "http*://*.<%= customDomain %>/**"
-        ]
+<% if(customDomain){ -%>
+            "https://*.<%= customDomain %>/login/callback"
+<% } else { -%>
+            "https://*-<%= projectName %>.cfapps.*.hana.ondemand.com/login/callback"
 <% } -%>
+        ]
     }
 }

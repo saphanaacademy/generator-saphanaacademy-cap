@@ -28,7 +28,7 @@ const hdbext = require('@sap/hdbext');
 <% if(multiTenant){ -%>
 const createInstanceManager = require('@sap/instance-manager').create;
 <% } -%>
-<% if(attributes === false && multiTenant === false){ -%>    
+<% if(attributes === false && multiTenant === false){ -%>
 // placed before authentication - business user info from the JWT will not be set as HANA session variables (XS_)
 app.use(hdbext.middleware(services.hana));
 <% } -%>

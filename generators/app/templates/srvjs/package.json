@@ -1,8 +1,5 @@
 {
     "name": "<%= projectName %>-srvjs",
-    "engines": {
-        "node": "14.x"
-    },
     "dependencies": {
         "express": "latest",
 <% if(authentication){ -%>

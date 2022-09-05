@@ -1,7 +1,4 @@
 {
-    "engines": {
-        "node": "14.x"
-    },
     "dependencies": {
         "@sap/approuter": "latest"
     },

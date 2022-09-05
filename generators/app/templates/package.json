@@ -4,9 +4,6 @@
   "repository": "<Add your repository here>",
   "license": "UNLICENSED",
   "description": "<%= description %>",
-  "engines": {
-    "node": "14.x"
-  },
   "dependencies": {
     "@sap/cds": "^6.1",
 <% if(graphql){ -%>
