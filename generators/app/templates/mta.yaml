@@ -72,9 +72,6 @@ modules:
       memory: 512M
       disk-quota: 1024M
 <% if(customDomain !== ""){ -%>
-<% if(multiTenant){ -%>
-      host: <%= projectName %>-srv
-<% } -%>
       domain: <%= customDomain %>
 <% } -%>
 <% if(api){ -%>
@@ -136,6 +133,10 @@ modules:
 <% if(multiTenant){ -%>
       - name: <%= projectName %>-registry
       - name: <%= projectName %>-sm
+      - name: app-api
+        properties:
+          APP_PROTOCOL: ~{app-protocol}
+          APP_URI: ~{app-uri}
 <% } else if (hana || schemaName !== '' || hanaTargetHDI !== ''){ -%>
       - name: <%= projectName %>-db
 <% } -%>
@@ -160,9 +161,12 @@ modules:
         - "*node_modules*"
         - package-lock.json
     parameters:
-        buildpack: nodejs_buildpack
-        memory: 512M
-        disk-quota: 1024M
+      buildpack: nodejs_buildpack
+      memory: 512M
+      disk-quota: 1024M
+<% if(customDomain !== ""){ -%>
+      domain: <%= customDomain %>
+<% } -%>
     requires:
 <% if(authentication || api){ -%>
       - name: <%= projectName %>-uaa
@@ -198,9 +202,12 @@ modules:
         - "*node_modules*"
         - package-lock.json
     parameters:
-        buildpack: nodejs_buildpack
-        memory: 512M
-        disk-quota: 1024M
+      buildpack: nodejs_buildpack
+      memory: 512M
+      disk-quota: 1024M
+<% if(customDomain !== ""){ -%>
+      domain: <%= customDomain %>
+<% } -%>
     requires:
 <% if(authentication || api){ -%>
       - name: <%= projectName %>-uaa
@@ -238,6 +245,9 @@ modules:
       buildpack: sap_java_buildpack
       memory: 1024M
       disk-quota: 1024M
+<% if(customDomain !== ""){ -%>
+      domain: <%= customDomain %>
+<% } -%>
     properties:
       TARGET_RUNTIME: tomee7
       JBP_CONFIG_RESOURCE_CONFIGURATION: "['tomee7/webapps/ROOT/WEB-INF/resources.xml': {'xsahaa-hdi-container':'<%= projectName %>-db'}]"
@@ -255,7 +265,7 @@ modules:
 
 <% if((authentication || ui) && !managedAppRouter){ -%>
   # ------------------ APP ROUTER MODULE -----------------------
-  - name: <%= projectName %>
+  - name: <%= projectName %>-app
   # ------------------------------------------------------------
     type: approuter.nodejs
     path: app
@@ -269,27 +279,28 @@ modules:
       memory: 256M
       disk-quota: 1024M
 <% if(customDomain !== ""){ -%>
-<% if(multiTenant){ -%>
-      host: <%= projectName %>
       domain: <%= customDomain %>
 <% } -%>
-<% } else if(multiTenant){ -%>
+<% if(multiTenant){ -%>
       keep-existing-routes: true
 <% } -%>
 <% if(multiTenant || haa){ -%>
     properties:
 <% if(multiTenant){ -%>
-<% if(customDomain !== ""){ -%>
-      TENANT_HOST_PATTERN: '^(.*).<%= customDomain %>'
-<% } else { -%>
-      TENANT_HOST_PATTERN: '^(.*)-${space}-${app-name}.${default-domain}'
-<% } -%>
+      TENANT_HOST_PATTERN: '^(.*)-${default-uri}'
 <% } -%>
 <% if(haa){ -%>
       CORS: '[{"uriPattern": "^/sap/bc/ina/(.*)$", "allowedOrigin": [{"host":"<%= haaHostname %>", "protocol":"https"}], "allowedMethods": ["GET", "POST", "OPTIONS"], "allowedHeaders": ["Origin", "Accept", "X-Requested-With", "Content-Type", "Access-Control-Request-Method", "Access-Control-Request-Headers", "Authorization", "X-Sap-Cid", "X-Csrf-Token"], "exposeHeaders": ["Accept", "Authorization", "X-Requested-With", "X-Sap-Cid", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials", "X-Csrf-Token", "Content-Type"]}]'
       COOKIES: '{"SameSite": "None"}'
       INCOMING_CONNECTION_TIMEOUT: 600000
 <% } -%>
+<% } -%>
+<% if(multiTenant){ -%>
+    provides:
+      - name: app-api
+        properties:
+          app-protocol: ${protocol}
+          app-uri: ${default-uri}
 <% } -%>
     requires:
 <% if(authentication || html5repo){ -%>
@@ -453,7 +464,7 @@ modules:
 <% if(srvjs){ -%>
             - Name: <%= projectName %>-srvjs
               Description: <%= displayName %> - Additional Server Module
-              URL: ~{srvjs-api/srvjs-url}
+              URL: ~{srvjs/srvjs-url}
               TokenServiceInstanceName: <%= projectName %>-uaa
               TokenServiceKeyName: <%= projectName %>-uaa-sk
               Authentication: OAuth2UserTokenExchange
@@ -783,9 +794,12 @@ resources:
   - name: <%= projectName %>-registry
   # ------------------------------------------------------------
     type: org.cloudfoundry.managed-service
+    requires:
+      - name: srv-api
     parameters:
       service: saas-registry
       service-plan: application
+      service-name: <%= projectName %>-registry
       config:
         xsappname: <%= projectName %>
         appName: <%= projectName %>
@@ -793,17 +807,13 @@ resources:
         description: '<%= description %>'
         category: '<%= category %>'
         appUrls:
-<% if(customDomain !== ""){ -%>
-          onSubscription: https://<%= projectName %>-srv.<%= customDomain %>/mtx/v1/provisioning/tenant/{tenantId}
+          onSubscription: ~{srv-api/srv-url}/mtx/v1/provisioning/tenant/{tenantId}
 <% if(api){ -%>
-          getDependencies: https://<%= projectName %>-srv.<%= customDomain %>/mtx/v1/provisioning/dependencies
+          getDependencies: ~{srv-api/srv-url}/mtx/v1/provisioning/dependencies
 <% } -%>
-<% } else { -%>
-          onSubscription: https://${org}-${space}-<%= projectName %>-srv.${default-domain}/mtx/v1/provisioning/tenant/{tenantId}
-<% if(api){ -%>
-          getDependencies: https://${org}-${space}-<%= projectName %>-srv.${default-domain}/mtx/v1/provisioning/dependencies
-<% } -%>
-<% } -%>
+          onSubscriptionAsync: false
+          onUnSubscriptionAsync: false
+          callbackTimeoutMillis: 300000
 
   # ------------------- SERVICE MANAGER SERVICE ----------------
   - name: <%= projectName %>-sm

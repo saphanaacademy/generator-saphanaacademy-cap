@@ -3,8 +3,11 @@ const debug = require('debug')('srv:provisioning');
 <% if(credStore !== ''){ -%>
 const credStore = require('./lib/credStore');
 <% } -%>
+<% if (routes) {-%>
 const cfenv = require('cfenv');
 const appEnv = cfenv.getAppEnv();
+const httpClient = require('@sap-cloud-sdk/http-client');
+<% } -%>
 const xsenv = require('@sap/xsenv');
 xsenv.loadEnv();
 const services = xsenv.getServices({
@@ -16,8 +19,6 @@ const services = xsenv.getServices({
 });
 
 <% if(routes){ -%>
-const httpClient = require('@sap-cloud-sdk/http-client');
-
 async function getCFInfo(appname) {
     try {
         // get app GUID
@@ -41,7 +42,7 @@ async function getCFInfo(appname) {
     }
 };
 
-async function createRoute(tenantHost, appname) {
+async function createRoute(subscribedSubdomain, appname) {
     getCFInfo(appname).then(
         async function (CFInfo) {
             try {
@@ -50,7 +51,7 @@ async function createRoute(tenantHost, appname) {
                     method: 'POST',
                     url: '/v3/routes',
                     data: {
-                        'host': tenantHost,
+                        'host': subscribedSubdomain + '-' + process.env.APP_URI.split('.')[0],
                         'relationships': {
                             'space': {
                                 'data': {
@@ -77,7 +78,7 @@ async function createRoute(tenantHost, appname) {
                         }]
                     },
                 });
-                console.log('Route created for ' + tenantHost);
+                console.log('Route created for ' + subscribedSubdomain);
                 return res2.data;
             } catch (err) {
                 console.log(err.stack);
@@ -90,14 +91,14 @@ async function createRoute(tenantHost, appname) {
         });
 };
 
-async function deleteRoute(tenantHost, appname) {
+async function deleteRoute(subscribedSubdomain, appname) {
     getCFInfo(appname).then(
         async function (CFInfo) {
             try {
                 // get route id
                 let res1 = await httpClient.executeHttpRequest({ destinationName: '<%= projectName %>-cfapi'}, {
                     method: 'GET',
-                    url: '/v3/apps/' + CFInfo.app_id + '/routes?hosts=' + tenantHost
+                    url: '/v3/apps/' + CFInfo.app_id + '/routes?hosts=' + subscribedSubdomain + '-' + process.env.APP_URI.split('.')[0]
                 });
                 if (res1.data.pagination.total_results === 1) {
                     try {
@@ -106,7 +107,7 @@ async function deleteRoute(tenantHost, appname) {
                             method: 'DELETE',
                             url: '/v3/routes/' + res1.data.resources[0].guid
                         });
-                        console.log('Route deleted for ' + tenantHost);
+                        console.log('Route deleted for ' + subscribedSubdomain);
                         return res2.data;
                     } catch (err) {
                         console.log(err.stack);
@@ -132,18 +133,12 @@ async function deleteRoute(tenantHost, appname) {
 module.exports = (service) => {
 
     service.on('UPDATE', 'tenant', async (req, next) => {
-<% if(customDomain !== ""){ -%>
-        let tenantHost = req.data.subscribedSubdomain;
-<% } else { -%>
-        let tenantHost = req.data.subscribedSubdomain + '-' + appEnv.app.space_name.toLowerCase().replace(/_/g, '-') + '-' + services.registry.appName.toLowerCase().replace(/_/g, '-');
-<% } -%>
-        let tenantURL = 'https:\/\/' + tenantHost + /\.(.*)/gm.exec(appEnv.app.application_uris[0])[0];
-        console.log('Subscribe: ', req.data.subscribedSubdomain, req.data.subscribedTenantId, tenantHost);
+        let tenantURL = process.env.APP_PROTOCOL + ':\/\/' + req.data.subscribedSubdomain + '-' + process.env.APP_URI;
+        console.log('Subscribe:', req.data.subscribedSubdomain, req.data.subscribedTenantId, tenantURL);
         await next();
 <% if(routes){ -%>
-        createRoute(tenantHost, services.registry.appName).then(
+        createRoute(req.data.subscribedSubdomain, services.registry.appName + '-app').then(
             function (res2) {
-                console.log('Subscribe: - Create Route: ', req.data.subscribedTenantId, tenantHost, tenantURL);
                 return tenantURL;
             },
             function (err) {
@@ -155,17 +150,11 @@ module.exports = (service) => {
     });
 
     service.on('DELETE', 'tenant', async (req, next) => {
-<% if(customDomain !== ""){ -%>
-        let tenantHost = req.data.subscribedSubdomain;
-<% } else { -%>
-        let tenantHost = req.data.subscribedSubdomain + '-' + appEnv.app.space_name.toLowerCase().replace(/_/g, '-') + '-' + services.registry.appName.toLowerCase().replace(/_/g, '-');
-<% } -%>
-        console.log('Unsubscribe: ', req.data.subscribedSubdomain, req.data.subscribedTenantId, tenantHost);
+        console.log('Unsubscribe:', req.data.subscribedSubdomain, req.data.subscribedTenantId);
         await next();
 <% if(routes){ -%>
-        deleteRoute(tenantHost, services.registry.appName).then(
+        deleteRoute(req.data.subscribedSubdomain, services.registry.appName + '-app').then(
             async function (res2) {
-                console.log('Unsubscribe: - Delete Route: ', req.data.subscribedTenantId);
                 return req.data.subscribedTenantId;
             },
             function (err) {
@@ -179,7 +168,7 @@ module.exports = (service) => {
     service.on('upgradeTenant', async (req, next) => {
         await next();
         const { instanceData, deploymentOptions } = cds.context.req.body;
-        console.log('UpgradeTenant: ', req.data.subscribedTenantId, req.data.subscribedSubdomain, instanceData, deploymentOptions);
+        console.log('UpgradeTenant:', req.data.subscribedTenantId, req.data.subscribedSubdomain, instanceData, deploymentOptions);
     });
 
 <% if(api){ -%>

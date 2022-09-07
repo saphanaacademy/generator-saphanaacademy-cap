@@ -1087,7 +1087,7 @@ module.exports = class extends Generator {
     }
     if (this.config.get('customDomain') !== "" && this.config.get('multiTenant')) {
       this.log("Important: The wildcard custom domain route needs be mapped via the following CF CLI command after deployment:");
-      this.log("  cf map-route " + this.config.get('projectName') + " " + this.config.get('customDomain') + ' --hostname "*"');
+      this.log("  cf map-route " + this.config.get('projectName') + "-app " + this.config.get('customDomain') + ' --hostname "*"');
     }
     if (this.config.get('routes')) {
       this.log("Important: The CF API is being used so please be sure to update the destination " + this.config.get('projectName') + "-cfapi - Token Service URL (replace login with uaa) and set User & Password. Client Secret needs to be empty.");
