@@ -1,0 +1,6 @@
+COLUMN TABLE "<%= projectName %>.dbcommon::Jurisdictions"
+    (
+        "ID" INTEGER,
+        "name" VARCHAR(100),
+        PRIMARY KEY ("ID")
+    )

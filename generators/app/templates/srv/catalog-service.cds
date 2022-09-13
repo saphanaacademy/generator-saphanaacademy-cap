@@ -386,8 +386,12 @@ service CatalogService @(path : '/catalog')
       as projection on NearEarthObjectWebService.Feed;
 <% } -%>
 
+<% if(multiTenant && common){ -%>
+    function common() returns Integer;
+<% } -%>
+
 <% if(authentication){ -%>
-    type userScopes { identified: Boolean; authenticated: Boolean; <% if(authorization){ -%>Viewer: Boolean; Admin: Boolean; <% } -%><% if(multiTenant){ -%>ExtendCDS: Boolean; ExtendCDSdelete: Boolean;<% } -%>};
+    type userScopes { identified: Boolean; authenticated: Boolean; <% if(authorization){ -%>Viewer: Boolean; Admin: Boolean; <% } -%>};
 <% if(attributes){ -%>
     type userAttrs { Region: many String; };
 <% } -%>

@@ -85,6 +85,9 @@ GET http://localhost:4004/catalog/Sales
 Authorization: Basic joe:
 <% } -%>
 ###
+DELETE http://localhost:4004/catalog/Sales(5)
+Authorization: Basic joe:
+###
 POST http://localhost:4004/catalog/Sales(1)/CatalogService.boost
 <% if(authentication){ -%>
 Authorization: Basic joe:
@@ -305,6 +308,11 @@ Authorization: Basic joe:
 <% } -%>
 ###
 <% } -%>
+<% if(multiTenant && common){ -%>
+GET http://localhost:4004/catalog/common()
+Authorization: Basic joe:
+###
+<% } -%>
 <% if(authentication){ -%>
 GET http://localhost:4004/catalog/userInfo()
 Authorization: Basic joe:
@@ -327,6 +335,32 @@ GET http://localhost:4004/catalog2/Students?$top=10
 <% if(authentication){ -%>
 Authorization: Basic joe:
 <% } -%>
+###
+<% } -%>
+<% if(multiTenant){ -%>
+POST http://localhost:4004/-/cds/deployment/subscribe
+Authorization: Basic joe:
+Content-Type: application/json
+
+{"tenant": "t1"}
+###
+POST http://localhost:4004/-/cds/deployment/unsubscribe
+Authorization: Basic joe:
+Content-Type: application/json
+
+{"tenant": "t1"}
+###
+POST http://localhost:4004/-/cds/model-provider/getCsn
+Authorization: Basic joe:
+Content-Type: application/json
+
+{"tenant": "t1"<% if(toggles){ -%>, "toggles": ["comments"]<% } -%>}
+###
+POST http://localhost:4004/-/cds/deployment/upgrade
+Authorization: Basic joe:
+Content-Type: application/json
+
+{"tenant": "t1", "options": {}}
 ###
 <% } -%>
 <% if(srvjs){ -%>
@@ -547,6 +581,11 @@ GET http://localhost:4004/v2/catalog/Asteroids
 <% if(authentication){ -%>
 Authorization: Basic joe:
 <% } -%>
+###
+<% } -%>
+<% if(multiTenant && common){ -%>
+GET http://localhost:4004/v2/catalog/common()
+Authorization: Basic joe:
 ###
 <% } -%>
 <% if(authentication){ -%>

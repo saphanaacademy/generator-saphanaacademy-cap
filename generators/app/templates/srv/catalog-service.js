@@ -27,6 +27,9 @@ const utils = require('./lib/utils');
 <% if(apiFGCN){ -%>
 const fgcnAPI = require('./external/FieldglassConnectorsAPI');
 <% } -%>
+<% if(multiTenant && common){ -%>
+const dbClass = require('sap-hdbext-promisfied');
+<% } -%>
 
 module.exports = cds.service.impl(async function () {
 
@@ -877,13 +880,25 @@ module.exports = cds.service.impl(async function () {
     });
 <% } -%>
 
+<% if(multiTenant && common){ -%>
+    this.on('common', async req => {
+        try {
+            let db = new dbClass(await dbClass.createConnectionFromEnv(dbClass.resolveEnv(null)));
+            let sql = `SELECT COUNT(*) AS "count" FROM "<%= projectName %>.dbcommon::Jurisdictions"`;
+            const statement = await db.preparePromisified(sql);
+            const results = await db.statementExecPromisified(statement, []);
+            return results;
+        } catch (err) {
+            console.error(err);
+        }
+    });
+<% } -%>
+
 <% if(authentication){ -%>
     this.on('userInfo', req => {
         let results = {};
-        results.user = req.user.id;
-        if (req.user.hasOwnProperty('locale')) {
-            results.locale = req.user.locale;
-        }
+        results.user = cds.context.user.id;
+        results.locale = cds.context.locale;
         results.scopes = {};
         results.scopes.identified = req.user.is('identified-user');
         results.scopes.authenticated = req.user.is('authenticated-user');
@@ -892,9 +907,7 @@ module.exports = cds.service.impl(async function () {
         results.scopes.Admin = req.user.is('Admin');
 <% } -%>
 <% if(multiTenant){ -%>
-        results.tenant = req.user.tenant;
-        results.scopes.ExtendCDS = req.user.is('ExtendCDS');
-        results.scopes.ExtendCDSdelete = req.user.is('ExtendCDSdelete');
+        results.tenant = cds.context.tenant;
 <% } -%>
 <% if(attributes){ -%>
         results.attrs = {};

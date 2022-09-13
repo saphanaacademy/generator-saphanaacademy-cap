@@ -5,18 +5,14 @@
     "scopes": [
         {
             "name": "$XSAPPNAME.mtcallback",
-            "description": "SaaS Provisioning",
+            "description": "Subscription via SaaS Registry",
             "grant-as-authority-to-apps": [
                 "$XSAPPNAME(application,sap-provisioning,tenant-onboarding)"
             ]
         },
         {
-            "name": "$XSAPPNAME.mtdeployment",
-            "description": "SaaS Model Upgrade"
-        },
-        {
-            "name": "$XSAPPNAME.MtxDiagnose",
-            "description": "SaaS Diagnose"
+            "name": "$XSAPPNAME.cds.Subscriber",
+            "description": "Subscribe to applications"
         },
 <% } else { -%>
     "tenant-mode": "dedicated",
@@ -45,25 +41,25 @@
             "description": "Administrator"
         }
 <% } -%>
-<% if(multiTenant){ -%>
-        ,
-        {
-            "name": "$XSAPPNAME.ExtendCDS",
-            "description": "Create Extensions"
-        },
-        {
-            "name": "$XSAPPNAME.ExtendCDSdelete",
-            "description": "Delete Extensions"
-        }
-<% } -%>
     ],
-<% if(app2appType === "access"){ -%>
+<% if(app2appType === "access" || multiTenant){ -%>
 <% if(app2appMethod.includes("user")){ -%>
     "foreign-scope-references": ["$ACCEPT_GRANTED_SCOPES"],
 <% } -%>
-<% if(app2appMethod.includes("machine")){ -%>
-    "authorities": ["$ACCEPT_GRANTED_AUTHORITIES"],
+<% if(multiTenant){ -%>
+    "authorities-inheritance": false,
 <% } -%>
+    "authorities": [
+<% if(multiTenant){ -%>
+        "$XSAPPNAME.cds.Subscriber"
+<% } -%>
+<% if(app2appMethod.includes("machine")){ -%>
+<% if(multiTenant){ -%>
+        ,
+<% } -%>
+        "$ACCEPT_GRANTED_AUTHORITIES"
+<% } -%>
+    ],
 <% } -%>
 <% if(attributes){ -%>
     "attributes": [
@@ -82,6 +78,16 @@
                 "uaa.user"
             ]
         }
+<% if(multiTenant){ -%>
+        ,
+        {
+            "name": "Subscriber",
+            "description": "Subscriber",
+            "scope-references": [
+                "$XSAPPNAME.cds.Subscriber"
+            ]
+        }
+<% } -%>
 <% if(authorization){ -%>
         ,
         {
@@ -106,38 +112,19 @@
             ]
         }
 <% } -%>
-<% if(multiTenant){ -%>
-        ,
-        {
-            "name": "SaaSAdmin",
-            "description": "SaaS Administrator",
-            "scope-references": [
-                "$XSAPPNAME.mtcallback",
-                "$XSAPPNAME.mtdeployment",
-                "$XSAPPNAME.MtxDiagnose"
-            ]
-        },
-        {
-            "name": "ExtendCDS",
-            "description": "Extension Developer",
-            "scope-references": [
-                "$XSAPPNAME.ExtendCDS"
-            ]
-        },
-        {
-            "name": "ExtendCDSdelete",
-            "description": "Extension Developer - Delete",
-            "scope-references": [
-                "$XSAPPNAME.ExtendCDSdelete"
-            ]
-        }
-<% } -%>
     ]
-<% if(authorization || multiTenant){ -%>
+<% if(authorization){ -%>
     ,
     "role-collections": [
+<% if(multiTenant){ -%>
+        {
+            "name": "<%= projectName %>_Subscriber",
+            "description": "Subscriber access",
+            "role-template-references": [
+                "$XSAPPNAME.Subscriber"
+            ]
+        },
 <% } -%>
-<% if(authorization){ -%>
 <% if(!attributes){ -%>
         {
             "name": "<%= projectName %>_Viewer",
@@ -154,42 +141,6 @@
                 "$XSAPPNAME.Admin"
             ]
         }
-<% } -%>
-<% if(multiTenant){ -%>
-<% if(authorization){ -%>
-        ,
-<% } -%>
-        {
-            "name": "<%= projectName %>_SaaS_Administrator",
-            "description": "SaaS Administrative access",
-            "role-template-references": [
-                "$XSAPPNAME.SaaSAdmin"
-            ]
-        },
-        {
-            "name": "<%= projectName %>_Extension_Developer",
-            "description": "Extension Development access",
-            "role-template-references": [
-                "$XSAPPNAME.ExtendCDS"
-            ]
-        },
-        {
-            "name": "<%= projectName %>_Extension_Developer_Delete",
-            "description": "Extension Development Delete access",
-            "role-template-references": [
-                "$XSAPPNAME.ExtendCDSdelete"
-            ]
-        }
-<% } -%>
-<% if(authorization || multiTenant){ -%>
-    ]
-<% } -%>
-<% if(multiTenant){ -%>
-    ,
-    "authorities": [
-        "$XSAPPNAME.mtcallback",
-        "$XSAPPNAME.mtdeployment",
-        "$XSAPPNAME.MtxDiagnose"
     ]
 <% } -%>
     ,

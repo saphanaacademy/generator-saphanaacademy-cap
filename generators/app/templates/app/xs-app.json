@@ -179,12 +179,9 @@
 <% if(multiTenant){ -%>
         ,
         {
-            "source": "^/extend/(.*)",
-            "target": "$1",
-<% if(authentication){ -%>
+            "source": "^/-/cds/.*",
             "authenticationType": "none",
-<% } -%>
-            "destination": "srv"
+            "destination": "mtx"
         }
 <% } -%>
 <% if(haa){ -%>

@@ -1,0 +1,4 @@
+{
+    "name":    "<%= projectName %>.dbcommon",
+    "subfolder": "append"
+}

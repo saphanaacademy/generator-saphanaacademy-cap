@@ -213,6 +213,9 @@
 <% if(apiNeoWs){ -%>
     <a href="<%= srvPath %>catalog/Asteroids">Near Earth Objects</a><br />
 <% } -%>
+<% if(multiTenant && common){ -%>
+    <a href="<%= srvPath %>catalog/common()">Common</a><br />
+<% } -%>
 <% if(authentication){ -%>
     <a href="<%= srvPath %>catalog/userInfo()">User Info</a><br />
 <% } -%>
@@ -319,6 +322,9 @@
 <% } -%>
 <% if(apiNeoWs){ -%>
     <a href="<%= srvPath %>v2/catalog/Asteroids">Near Earth Objects</a><br />
+<% } -%>
+<% if(multiTenant && common){ -%>
+    <a href="<%= srvPath %>v2/catalog/common()">Common</a><br />
 <% } -%>
 <% if(authentication){ -%>
     <a href="<%= srvPath %>v2/catalog/userInfo()">User Info</a><br />

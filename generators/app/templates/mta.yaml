@@ -56,6 +56,32 @@ modules:
 <% } -%>
 <% } -%>
 
+<% if(multiTenant && common){ -%>
+  # ------------ COMMON DATA BASE DEPLOYER MODULE --------------
+  - name: <%= projectName %>-db-common-deployer
+  # ------------------------------------------------------------
+    type: hdb
+    path: dbcommon
+    build-parameters:
+      ignore:
+        - default-*.json
+        - .env
+        - "*node_modules*"
+        - package-lock.json
+    parameters:
+      buildpack: nodejs_buildpack
+      memory: 256M
+      disk-quota: 1024M
+<% if(customDomain !== ""){ -%>
+      domain: <%= customDomain %>
+<% } -%>
+    requires:
+<% if(authentication){ -%>
+      - name: <%= projectName %>-uaa
+<% } -%>
+      - name: <%= projectName %>-db-common
+<% } -%>
+
   # --------------------- SERVER MODULE ------------------------
   - name: <%= projectName %>-srv
   # ------------------------------------------------------------
@@ -137,6 +163,9 @@ modules:
         properties:
           APP_PROTOCOL: ~{app-protocol}
           APP_URI: ~{app-uri}
+<% if(common){ -%>
+      - name: <%= projectName %>-db-common
+<% } -%>
 <% } else if (hana || schemaName !== '' || hanaTargetHDI !== ''){ -%>
       - name: <%= projectName %>-db
 <% } -%>
@@ -147,6 +176,11 @@ modules:
       - name: srv-api
         properties:
           srv-url: ${default-url}
+<% if(multiTenant){ -%>
+      - name: mtx-api
+        properties:
+          mtx-url: ${default-url}
+<% } -%>
 
 <% if(srv2){ -%>
   # ------------- ADDITIONAL SERVER MODULE - CAP ---------------
@@ -180,6 +214,9 @@ modules:
 <% if(multiTenant){ -%>
       - name: <%= projectName %>-registry
       - name: <%= projectName %>-sm
+<% if(common){ -%>
+      - name: <%= projectName %>-db-common
+<% } -%>
 <% } else if (hana){ -%>
       - name: <%= projectName %>-db
 <% } -%>
@@ -221,6 +258,9 @@ modules:
 <% if(multiTenant){ -%>
       - name: <%= projectName %>-registry
       - name: <%= projectName %>-sm
+<% if(common){ -%>
+      - name: <%= projectName %>-db-common
+<% } -%>
 <% } else if (hana){ -%>
       - name: <%= projectName %>-db
 <% } -%>
@@ -254,13 +294,13 @@ modules:
       PERSONALIZE_JWT: <%= haaPersonalizeJWT %>
       USE_NAMED_USER: <%= haaUseNamedUser %>
       SECONDARY_ROUTING_PERCENT: 0
+    requires:
+      - name: <%= projectName %>-uaa
+      - name: <%= projectName %>-db
     provides:
       - name: haa-api
         properties:
           haa-url: ${default-url}
-    requires:
-      - name: <%= projectName %>-uaa
-      - name: <%= projectName %>-db
 <% } -%>
 
 <% if((authentication || ui) && !managedAppRouter){ -%>
@@ -295,13 +335,6 @@ modules:
       INCOMING_CONNECTION_TIMEOUT: 600000
 <% } -%>
 <% } -%>
-<% if(multiTenant){ -%>
-    provides:
-      - name: app-api
-        properties:
-          app-protocol: ${protocol}
-          app-uri: ${default-uri}
-<% } -%>
     requires:
 <% if(authentication || html5repo){ -%>
       - name: <%= projectName %>-uaa
@@ -318,6 +351,14 @@ modules:
           timeout: 600000
 <% if(authentication){ -%>
           forwardAuthToken: true
+<% } -%>
+<% if(multiTenant){ -%>
+      - name: mtx-api
+        group: destinations
+        properties:
+          name: mtx
+          url: ~{mtx-url}
+          timeout: 600000
 <% } -%>
 <% if(srv2){ -%>
       - name: srv2-api
@@ -353,6 +394,13 @@ modules:
 <% } -%>
 <% if(applicationLogging){ -%>
       - name: <%= projectName %>-logging
+<% } -%>
+<% if(multiTenant){ -%>
+    provides:
+      - name: app-api
+        properties:
+          app-protocol: ${protocol}
+          app-uri: ${default-uri}
 <% } -%>
 <% } -%>
 
@@ -789,13 +837,25 @@ resources:
       service-name: <%= hanaTargetHDI %>
 <% } -%>
 
+<% if(multiTenant && common){ -%>
+  # ---------------- COMMON HDI CONTAINER SERVICE --------------
+  - name: <%= projectName %>-db-common
+  # ------------------------------------------------------------
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared
+    properties:
+      hdi-service-name: ${service-name}
+<% } -%>
+
 <% if(multiTenant){ -%>
   # --------------------- REGISTRY SERVICE ---------------------
   - name: <%= projectName %>-registry
   # ------------------------------------------------------------
     type: org.cloudfoundry.managed-service
     requires:
-      - name: srv-api
+      - name: mtx-api
     parameters:
       service: saas-registry
       service-plan: application
@@ -807,9 +867,9 @@ resources:
         description: '<%= description %>'
         category: '<%= category %>'
         appUrls:
-          onSubscription: ~{srv-api/srv-url}/mtx/v1/provisioning/tenant/{tenantId}
+          onSubscription: ~{mtx-api/mtx-url}/-/cds/saas-provisioning/tenant/{tenantId}
 <% if(api){ -%>
-          getDependencies: ~{srv-api/srv-url}/mtx/v1/provisioning/dependencies
+          getDependencies: ~{mtx-api/mtx-url}/-/cds/saas-provisioning/dependencies
 <% } -%>
           onSubscriptionAsync: false
           onUnSubscriptionAsync: false

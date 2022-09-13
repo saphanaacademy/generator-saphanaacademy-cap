@@ -4,6 +4,9 @@
   "repository": "<Add your repository here>",
   "license": "UNLICENSED",
   "description": "<%= description %>",
+  "engines": {
+    "node": "^16"
+  },
   "dependencies": {
     "@sap/cds": "^6.1",
 <% if(graphql){ -%>
@@ -37,7 +40,7 @@
     "node-jose": "^2",
 <% } -%>
 <% if(multiTenant){ -%>
-    "@sap/cds-mtx": "^2",
+    "@sap/cds-mtxs": "^1.1",
     "cfenv": "^1",
 <% } -%>
 <% if(apiARIBWS || apiCONC || app2appType === "access"){ -%>
@@ -55,6 +58,9 @@
 <% } -%>
 <% if(apiFGCN){ -%>
     "uuid": "^8.3",
+<% } -%>
+<% if(multiTenant && common){ -%>
+    "sap-hdbext-promisfied": "^2",
 <% } -%>
     "debug": "^4.3",
     "express": "^4"
@@ -111,6 +117,7 @@
       "flavor": "x4"
     },
 <% } -%>
+<% if(srv2){ -%>
     "build": {
       "target": "gen",
       "tasks": [
@@ -127,13 +134,19 @@
 <% if(ui || authentication){ -%>
               "app",
 <% } -%>
+<% if(multiTenant){ -%>
+              "@sap/cds/srv/mtx",
+<% if(toggles){ -%>
+              "fts/comments/",
+<% } -%>
+<% } -%>
               "srv"
             ]
           }
         },
 <% } -%>
         {
-          "for": "node-cf",
+          "for": "nodejs",
           "src": "srv",
           "options": {
             "model": [
@@ -143,14 +156,19 @@
 <% if(ui || authentication){ -%>
               "app",
 <% } -%>
+<% if(multiTenant){ -%>
+              "@sap/cds/srv/mtx",
+<% if(toggles){ -%>
+              "fts/comments/",
+<% } -%>
+<% } -%>
               "srv"
             ]
           }
         }
-<% if(srv2){ -%>
         ,
         {
-          "for": "node-cf",
+          "for": "nodejs",
           "src": "srv2",
           "options": {
             "model": [
@@ -160,17 +178,21 @@
 <% if(ui || authentication){ -%>
               "app",
 <% } -%>
+<% if(multiTenant){ -%>
+              "@sap/cds/srv/mtx",
+<% if(toggles){ -%>
+              "fts/comments/",
+<% } -%>
+<% } -%>
               "srv2"
             ]
           }
         }
-<% } -%>
 <% if(multiTenant){ -%>
         ,
         {
           "for": "mtx",
-          "src": ".",
-          "dest": "srv",
+          "src": "srv",
           "options": {
             "model": [
 <% if(hana){ -%>
@@ -182,14 +204,20 @@
 <% if(srv2){ -%>
               "srv2",
 <% } -%>
-              "srv",
-              "."
+<% if(multiTenant){ -%>
+              "@sap/cds/srv/mtx",
+<% if(toggles){ -%>
+              "fts/comments/",
+<% } -%>
+<% } -%>
+              "srv"
             ]
           }
         }
 <% } -%>
       ]
     },
+<% } -%>
 <% if(graphql){ -%>
     "plugins": [
       {
@@ -215,7 +243,18 @@
               "roles": [
                 "Admin",
                 "Viewer"
+<% if(multiTenant){ -%>
+                ,
+                "internal-user"
+<% } -%>
               ]
+<% } -%>
+<% if(multiTenant){ -%>
+<% if(authorization){ -%>
+              ,
+<% } -%>
+              "tenant": "t1"
+<% } -%>
 <% if(attributes){ -%>
               ,
               "userAttributes": {
@@ -224,13 +263,19 @@
                 ]
               }
 <% } -%>
-<% } -%>
             },
             "julie": {
 <% if(authorization){ -%>
               "roles": [
                 "Viewer"
               ]
+<% } -%>
+<% if(multiTenant){ -%>
+<% if(authorization){ -%>
+              ,
+<% } -%>
+              "tenant": "t2"
+<% } -%>
 <% if(attributes){ -%>
               ,
               "userAttributes": {
@@ -240,13 +285,19 @@
                 ]
               }
 <% } -%>
-<% } -%>
             },
             "bob": {
 <% if(authorization){ -%>
               "roles": [
                 "Viewer"
               ]
+<% } -%>
+<% if(multiTenant){ -%>
+<% if(authorization){ -%>
+              ,
+<% } -%>
+              "tenant": "t3"
+<% } -%>
 <% if(attributes){ -%>
               ,
               "userAttributes": {
@@ -255,10 +306,17 @@
                 ]
               }
 <% } -%>
-<% } -%>
             }
           }
         }
+<% if(toggles){ -%>
+        ,
+        "tenants": {
+          "t1": { "features": ["*"] },
+          "t2": { "features": ["comments"] },
+          "t3": { "features": [] }
+        }
+<% } -%>
       }
 <% } else { -%>
       "auth": {
@@ -269,10 +327,18 @@
       ,
       "db": {
         "[production]": {
+<% if(multiTenant){ -%>
+          "kind": "hana-mt"
+<% } else { -%>
           "kind": "hana-cloud"
+<% } -%>
         },
         "[development]": {
+<% if(multiTenant){ -%>
+          "kind": "sql-mt"
+<% } else { -%>
           "kind": "sql"
+<% } -%>
         },
         "model": [
           "db",
@@ -291,7 +357,13 @@
 <% } -%>
 <% if(multiTenant){ -%>
       ,
-      "multitenancy": true
+      "multitenancy": true,
+<% if(toggles){ -%>
+      "toggles": true,
+<% }else{ -%>
+      "toggles": true,
+<% } -%>
+      "extensibility": false
 <% } -%>
 <% if(apiS4HCSO){ -%>
       ,
@@ -391,22 +463,22 @@
       }
 <% } -%>
 <% if(apiFGAP){ -%>
-        ,
-        "FieldglassApprovals": {
-          "kind": "rest",
-          "impl": "srv/external/FieldglassApprovals.js",
-          "credentials": {
-            "[production]": {
-              "destination": "<%= projectName %>-fieldglass-api",
-              "path": "/api/v1"
-            },
-            "[development]": {
-              "url": "https://sandbox.api.sap.com/fieldglass/api/v1"
-            }
+      ,
+      "FieldglassApprovals": {
+        "kind": "rest",
+        "impl": "srv/external/FieldglassApprovals.js",
+        "credentials": {
+          "[production]": {
+            "destination": "<%= projectName %>-fieldglass-api",
+            "path": "/api/v1"
+          },
+          "[development]": {
+            "url": "https://sandbox.api.sap.com/fieldglass/api/v1"
           }
         }
-  <% } -%>
-  <% if(apiCONC){ -%>
+      }
+<% } -%>
+<% if(apiCONC){ -%>
       ,
       "Concur": {
         "kind": "rest",
@@ -529,33 +601,5 @@
       }
 <% } -%>
     }
-<% if(multiTenant){ -%>
-    ,
-    "mtx": {
-      "api": {
-        "provisioning": true,
-        "metadata": true,
-        "model": true
-      },
-      "element-prefix": [
-        "Z_",
-        "ZZ_"
-      ],
-      "namespace-blocklist": [
-        "com.sap.",
-        "sap.",
-        "<%= projectName %>."
-      ],
-      "extension-allowlist": [
-        {
-          "for": ["<%= projectName %>.db.Sales"]
-        },
-        {
-          "for": ["CatalogService"],
-          "kind": "service"
-        }
-      ]
-    }
-<% } -%>
   }
 }
