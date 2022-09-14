@@ -361,7 +361,7 @@
 <% if(toggles){ -%>
       "toggles": true,
 <% }else{ -%>
-      "toggles": true,
+      "toggles": false,
 <% } -%>
       "extensibility": false
 <% } -%>
