@@ -1,858 +1,2840 @@
 {
+  "meta": {
+    "creator": "cds-dk 6.1.3"
+  },
+  "$version": "2.0",
   "definitions": {
     "ECEmploymentInformation": {
-      "kind": "service"
+      "kind": "service",
+      "@cds.external": true,
+      "@m.IsDefaultEntityContainer": "true"
     },
     "ECEmploymentInformation.EmpEmployment": {
       "kind": "entity",
       "@cds.persistence.skip": true,
+      "@sap.creatable": "false",
+      "@sap.deletable": "false",
+      "@sap.label": "Employment Details",
+      "@sap.updatable": "false",
+      "@sap.upsertable": "true",
       "elements": {
         "personIdExternal": {
           "key": true,
           "type": "cds.String",
-          "length": 100
+          "length": 100,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Person ID External",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "userId": {
           "key": true,
           "type": "cds.String",
-          "length": 100
+          "length": 100,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "User ID",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "StockEndDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "false",
+          "@sap.label": "Stock End Date",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "assignmentClass": {
           "type": "cds.String",
-          "length": 128
+          "length": 128,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Employment Assignment Type",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "benefitsEligibilityStartDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "false",
+          "@sap.label": "Benefits Eligibility Start Date",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "benefitsEndDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "false",
+          "@sap.label": "Benefits End Date",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "bonusPayExpirationDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "false",
+          "@sap.label": "bonusPayExpirationDate",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "createdBy": {
           "type": "cds.String",
-          "length": 100
+          "length": 100,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Created By",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "createdDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Created Date Time",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "createdOn": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "Created On",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "eligibleForSalContinuation": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.creatable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Eligible for Salary Continuation",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "eligibleForStock": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.creatable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Eligible for Stock",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "employeeFirstEmployment": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.creatable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Employee's First Employment",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "endDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "Termination Date",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "firstDateWorked": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "false",
+          "@sap.label": "First Date Worked",
+          "@sap.required": "true",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "includeAllRecords": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Include All Records",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "false"
         },
         "initialOptionGrant": {
-          "type": "cds.Double"
+          "type": "cds.Double",
+          "@sap.creatable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Initial Option Grant",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "initialStockGrant": {
-          "type": "cds.Double"
+          "type": "cds.Double",
+          "@sap.creatable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Initial Stock Grant",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "isContingentWorker": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Contingent Worker",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "isECRecord": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "isECRecord",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "jobNumber": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Employment Id",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "false"
         },
         "lastDateWorked": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "false",
+          "@sap.label": "Last Date Worked",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "lastModifiedBy": {
           "type": "cds.String",
-          "length": 100
+          "length": 100,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified By",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "lastModifiedDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified Date Time",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "lastModifiedOn": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified On",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "okToRehire": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.creatable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "OK to Rehire",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "originalStartDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "false",
+          "@sap.label": "Original Start Date",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "payrollEndDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "false",
+          "@sap.label": "Payroll End Date",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "prevEmployeeId": {
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Previous Employment ID",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "professionalServiceDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "Professional Service Date",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "regretTermination": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.creatable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Regret Termination",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "salaryEndDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "false",
+          "@sap.label": "Salary End Date",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "seniorityDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "false",
+          "@sap.label": "Seniority Start Date",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "serviceDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "Service Date",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "startDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "Hire Date",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "empJobRelationshipNav": {
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "User ID",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
           "target": "ECEmploymentInformation.EmpJobRelationships",
           "cardinality": {
             "max": "*"
-          }
+          },
+          "keys": []
         },
         "empWorkPermitNav": {
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "User ID",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
           "target": "ECEmploymentInformation.EmpWorkPermit",
           "cardinality": {
             "max": "*"
-          }
+          },
+          "keys": []
         },
         "jobInfoNav": {
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "User ID",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
           "target": "ECEmploymentInformation.EmpJob",
           "cardinality": {
             "max": "*"
-          }
+          },
+          "keys": []
         },
         "empPensionPayoutNav": {
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "User ID",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
-          "target": "ECEmploymentInformation.EmpPensionPayout"
+          "target": "ECEmploymentInformation.EmpPensionPayout",
+          "keys": []
         },
         "empBeneficiaryNav": {
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "User ID",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
-          "target": "ECEmploymentInformation.EmpBeneficiary"
+          "target": "ECEmploymentInformation.EmpBeneficiary",
+          "keys": []
         }
       }
     },
     "ECEmploymentInformation.EmpEmploymentTermination": {
       "kind": "entity",
       "@cds.persistence.skip": true,
+      "@sap.creatable": "false",
+      "@sap.deletable": "false",
+      "@sap.label": "Employment Details",
+      "@sap.updatable": "false",
+      "@sap.upsertable": "true",
       "elements": {
         "endDate": {
           "key": true,
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "Termination Date",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "personIdExternal": {
           "key": true,
           "type": "cds.String",
-          "length": 100
+          "length": 100,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Person ID External",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "userId": {
           "key": true,
           "type": "cds.String",
-          "length": 100
+          "length": 100,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "User ID",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "StockEndDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "false",
+          "@sap.label": "Stock End Date",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "attachmentId": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.creatable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "attachmentId",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "false"
         },
         "benefitsEndDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "false",
+          "@sap.label": "Benefits End Date",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "bonusPayExpirationDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "false",
+          "@sap.label": "bonusPayExpirationDate",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "createdBy": {
           "type": "cds.String",
-          "length": 100
+          "length": 100,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Created By",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "createdDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Created Date Time",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "createdOn": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "Created On",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "eligibleForSalContinuation": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.creatable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Eligible for Salary Continuation",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "eventReason": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.creatable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Event Reason",
+          "@sap.required": "true",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "false"
         },
         "lastDateWorked": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "false",
+          "@sap.label": "Last Date Worked",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "lastModifiedBy": {
           "type": "cds.String",
-          "length": 100
+          "length": 100,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified By",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "lastModifiedDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified Date Time",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "lastModifiedOn": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified On",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "newMainEmploymentId": {
-          "type": "cds.DecimalFloat"
+          "type": "cds.Decimal",
+          "@sap.creatable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "newMainEmploymentId",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "false"
         },
         "notes": {
           "type": "cds.String",
-          "length": 4000
+          "length": 4000,
+          "@sap.creatable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Notes",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "okToRehire": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.creatable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "OK to Rehire",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "payrollEndDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "false",
+          "@sap.label": "Payroll End Date",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "regretTermination": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.creatable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Regret Termination",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "salaryEndDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "false",
+          "@sap.label": "Salary End Date",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "employmentNav": {
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "User ID",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
-          "target": "ECEmploymentInformation.EmpEmployment"
+          "target": "ECEmploymentInformation.EmpEmployment",
+          "keys": []
         },
         "jobInfoNav": {
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "User ID",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
-          "target": "ECEmploymentInformation.EmpJob"
+          "target": "ECEmploymentInformation.EmpJob",
+          "keys": []
         }
       }
     },
     "ECEmploymentInformation.EmpWorkPermit": {
       "kind": "entity",
       "@cds.persistence.skip": true,
+      "@sap.creatable": "false",
+      "@sap.deletable": "false",
+      "@sap.label": "Work Permit Info",
+      "@sap.updatable": "false",
+      "@sap.upsertable": "true",
       "elements": {
         "country": {
           "key": true,
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Country",
+          "@sap.picklist": "ISOCountryList",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "documentNumber": {
           "key": true,
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Document Number",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "documentType": {
           "key": true,
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Document Type",
+          "@sap.picklist": "permitdoctype",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "userId": {
           "key": true,
           "type": "cds.String",
-          "length": 100
+          "length": 100,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "User ID",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "attachment": {
-          "type": "cds.LargeBinary"
+          "type": "cds.LargeBinary",
+          "@sap.creatable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Attachment Content",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "attachmentFileName": {
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Attachment File Name",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "attachmentFileSize": {
-          "type": "cds.DecimalFloat"
+          "type": "cds.Decimal",
+          "@sap.creatable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Attachment File Size",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "attachmentFileType": {
           "type": "cds.String",
-          "length": 5
+          "length": 5,
+          "@sap.creatable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Attachment File Type",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "attachmentId": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.creatable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "attachmentId",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "attachmentMimeType": {
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Attachment Mime Type",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "attachmentStatus": {
-          "type": "cds.DecimalFloat"
+          "type": "cds.Decimal",
+          "@sap.creatable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Attachment Status",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "createdBy": {
           "type": "cds.String",
-          "length": 100
+          "length": 100,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Created By",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "createdDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Created Date Time",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "createdOn": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "Created On",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "documentTitle": {
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Document Title",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "expirationDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "false",
+          "@sap.label": "Expiration Date",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "isValidated": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.creatable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Validated",
+          "@sap.required": "true",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "issueDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "false",
+          "@sap.label": "Issue Date",
+          "@sap.required": "true",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "issuePlace": {
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Issue Place",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "issuingAuthority": {
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Issuing Authority",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "lastModifiedBy": {
           "type": "cds.String",
-          "length": 100
+          "length": 100,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified By",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "lastModifiedDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified Date Time",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "lastModifiedOn": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified On",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "notes": {
           "type": "cds.String",
-          "length": 4000
+          "length": 4000,
+          "@sap.creatable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "notes",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "employmentNav": {
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "User ID",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
-          "target": "ECEmploymentInformation.EmpEmployment"
+          "target": "ECEmploymentInformation.EmpEmployment",
+          "keys": []
         }
       }
     },
     "ECEmploymentInformation.EmpJobRelationships": {
       "kind": "entity",
       "@cds.persistence.skip": true,
+      "@sap.creatable": "false",
+      "@sap.deletable": "false",
+      "@sap.label": "Job Relationships",
+      "@sap.updatable": "false",
+      "@sap.upsertable": "true",
       "elements": {
         "relationshipType": {
           "key": true,
           "type": "cds.String",
-          "length": 100
+          "length": 100,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Relationship Type",
+          "@sap.picklist": "jobRelType",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "startDate": {
           "key": true,
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "Start Date",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "userId": {
           "key": true,
           "type": "cds.String",
-          "length": 100
+          "length": 100,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "User ID",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "createdBy": {
           "type": "cds.String",
-          "length": 100
+          "length": 100,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Created By",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "createdDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Created Date Time",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "createdOn": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "Created On",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "endDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "End Date",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "lastModifiedBy": {
           "type": "cds.String",
-          "length": 100
+          "length": 100,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified By",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "lastModifiedDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified Date Time",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "lastModifiedOn": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified On",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "operation": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.creatable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "operation",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "false"
         },
         "relUserId": {
           "type": "cds.String",
-          "length": 384
+          "length": 384,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Name",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "employmentNav": {
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "User ID",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
-          "target": "ECEmploymentInformation.EmpEmployment"
+          "target": "ECEmploymentInformation.EmpEmployment",
+          "keys": []
         },
         "relEmploymentNav": {
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Name",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
-          "target": "ECEmploymentInformation.EmpEmployment"
+          "target": "ECEmploymentInformation.EmpEmployment",
+          "keys": []
         }
       }
     },
     "ECEmploymentInformation.EmpJob": {
       "kind": "entity",
       "@cds.persistence.skip": true,
+      "@sap.creatable": "false",
+      "@sap.deletable": "false",
+      "@sap.label": "Job Information",
+      "@sap.updatable": "false",
+      "@sap.upsertable": "true",
       "elements": {
         "seqNumber": {
           "key": true,
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Sequence Number",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "startDate": {
           "key": true,
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "Start Date",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "userId": {
           "key": true,
           "type": "cds.String",
-          "length": 100
+          "length": 100,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "User ID",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "assedicCertInitialStateNum": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Number of Initial Pôle Emploi Statement (Entertainment Worker)",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "assedicCertObjectNum": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Pôle Emploi Certificate Object Number (Entertainment Worker)",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "businessUnit": {
           "type": "cds.String",
-          "length": 32
+          "length": 32,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Business Unit",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "calcMethodIndicator": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Calculation Method Indicator",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "commitmentIndicator": {
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Commitment Indicator",
+          "@sap.picklist": "commitmentIndicator",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "company": {
           "type": "cds.String",
-          "length": 32
+          "length": 32,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Company",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "contractReferenceForAed": {
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Contract Reference",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "contractType": {
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Contract Type",
+          "@sap.picklist": "contractType",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "costCenter": {
           "type": "cds.String",
-          "length": 32
+          "length": 32,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Cost Center",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "countryOfCompany": {
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Country",
+          "@sap.picklist": "ISOCountryList",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "createdBy": {
           "type": "cds.String",
-          "length": 100
+          "length": 100,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Created By",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "createdDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Created Date Time",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "createdOn": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "Created On",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "defaultOvertimeCompensationVariant": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Default Overtime Compensation Variant",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "department": {
           "type": "cds.String",
-          "length": 32
+          "length": 32,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Department",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "division": {
           "type": "cds.String",
-          "length": 32
+          "length": 32,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Division",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "eeo1JobCategory": {
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "EEO Category 1",
+          "@sap.picklist": "EEO1CODE_USA",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "eeo4JobCategory": {
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "EEO Category 4",
+          "@sap.picklist": "EEO4CODE_USA",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "eeo5JobCategory": {
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "EEO Category 5",
+          "@sap.picklist": "EEO5CODE_USA",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "eeo6JobCategory": {
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "EEO Category 6",
+          "@sap.picklist": "EEO6CODE_USA",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "eeoClass": {
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "EEO Job Group",
+          "@sap.picklist": "EEOJOBGROUP_USA",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "electoralCollegeForWorkersRepresentatives": {
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Electoral College for Workers Representatives",
+          "@sap.picklist": "electoralCollegeRepresentativesCouncil",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "electoralCollegeForWorksCouncil": {
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Electoral College for Works Council",
+          "@sap.picklist": "electoralCollegeRepresentativesCouncil",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "empRelationship": {
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Employment Relationship",
+          "@sap.picklist": "employmentRelationship",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "emplStatus": {
           "type": "cds.String",
-          "length": 32
+          "length": 32,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Employee Status",
+          "@sap.picklist": "employee-status",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "employeeClass": {
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Employee Class",
+          "@sap.picklist": "EMPLOYEECLASS",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "employeeWorkgroupMembership": {
           "type": "cds.String",
-          "length": 60
+          "length": 60,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Employee Workgroup Membership",
+          "@sap.picklist": "yesNo",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "employmentType": {
           "type": "cds.String",
-          "length": 32
+          "length": 32,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Employment Type",
+          "@sap.picklist": "employmentType",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "endDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "End Date",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "event": {
           "type": "cds.String",
-          "length": 32
+          "length": 32,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Event",
+          "@sap.picklist": "event",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "eventReason": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Event Reason",
+          "@sap.required": "true",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "exclExecutiveSector": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Excluded from Executive Sector",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "expectedReturnDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "expectedReturnDate",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "familyRelationshipWithEmployer": {
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Family Relationship with Employer",
+          "@sap.picklist": "familyRelationship",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "fgtsDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "FGTS Date",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "fgtsOptant": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "FGTS Recipient (Entitled to Receive Severance Pay)",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "fgtsPercent": {
-          "type": "cds.Double"
+          "type": "cds.Double",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "FGTS Percentage",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "flsaStatus": {
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "FLSA Status",
+          "@sap.picklist": "FLSASTATUS_USA",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "fte": {
-          "type": "cds.Double"
+          "type": "cds.Double",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "FTE",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "harmfulAgentExposure": {
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Harmful Agent Exposure Code",
+          "@sap.picklist": "harmfulAgentExposureCode",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "hazard": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Hazard",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "healthRisk": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Health Risk",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "holidayCalendarCode": {
           "type": "cds.String",
-          "length": 128
+          "length": 128,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Holiday Calendar",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "isCompetitionClauseActive": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Competition Clause",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "isFulltimeEmployee": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Is Fulltime Employee",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "isSideLineJobAllowed": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Sideline Job Allowed",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "jobCode": {
           "type": "cds.String",
-          "length": 32
+          "length": 32,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Job Classification",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "jobTitle": {
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Job Title",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "laborProtection": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Labor Protection",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "lastModifiedBy": {
           "type": "cds.String",
-          "length": 100
+          "length": 100,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified By",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "lastModifiedDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified Date Time",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "lastModifiedOn": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified On",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "location": {
           "type": "cds.String",
-          "length": 128
+          "length": 128,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Location",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "managerId": {
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Supervisor",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "mandatoryWorkBreakRecord": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Mandatory Work Break Record",
+          "@sap.picklist": "yesNo",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "municipalInseeCode": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Municipal INSEE Code",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "notes": {
           "type": "cds.String",
-          "length": 4000
+          "length": 4000,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Notes",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "operation": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.creatable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "operation",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "false"
         },
         "payGrade": {
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Pay Grade",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "payScaleArea": {
           "type": "cds.String",
-          "length": 128
+          "length": 128,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Pay Scale Area",
+          "@sap.required": "true",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "payScaleGroup": {
           "type": "cds.String",
-          "length": 128
+          "length": 128,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Pay Scale Group",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "payScaleLevel": {
           "type": "cds.String",
-          "length": 128
+          "length": 128,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Pay Scale Level",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "payScaleType": {
           "type": "cds.String",
-          "length": 128
+          "length": 128,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Pay Scale Type",
+          "@sap.required": "true",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "pcfm": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Provisional Certificate in Financial Movements (PCFM)",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "pensionProtection": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Pension Protection (Fixed or Enhanced)",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "permitIndicator": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Underage Apprentice Permit",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "position": {
           "type": "cds.String",
-          "length": 128
+          "length": 128,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Position",
+          "@sap.required": "true",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "positionEntryDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "Position Entry Date",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "probationPeriodEndDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "Probationary Period End Date",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "regularTemp": {
           "type": "cds.String",
-          "length": 32
+          "length": 32,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Regular/Temporary",
+          "@sap.picklist": "regular-temp",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "residentVote": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Resident Vote",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "retired": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Retired",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "sickPaySupplement": {
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Sick Pay Supplement",
+          "@sap.picklist": "SICKPAYSUPP",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "standardHours": {
-          "type": "cds.Double"
+          "type": "cds.Double",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Standard Weekly Hours",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "teachersPension": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Teachers Pensions",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "timeRecordingAdmissibilityCode": {
           "type": "cds.String",
-          "length": 128
+          "length": 128,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Time Recording Admissibility",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "timeRecordingProfileCode": {
           "type": "cds.String",
-          "length": 128
+          "length": 128,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Time Recording Profile",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "timeRecordingVariant": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Time Recording Variant",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "timeTypeProfileCode": {
           "type": "cds.String",
-          "length": 128
+          "length": 128,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Time Profile",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "timezone": {
           "type": "cds.String",
-          "length": 128
+          "length": 128,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Timezone",
+          "@sap.required": "true",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "travelDistance": {
-          "type": "cds.Double"
+          "type": "cds.Double",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Travel Distance",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "tupeOrgNumber": {
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "TUPE Organization Number",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "workLocation": {
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Work Location",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "workerCategory": {
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Worker Category",
+          "@sap.picklist": "workerCategory",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "workingDaysPerWeek": {
-          "type": "cds.Double"
+          "type": "cds.Double",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Working Days Per Week",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "workingTimeDirective": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Working Time Directive",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "workscheduleCode": {
           "type": "cds.String",
-          "length": 128
+          "length": 128,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Work Schedule",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "wtdHoursLimit": {
           "type": "cds.String",
-          "length": 256
+          "length": 256,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "WTD Working Hours Limit",
+          "@sap.required": "false",
+          "@sap.sortable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "employmentNav": {
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "User ID",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
-          "target": "ECEmploymentInformation.EmpEmployment"
+          "target": "ECEmploymentInformation.EmpEmployment",
+          "keys": []
         },
         "managerEmploymentNav": {
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Supervisor",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
-          "target": "ECEmploymentInformation.EmpEmployment"
+          "target": "ECEmploymentInformation.EmpEmployment",
+          "keys": []
         }
       }
     },
     "ECEmploymentInformation.PersonEmpTerminationInfo": {
       "kind": "entity",
       "@cds.persistence.skip": true,
+      "@sap.creatable": "false",
+      "@sap.deletable": "false",
+      "@sap.label": "PersonEmpTerminationInfo",
+      "@sap.updatable": "false",
+      "@sap.upsertable": "false",
       "elements": {
         "personIdExternal": {
           "key": true,
           "type": "cds.String",
-          "length": 100
+          "length": 100,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Person ID External",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "activeEmploymentsCount": {
-          "type": "cds.Integer"
+          "type": "cds.Integer",
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Active Employments Count",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "latestTerminationDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "Latest Termination Date",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         }
       }
     },
     "ECEmploymentInformation.EmpPensionPayout": {
       "kind": "entity",
       "@cds.persistence.skip": true,
+      "@sap.creatable": "false",
+      "@sap.deletable": "false",
+      "@sap.label": "Pension Payout Details",
+      "@sap.updatable": "false",
+      "@sap.upsertable": "true",
       "elements": {
         "userId": {
           "key": true,
           "type": "cds.String",
-          "length": 100
+          "length": 100,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "User ID",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "createdBy": {
           "type": "cds.String",
-          "length": 100
+          "length": 100,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Created By",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "createdDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Created Date Time",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "createdOn": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "Created On",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "endDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "Actual End Date",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "lastModifiedBy": {
           "type": "cds.String",
-          "length": 100
+          "length": 100,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified By",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "lastModifiedDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified Date Time",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "lastModifiedOn": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified On",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "payrollEndDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "Payroll End Date",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "personIdExternal": {
           "type": "cds.String",
-          "length": 100
+          "length": 100,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Person ID External",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "plannedEndDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "End Date",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "startDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "Start Date",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "employmentNav": {
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "User ID",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
-          "target": "ECEmploymentInformation.EmpEmployment"
+          "target": "ECEmploymentInformation.EmpEmployment",
+          "keys": []
         }
       }
     },
     "ECEmploymentInformation.EmpBeneficiary": {
       "kind": "entity",
       "@cds.persistence.skip": true,
+      "@sap.creatable": "false",
+      "@sap.deletable": "false",
+      "@sap.label": "Pension Payout Details",
+      "@sap.updatable": "false",
+      "@sap.upsertable": "true",
       "elements": {
         "userId": {
           "key": true,
           "type": "cds.String",
-          "length": 100
+          "length": 100,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "User ID",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "createdBy": {
           "type": "cds.String",
-          "length": 100
+          "length": 100,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Created By",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "createdDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Created Date Time",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "createdOn": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "Created On",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "endDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "Actual End Date",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "lastModifiedBy": {
           "type": "cds.String",
-          "length": 100
+          "length": 100,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified By",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "lastModifiedDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified Date Time",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "lastModifiedOn": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified On",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "payrollEndDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "Payroll End Date",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true"
         },
         "personIdExternal": {
           "type": "cds.String",
-          "length": 100
+          "length": 100,
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Person ID External",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "plannedEndDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "End Date",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "startDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.creatable": "false",
+          "@sap.display.format": "Date",
+          "@sap.filterable": "true",
+          "@sap.label": "Start Date",
+          "@sap.required": "true",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true"
         },
         "employmentNav": {
+          "@sap.creatable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "User ID",
+          "@sap.required": "false",
+          "@sap.sortable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
-          "target": "ECEmploymentInformation.EmpEmployment"
+          "target": "ECEmploymentInformation.EmpEmployment",
+          "keys": []
         }
       }
     }

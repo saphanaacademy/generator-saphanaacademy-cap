@@ -1,7 +1,4 @@
 const cds = require('@sap/cds');
-<% if(credStore !== ''){ -%>
-const credStore = require('./../lib/credStore');
-<% } -%>
 
 class HERELocationServices extends cds.RemoteService {
     async init() {
@@ -10,13 +7,13 @@ class HERELocationServices extends cds.RemoteService {
 
         this.before('READ', 'Geocodes', async (req) => {
             try {
-                let query = 'GET /geocode?apiKey=' + <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'APIKeyHERE')<% } else { -%>process.env.APIKeyHERE<% } -%>;
+                let query = 'GET /geocode';
                 let select = req.query.SELECT;
                 let hasFilter = false;
                 if (select.where) {
                     select.where.forEach(element => {
                         if (element.ref && element.ref[0] === 'title') {
-                            query += '&q=';
+                            query += '?q=';
                             hasFilter = true;
                         }
                         else if (element.val) {

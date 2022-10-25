@@ -10,21 +10,28 @@ FGCNsupplierId=<%= FGCNsupplierId %>
 AICoreDeploymentId=<%= AICoreDeploymentId %>
 AICoreModel=<%= AICoreModel %>
 <% } -%>
-<% if(credStore === ""){ -%>
-<% if(ApplicationInterfaceKey !== ""){ -%>
-ApplicationInterfaceKey=<%= ApplicationInterfaceKey %>
+<% if(apiS4HCSO){ -%>
+cds.requires.API_SALES_ORDER_SRV.credentials.[development].headers.APIKey=<%= APIKeyHubSandbox %>
 <% } -%>
-<% if (APIKeyHubSandbox !== ""){ -%>
-APIKeyHubSandbox=<%= APIKeyHubSandbox %>
+<% if(apiS4HCBP){ -%>
+cds.requires.API_BUSINESS_PARTNER.credentials.[development].headers.APIKey=<%= APIKeyHubSandbox %>
+<% } -%>
+<% if(apiSFSFRC){ -%>
+cds.requires.RCMCandidate.credentials.[development].headers.APIKey=<%= APIKeyHubSandbox %>
+<% } -%>
+<% if(apiSFSFEC){ -%>
+cds.requires.ECEmploymentInformation.credentials.[development].headers.APIKey=<%= APIKeyHubSandbox %>
 <% } -%>
 <% if(apiARIBPO){ -%>
-AribaNetworkId=<%= AribaNetworkId %>
-APIKeyAriba=<%= APIKeyHubSandbox %>
+cds.requires.ARIBA_NETWORK_PURCHASE_ORDERS.credentials.[development].headers.X-ARIBA-NETWORK-ID=<%= AribaNetworkId %>
+cds.requires.ARIBA_NETWORK_PURCHASE_ORDERS.credentials.[development].headers.APIKey=<%= APIKeyHubSandbox %>
+<% } -%>
+<% if(apiFGAP){ -%>
+cds.requires.FieldglassApprovals.credentials.[development].headers.APIKey=<%= APIKeyHubSandbox %>
 <% } -%>
 <% if(apiHERE){ -%>
-APIKeyHERE=<%= APIKeyHERE %>
+cds.requires.HERELocationServices.credentials.[development].queries.apiKey=<%= APIKeyHERE %>
 <% } -%>
 <% if(apiNeoWs){ -%>
-APIKeyNASA=<%= APIKeyNASA %>
-<% } -%>
+cds.requires.NearEarthObjectWebService.credentials.[development].queries.api_key=<%= APIKeyNASA %>
 <% } -%>

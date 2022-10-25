@@ -1,1041 +1,3527 @@
 {
+  "meta": {
+    "creator": "cds-dk 6.1.3"
+  },
+  "$version": "2.0",
   "definitions": {
     "RCMCandidate": {
-      "kind": "service"
+      "kind": "service",
+      "@cds.external": true,
+      "@m.IsDefaultEntityContainer": "true"
     },
-    "RCMCandidate.CandidateBackground_InsideWorkExperience": {
-      "kind": "entity",
-      "@cds.persistence.skip": true,
-      "elements": {
-        "backgroundElementId": {
-          "key": true,
-          "type": "cds.Integer64"
-        },
-        "bgOrderPos": {
-          "type": "cds.Integer64"
+    "RCMCandidate.setSmsNotificationPreference": {
+      "kind": "action",
+      "params": {
+        "optIn": {
+          "type": "cds.Boolean"
         },
         "candidateId": {
           "type": "cds.Integer64"
         },
-        "department": {
+        "isoCountryCode": {
           "type": "cds.LargeString"
+        },
+        "cellPhone": {
+          "type": "cds.LargeString"
+        }
+      },
+      "returns": {
+        "type": "cds.LargeString"
+      },
+      "doc": "Enable or disable SMS preference for Candidate\nUse Function Import to enable/disable SMS Notifications for candidate by providing Candidate Id, Phone Country Code and Cell Phone Number"
+    },
+    "RCMCandidate.CandidateBackground_InsideWorkExperience": {
+      "kind": "entity",
+      "@cds.persistence.skip": true,
+      "@sap.label": "CandidateBackground_InsideWorkExperience",
+      "@sap.creatable": "true",
+      "@sap.updatable": "true",
+      "@sap.upsertable": "true",
+      "@sap.deletable": "false",
+      "elements": {
+        "backgroundElementId": {
+          "key": true,
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Background Element Id"
+        },
+        "bgOrderPos": {
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "false",
+          "@sap.label": "Background Order Position"
+        },
+        "candidateId": {
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Candidate Id"
+        },
+        "department": {
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Department"
         },
         "endDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.display.format": "Date",
+          "@sap.label": "End Date"
         },
         "lastModifiedDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified Date"
         },
         "startDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.display.format": "Date",
+          "@sap.label": "From Date"
         },
         "title": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Position Title"
         },
         "candidate": {
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Candidate Id",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
-          "target": "RCMCandidate.Candidate"
+          "target": "RCMCandidate.Candidate",
+          "keys": []
         }
       }
     },
     "RCMCandidate.CandidateLight": {
       "kind": "entity",
       "@cds.persistence.skip": true,
+      "@sap.label": "CandidateLight",
+      "@sap.creatable": "true",
+      "@sap.updatable": "true",
+      "@sap.upsertable": "true",
+      "@sap.deletable": "false",
       "elements": {
         "candidateId": {
           "key": true,
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Candidate Id"
         },
         "address": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Address line 1"
         },
         "address2": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Address line 2"
         },
         "agreeToPrivacyStatement": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "false",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Agreed to Privacy Statement"
         },
         "anonymized": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Anonymized Flag"
         },
         "anonymizedDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Anonymized Date Time"
         },
         "candidateLocale": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Candidate Locale"
         },
         "cellPhone": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Primary Phone"
         },
         "city": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "City"
         },
         "contactEmail": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Email Address"
         },
         "country": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Country of Residence"
         },
         "creationDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Creation Date"
         },
         "currentTitle": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Current Title"
         },
         "dataPrivacyId": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Data Privacy Id"
         },
         "dateofAvailability": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Date of Availability"
         },
         "externalCandidate": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "External Candidate"
         },
         "firstName": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "true",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "First Name"
         },
         "homePhone": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Secondary Phone"
         },
         "lastLoginDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Last login date"
         },
         "lastModifiedDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified Date"
         },
         "lastName": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "true",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Name"
         },
         "middleName": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Middle Name"
         },
         "partnerMemberId": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Partner Member Id"
         },
         "partnerSource": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Partner Source"
         },
         "password": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "false",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Password"
         },
         "primaryEmail": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "true",
+          "@sap.creatable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Primary Email"
         },
         "privacyAcceptDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Privacy Acceptence Date"
         },
         "publicIntranet": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Public Intranet"
         },
         "shareProfile": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Share Profile flag"
         },
         "usersSysId": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Users sys id"
         },
         "visibilityOption": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Visibility Option"
         },
         "zip": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Zip Code"
         },
         "candidateProfileExtension": {
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Candidate Profile Extension",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
-          "target": "RCMCandidate.CandidateProfileExtension"
+          "target": "RCMCandidate.CandidateProfileExtension",
+          "keys": []
         },
         "certificates": {
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Certifications/Licenses",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
           "target": "RCMCandidate.CandidateBackground_Certificates",
           "cardinality": {
             "max": "*"
-          }
+          },
+          "keys": []
         },
         "education": {
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Formal Education",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
           "target": "RCMCandidate.CandidateBackground_Education",
           "cardinality": {
             "max": "*"
-          }
+          },
+          "keys": []
         },
         "insideWorkExperience": {
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Internal Employment History",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
           "target": "RCMCandidate.CandidateBackground_InsideWorkExperience",
           "cardinality": {
             "max": "*"
-          }
+          },
+          "keys": []
         },
         "languages": {
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Language Skills",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
           "target": "RCMCandidate.CandidateBackground_Languages",
           "cardinality": {
             "max": "*"
-          }
+          },
+          "keys": []
         },
         "outsideWorkExperience": {
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Previous Employment",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
           "target": "RCMCandidate.CandidateBackground_OutsideWorkExperience",
           "cardinality": {
             "max": "*"
-          }
+          },
+          "keys": []
         },
         "tags": {
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Tags",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
           "target": "RCMCandidate.CandidateTags",
           "cardinality": {
             "max": "*"
-          }
+          },
+          "keys": []
         },
         "talentPool": {
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Candidate Talent Pool",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
           "target": "RCMCandidate.CandidateBackground_TalentPool",
           "cardinality": {
             "max": "*"
-          }
+          },
+          "keys": []
         },
         "talentPoolcorp": {
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Corporate Talent Pool",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
           "target": "RCMCandidate.CandidateBackground_TalentPoolcorp",
           "cardinality": {
             "max": "*"
-          }
+          },
+          "keys": []
         }
       }
     },
     "RCMCandidate.CandidateComments": {
       "kind": "entity",
       "@cds.persistence.skip": true,
+      "@sap.label": "CandidateComments",
+      "@sap.creatable": "true",
+      "@sap.updatable": "true",
+      "@sap.upsertable": "true",
+      "@sap.deletable": "false",
       "elements": {
         "commentId": {
           "key": true,
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Comment Id"
         },
         "associatedCommentId": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Associated Comment Id"
         },
         "associatedId": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Associated Id"
         },
         "candidateId": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "true",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Candidate Id"
         },
         "commentator": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Commentator"
         },
         "content": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "true",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Content"
         },
         "hasAssociatedComment": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Has Associated Comment"
         },
         "migratedCommentatorUserName": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Migrated Commentator User Name"
         },
         "refType": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Reference Type"
         },
         "candidate": {
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Candidate",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
-          "target": "RCMCandidate.Candidate"
+          "target": "RCMCandidate.Candidate",
+          "keys": []
         }
       }
     },
     "RCMCandidate.CandidateBackground_Education": {
       "kind": "entity",
       "@cds.persistence.skip": true,
+      "@sap.label": "CandidateBackground_Education",
+      "@sap.creatable": "true",
+      "@sap.updatable": "true",
+      "@sap.upsertable": "true",
+      "@sap.deletable": "false",
       "elements": {
         "backgroundElementId": {
           "key": true,
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Background Element Id"
         },
         "bgOrderPos": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "false",
+          "@sap.label": "Background Order Position"
         },
         "candidateId": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Candidate Id"
         },
         "degree": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "degree",
+          "@sap.label": "Degree"
         },
         "degreeDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.display.format": "Date",
+          "@sap.label": "Degree Date"
         },
         "endDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.display.format": "Date",
+          "@sap.label": "End Date"
         },
         "lastModifiedDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified Date"
         },
         "major": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "major",
+          "@sap.label": "Major"
         },
         "presentStudent": {
-          "type": "cds.Integer"
+          "type": "cds.Integer",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "student",
+          "@sap.label": "Are you a student?"
         },
         "school": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "School"
         },
         "schoolAddress": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "School Address"
         },
         "schoolCity": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "School City"
         },
         "schoolCountry": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "country",
+          "@sap.label": "School Country"
         },
         "schoolPhone": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "School Phone"
         },
         "schoolState": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "state",
+          "@sap.label": "School State"
         },
         "schoolType": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "School Type"
         },
         "schoolZip": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "School Zip Code"
         },
         "startDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.display.format": "Date",
+          "@sap.label": "From Date"
         },
         "candidate": {
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Candidate Id",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
-          "target": "RCMCandidate.Candidate"
+          "target": "RCMCandidate.Candidate",
+          "keys": []
         }
       }
     },
     "RCMCandidate.Candidate": {
       "kind": "entity",
       "@cds.persistence.skip": true,
+      "@sap.label": "Candidate",
+      "@sap.creatable": "true",
+      "@sap.updatable": "true",
+      "@sap.upsertable": "true",
+      "@sap.deletable": "false",
       "elements": {
         "candidateId": {
           "key": true,
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Candidate Id"
         },
         "address": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Address line 1"
         },
         "address2": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Address line 2"
         },
         "agreeToPrivacyStatement": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "false",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Agreed to Privacy Statement"
         },
         "anonymized": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Anonymized Flag"
         },
         "anonymizedDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Anonymized Date Time"
         },
         "candidateLocale": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Candidate Locale"
         },
         "cellPhone": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Primary Phone"
         },
         "city": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "City"
         },
         "contactEmail": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "true",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Email Address"
         },
         "country": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Country of Residence"
         },
         "creationDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Creation Date"
         },
         "currentTitle": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Current Title"
         },
         "dataPrivacyId": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Data Privacy Id"
         },
         "dateofAvailability": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Date of Availability"
         },
         "externalCandidate": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "External Candidate"
         },
         "firstName": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "true",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "First Name"
         },
         "homePhone": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Secondary Phone"
         },
         "lastLoginDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Last login date"
         },
         "lastModifiedDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified Date"
         },
         "lastName": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "true",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Name"
         },
         "middleName": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Middle Name"
         },
         "partnerMemberId": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Partner Member Id"
         },
         "partnerSource": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Partner Source"
         },
         "password": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "false",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Password"
         },
         "primaryEmail": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "true",
+          "@sap.creatable": "true",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Primary Email"
         },
         "privacyAcceptDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Privacy Acceptence Date"
         },
         "publicIntranet": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Public Intranet"
         },
         "shareProfile": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Share Profile flag"
         },
         "usersSysId": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Users sys id"
         },
         "visibilityOption": {
-          "type": "cds.Boolean"
+          "type": "cds.Boolean",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Visibility Option"
         },
         "zip": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Zip Code"
         },
         "candidateProfileExtension": {
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Candidate Profile Extension",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
-          "target": "RCMCandidate.CandidateProfileExtension"
+          "target": "RCMCandidate.CandidateProfileExtension",
+          "keys": []
         },
         "certificates": {
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Certifications/Licenses",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
           "target": "RCMCandidate.CandidateBackground_Certificates",
           "cardinality": {
             "max": "*"
-          }
+          },
+          "keys": []
         },
         "education": {
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Formal Education",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
           "target": "RCMCandidate.CandidateBackground_Education",
           "cardinality": {
             "max": "*"
-          }
+          },
+          "keys": []
         },
         "insideWorkExperience": {
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Internal Employment History",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
           "target": "RCMCandidate.CandidateBackground_InsideWorkExperience",
           "cardinality": {
             "max": "*"
-          }
+          },
+          "keys": []
         },
         "languages": {
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Language Skills",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
           "target": "RCMCandidate.CandidateBackground_Languages",
           "cardinality": {
             "max": "*"
-          }
+          },
+          "keys": []
         },
         "outsideWorkExperience": {
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Previous Employment",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
           "target": "RCMCandidate.CandidateBackground_OutsideWorkExperience",
           "cardinality": {
             "max": "*"
-          }
+          },
+          "keys": []
         },
         "tags": {
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Tags",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
           "target": "RCMCandidate.CandidateTags",
           "cardinality": {
             "max": "*"
-          }
+          },
+          "keys": []
         },
         "talentPool": {
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Candidate Talent Pool",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
           "target": "RCMCandidate.CandidateBackground_TalentPool",
           "cardinality": {
             "max": "*"
-          }
+          },
+          "keys": []
         },
         "talentPoolcorp": {
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Corporate Talent Pool",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
           "target": "RCMCandidate.CandidateBackground_TalentPoolcorp",
           "cardinality": {
             "max": "*"
-          }
+          },
+          "keys": []
         }
       }
     },
     "RCMCandidate.JobApplicationSnapshot_TalentPoolcorp": {
       "kind": "entity",
       "@cds.persistence.skip": true,
+      "@sap.label": "JobApplicationSnapshot_TalentPoolcorp",
+      "@sap.creatable": "false",
+      "@sap.updatable": "false",
+      "@sap.upsertable": "false",
+      "@sap.deletable": "false",
       "elements": {
         "backgroundElementId": {
           "key": true,
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Background Element Id"
         },
         "applicationId": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Application Id"
         },
         "bgOrderPos": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "false",
+          "@sap.label": "Background Order Position"
         },
         "lastModifiedDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified Date"
         },
         "startDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.display.format": "Date",
+          "@sap.label": "Date last updated"
         },
         "talentPoolComments": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Comments"
         },
         "talentPoolStatus": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "TalentPoolstatus",
+          "@sap.label": "Talent Status"
         },
         "talentPoolitemCorp": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "TalentPoolcorp",
+          "@sap.label": "Corporate Talent Pool"
         }
       }
     },
     "RCMCandidate.JobApplicationSnapshot_Education": {
       "kind": "entity",
       "@cds.persistence.skip": true,
+      "@sap.label": "JobApplicationSnapshot_Education",
+      "@sap.creatable": "false",
+      "@sap.updatable": "false",
+      "@sap.upsertable": "false",
+      "@sap.deletable": "false",
       "elements": {
         "backgroundElementId": {
           "key": true,
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Background Element Id"
         },
         "applicationId": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Application Id"
         },
         "bgOrderPos": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "false",
+          "@sap.label": "Background Order Position"
         },
         "degree": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "degree",
+          "@sap.label": "Degree"
         },
         "degreeDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.display.format": "Date",
+          "@sap.label": "Degree Date"
         },
         "endDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.display.format": "Date",
+          "@sap.label": "End Date"
         },
         "lastModifiedDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified Date"
         },
         "major": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "major",
+          "@sap.label": "Major"
         },
         "presentStudent": {
-          "type": "cds.Integer"
+          "type": "cds.Integer",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "student",
+          "@sap.label": "Are you a student?"
         },
         "school": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "School"
         },
         "schoolAddress": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "School Address"
         },
         "schoolCity": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "School City"
         },
         "schoolCountry": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "country",
+          "@sap.label": "School Country"
         },
         "schoolPhone": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "School Phone"
         },
         "schoolState": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "state",
+          "@sap.label": "School State"
         },
         "schoolType": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "School Type"
         },
         "schoolZip": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "School Zip Code"
         },
         "startDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.display.format": "Date",
+          "@sap.label": "From Date"
         }
       }
     },
     "RCMCandidate.JobApplicationSnapshot_TalentPool": {
       "kind": "entity",
       "@cds.persistence.skip": true,
+      "@sap.label": "JobApplicationSnapshot_TalentPool",
+      "@sap.creatable": "false",
+      "@sap.updatable": "false",
+      "@sap.upsertable": "false",
+      "@sap.deletable": "false",
       "elements": {
         "backgroundElementId": {
           "key": true,
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Background Element Id"
         },
         "applicationId": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Application Id"
         },
         "bgOrderPos": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "false",
+          "@sap.label": "Background Order Position"
         },
         "lastModifiedDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified Date"
         },
         "startDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.display.format": "Date",
+          "@sap.label": "Date last updated"
         },
         "talentPoolComments": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Comments"
         },
         "talentPoolStatus": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "TalentPoolstatus",
+          "@sap.label": "Talent Status"
         },
         "talentPoolitem": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "TalentPoolitem",
+          "@sap.label": "Candidate Talent Pool"
         }
       }
     },
     "RCMCandidate.CandidateBackground_OutsideWorkExperience": {
       "kind": "entity",
       "@cds.persistence.skip": true,
+      "@sap.label": "CandidateBackground_OutsideWorkExperience",
+      "@sap.creatable": "true",
+      "@sap.updatable": "true",
+      "@sap.upsertable": "true",
+      "@sap.deletable": "false",
       "elements": {
         "backgroundElementId": {
           "key": true,
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Background Element Id"
         },
         "bgOrderPos": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "false",
+          "@sap.label": "Background Order Position"
         },
         "businessType": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "industry",
+          "@sap.label": "Type of Business"
         },
         "candidateId": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Candidate Id"
         },
         "employer": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Company Name"
         },
         "employerAddress": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Employer Address"
         },
         "employerCity": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Employer City"
         },
         "employerContact": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Employer Contact Name"
         },
         "employerCountry": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "country",
+          "@sap.label": "Employer Country"
         },
         "employerEmail": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Employer Contact Email"
         },
         "employerPhone": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Employer Phone"
         },
         "employerState": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "state",
+          "@sap.label": "Employer State"
         },
         "employerZip": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Employer Zip Code"
         },
         "endDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.display.format": "Date",
+          "@sap.label": "End Date"
         },
         "lastModifiedDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified Date"
         },
         "presentEmployer": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "forEmp",
+          "@sap.label": "Is this your present employer?"
         },
         "startDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.display.format": "Date",
+          "@sap.label": "Start Date"
         },
         "startTitle": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Title"
         },
         "candidate": {
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Candidate Id",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
-          "target": "RCMCandidate.Candidate"
+          "target": "RCMCandidate.Candidate",
+          "keys": []
         }
       }
     },
     "RCMCandidate.CandidateBackground_Certificates": {
       "kind": "entity",
       "@cds.persistence.skip": true,
+      "@sap.label": "CandidateBackground_Certificates",
+      "@sap.creatable": "true",
+      "@sap.updatable": "true",
+      "@sap.upsertable": "true",
+      "@sap.deletable": "false",
       "elements": {
         "backgroundElementId": {
           "key": true,
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Background Element Id"
         },
         "bgOrderPos": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "false",
+          "@sap.label": "Background Order Position"
         },
         "candidateId": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Candidate Id"
         },
         "description": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Description"
         },
         "endDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.display.format": "Date",
+          "@sap.label": "Expiration Date"
         },
         "institution": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Institution"
         },
         "lastModifiedDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified Date"
         },
         "licenseCountry": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "country",
+          "@sap.label": "Certification/License Country"
         },
         "licenseName": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Name as appears on Certification/License"
         },
         "licenseNumber": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Certification/License Number"
         },
         "licenseState": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "state",
+          "@sap.label": "Certification/License State"
         },
         "licenseType": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "credentialType",
+          "@sap.label": "Certification/License Type"
         },
         "name": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Certification/License Name"
         },
         "startDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.display.format": "Date",
+          "@sap.label": "Effective Date"
         },
         "candidate": {
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Candidate Id",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
-          "target": "RCMCandidate.Candidate"
+          "target": "RCMCandidate.Candidate",
+          "keys": []
         }
       }
     },
     "RCMCandidate.CandidateBackground_Languages": {
       "kind": "entity",
       "@cds.persistence.skip": true,
+      "@sap.label": "CandidateBackground_Languages",
+      "@sap.creatable": "true",
+      "@sap.updatable": "true",
+      "@sap.upsertable": "true",
+      "@sap.deletable": "false",
       "elements": {
         "backgroundElementId": {
           "key": true,
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Background Element Id"
         },
         "bgOrderPos": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "false",
+          "@sap.label": "Background Order Position"
         },
         "candidateId": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Candidate Id"
         },
         "language": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "language",
+          "@sap.label": "Language"
         },
         "lastModifiedDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified Date"
         },
         "readingProf": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "fluency",
+          "@sap.label": "Reading Proficiency"
         },
         "speakingProf": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "fluency",
+          "@sap.label": "Speaking Proficiency"
         },
         "writingProf": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "fluency",
+          "@sap.label": "Writing Proficiency"
         },
         "candidate": {
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Candidate Id",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
-          "target": "RCMCandidate.Candidate"
+          "target": "RCMCandidate.Candidate",
+          "keys": []
         }
       }
     },
     "RCMCandidate.JobApplicationSnapshot_InsideWorkExperience": {
       "kind": "entity",
       "@cds.persistence.skip": true,
+      "@sap.label": "JobApplicationSnapshot_InsideWorkExperience",
+      "@sap.creatable": "false",
+      "@sap.updatable": "false",
+      "@sap.upsertable": "false",
+      "@sap.deletable": "false",
       "elements": {
         "backgroundElementId": {
           "key": true,
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Background Element Id"
         },
         "applicationId": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Application Id"
         },
         "bgOrderPos": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "false",
+          "@sap.label": "Background Order Position"
         },
         "department": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Department"
         },
         "endDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.display.format": "Date",
+          "@sap.label": "End Date"
         },
         "lastModifiedDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified Date"
         },
         "startDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.display.format": "Date",
+          "@sap.label": "From Date"
         },
         "title": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Position Title"
         }
       }
     },
     "RCMCandidate.JobApplicationSnapshot_Certificates": {
       "kind": "entity",
       "@cds.persistence.skip": true,
+      "@sap.label": "JobApplicationSnapshot_Certificates",
+      "@sap.creatable": "false",
+      "@sap.updatable": "false",
+      "@sap.upsertable": "false",
+      "@sap.deletable": "false",
       "elements": {
         "backgroundElementId": {
           "key": true,
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Background Element Id"
         },
         "applicationId": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Application Id"
         },
         "bgOrderPos": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "false",
+          "@sap.label": "Background Order Position"
         },
         "description": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Description"
         },
         "endDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.display.format": "Date",
+          "@sap.label": "Expiration Date"
         },
         "institution": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Institution"
         },
         "lastModifiedDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified Date"
         },
         "licenseCountry": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "country",
+          "@sap.label": "Certification/License Country"
         },
         "licenseName": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Name as appears on Certification/License"
         },
         "licenseNumber": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Certification/License Number"
         },
         "licenseState": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "state",
+          "@sap.label": "Certification/License State"
         },
         "licenseType": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "credentialType",
+          "@sap.label": "Certification/License Type"
         },
         "name": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Certification/License Name"
         },
         "startDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.display.format": "Date",
+          "@sap.label": "Effective Date"
         }
       }
     },
     "RCMCandidate.JobApplicationSnapshot_OutsideWorkExperience": {
       "kind": "entity",
       "@cds.persistence.skip": true,
+      "@sap.label": "JobApplicationSnapshot_OutsideWorkExperience",
+      "@sap.creatable": "false",
+      "@sap.updatable": "false",
+      "@sap.upsertable": "false",
+      "@sap.deletable": "false",
       "elements": {
         "backgroundElementId": {
           "key": true,
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Background Element Id"
         },
         "applicationId": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Application Id"
         },
         "bgOrderPos": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "false",
+          "@sap.label": "Background Order Position"
         },
         "businessType": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "industry",
+          "@sap.label": "Type of Business"
         },
         "employer": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Company Name"
         },
         "employerAddress": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Employer Address"
         },
         "employerCity": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Employer City"
         },
         "employerContact": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Employer Contact Name"
         },
         "employerCountry": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "country",
+          "@sap.label": "Employer Country"
         },
         "employerEmail": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Employer Contact Email"
         },
         "employerPhone": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Employer Phone"
         },
         "employerState": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "state",
+          "@sap.label": "Employer State"
         },
         "employerZip": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Employer Zip Code"
         },
         "endDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.display.format": "Date",
+          "@sap.label": "End Date"
         },
         "lastModifiedDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified Date"
         },
         "presentEmployer": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "forEmp",
+          "@sap.label": "Is this your present employer?"
         },
         "startDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.display.format": "Date",
+          "@sap.label": "Start Date"
         },
         "startTitle": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Title"
         }
       }
     },
     "RCMCandidate.JobApplicationSnapshot_Languages": {
       "kind": "entity",
       "@cds.persistence.skip": true,
+      "@sap.label": "JobApplicationSnapshot_Languages",
+      "@sap.creatable": "false",
+      "@sap.updatable": "false",
+      "@sap.upsertable": "false",
+      "@sap.deletable": "false",
       "elements": {
         "backgroundElementId": {
           "key": true,
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Background Element Id"
         },
         "applicationId": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Application Id"
         },
         "bgOrderPos": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "false",
+          "@sap.label": "Background Order Position"
         },
         "language": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "language",
+          "@sap.label": "Language"
         },
         "lastModifiedDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified Date"
         },
         "readingProf": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "fluency",
+          "@sap.label": "Reading Proficiency"
         },
         "speakingProf": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "fluency",
+          "@sap.label": "Speaking Proficiency"
         },
         "writingProf": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "fluency",
+          "@sap.label": "Writing Proficiency"
         }
       }
     },
     "RCMCandidate.CandidateBackground_TalentPool": {
       "kind": "entity",
       "@cds.persistence.skip": true,
+      "@sap.label": "CandidateBackground_TalentPool",
+      "@sap.creatable": "true",
+      "@sap.updatable": "true",
+      "@sap.upsertable": "true",
+      "@sap.deletable": "false",
       "elements": {
         "backgroundElementId": {
           "key": true,
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Background Element Id"
         },
         "bgOrderPos": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "false",
+          "@sap.label": "Background Order Position"
         },
         "candidateId": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Candidate Id"
         },
         "lastModifiedDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified Date"
         },
         "startDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.display.format": "Date",
+          "@sap.label": "Date last updated"
         },
         "talentPoolComments": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Comments"
         },
         "talentPoolStatus": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "TalentPoolstatus",
+          "@sap.label": "Talent Status"
         },
         "talentPoolitem": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "TalentPoolitem",
+          "@sap.label": "Candidate Talent Pool"
         },
         "candidate": {
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Candidate Id",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
-          "target": "RCMCandidate.Candidate"
+          "target": "RCMCandidate.Candidate",
+          "keys": []
         }
       }
     },
     "RCMCandidate.CandidateProfileExtension": {
       "kind": "entity",
       "@cds.persistence.skip": true,
+      "@sap.label": "Candidate Profile Extension",
+      "@sap.creatable": "true",
+      "@sap.updatable": "true",
+      "@sap.upsertable": "true",
+      "@sap.deletable": "true",
       "elements": {
         "candidateId": {
           "key": true,
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Candidate ID"
         },
         "createdBy": {
           "type": "cds.String",
-          "length": 255
+          "length": 255,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "createdBy"
         },
         "createdDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "createdDate"
         },
         "lastModifiedBy": {
           "type": "cds.String",
-          "length": 255
+          "length": 255,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "lastModifiedBy"
         },
         "lastModifiedDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "lastModifiedDate"
         },
         "mdfSystemRecordStatus": {
           "type": "cds.String",
-          "length": 255
+          "length": 255,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "mdfSystemRecordStatus"
         }
       }
     },
     "RCMCandidate.CandidateTags": {
       "kind": "entity",
       "@cds.persistence.skip": true,
+      "@sap.label": "CandidateTags",
+      "@sap.creatable": "true",
+      "@sap.updatable": "true",
+      "@sap.upsertable": "true",
+      "@sap.deletable": "true",
       "elements": {
         "tagId": {
           "key": true,
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Tag Id"
         },
         "candidateId": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "true",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "false",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "candidateId"
         },
         "label": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "label"
         },
         "locale": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Locale"
         },
         "candidates": {
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Candidates",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
           "target": "RCMCandidate.Candidate",
           "cardinality": {
             "max": "*"
-          }
+          },
+          "keys": []
         }
       }
     },
     "RCMCandidate.CandidateBackground_TalentPoolcorp": {
       "kind": "entity",
       "@cds.persistence.skip": true,
+      "@sap.label": "CandidateBackground_TalentPoolcorp",
+      "@sap.creatable": "true",
+      "@sap.updatable": "true",
+      "@sap.upsertable": "true",
+      "@sap.deletable": "false",
       "elements": {
         "backgroundElementId": {
           "key": true,
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Background Element Id"
         },
         "bgOrderPos": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "false",
+          "@sap.label": "Background Order Position"
         },
         "candidateId": {
-          "type": "cds.Integer64"
+          "type": "cds.Integer64",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Candidate Id"
         },
         "lastModifiedDateTime": {
-          "type": "cds.Timestamp"
+          "type": "cds.DateTime",
+          "@odata.Type": "Edm.DateTimeOffset",
+          "@odata.Precision": 0,
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "true",
+          "@sap.label": "Last Modified Date"
         },
         "startDate": {
-          "type": "cds.Date"
+          "type": "cds.Date",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.display.format": "Date",
+          "@sap.label": "Date last updated"
         },
         "talentPoolComments": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.label": "Comments"
         },
         "talentPoolStatus": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "TalentPoolstatus",
+          "@sap.label": "Talent Status"
         },
         "talentPoolitemCorp": {
-          "type": "cds.LargeString"
+          "type": "cds.LargeString",
+          "@sap.required": "false",
+          "@sap.creatable": "true",
+          "@sap.updatable": "true",
+          "@sap.upsertable": "true",
+          "@sap.visible": "true",
+          "@sap.sortable": "false",
+          "@sap.filterable": "false",
+          "@sap.picklist": "TalentPoolcorp",
+          "@sap.label": "Corporate Talent Pool"
         },
         "candidate": {
+          "@sap.required": "false",
+          "@sap.creatable": "false",
+          "@sap.updatable": "false",
+          "@sap.upsertable": "false",
+          "@sap.visible": "true",
+          "@sap.sortable": "true",
+          "@sap.filterable": "true",
+          "@sap.label": "Candidate Id",
+          "@cds.ambiguous": "missing on condition?",
           "type": "cds.Association",
-          "target": "RCMCandidate.Candidate"
+          "target": "RCMCandidate.Candidate",
+          "keys": []
         }
       }
     }

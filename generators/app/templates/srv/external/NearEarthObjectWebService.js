@@ -1,7 +1,4 @@
 const cds = require('@sap/cds');
-<% if(credStore !== ''){ -%>
-const credStore = require('./../lib/credStore');
-<% } -%>
 
 class NearEarthObjectWebService extends cds.RemoteService {
     async init() {
@@ -11,7 +8,7 @@ class NearEarthObjectWebService extends cds.RemoteService {
         this.before('READ', '*', async (req) => {
             try {
                 let today = new Date().toISOString().split('T')[0];
-                req.query = 'GET /feed?api_key=' + <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'APIKeyNASA')<% } else { -%>process.env.APIKeyNASA<% } -%> + '&start_date=' + today + '&end_date=' + today;
+                req.query = 'GET /feed?start_date=' + today + '&end_date=' + today;
             } catch (err) {
                 console.error(err);
             }

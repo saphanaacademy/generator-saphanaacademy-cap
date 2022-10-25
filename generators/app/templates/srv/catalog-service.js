@@ -335,14 +335,7 @@ module.exports = cds.service.impl(async function () {
             const cql = SELECT.one(SalesOrders).where({ SalesOrder: msg.data.SalesOrder });
             const tx = s4hcso.transaction(msg);
             const res = await tx.send({
-                query: cql,
-                headers: {
-                    'Application-Interface-Key': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'ApplicationInterfaceKey')<% } else { -%>process.env.ApplicationInterfaceKey<% } -%>,
-<% if (APIKeyHubSandbox !== ""){ -%>
-                    'APIKey': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'APIKeyHubSandbox')<% } else { -%>process.env.APIKeyHubSandbox<% } -%>
-<% } -%>
-
-                }
+                query: cql
             });
             await db.tx(msg).run (
                 INSERT.into(SalesOrdersLog).entries({ salesOrder: msg.data.SalesOrder, incotermsLocation1: res.IncotermsLocation1 })
@@ -402,13 +395,6 @@ module.exports = cds.service.impl(async function () {
                         )
                     )
                 )
-                .withCustomHeaders({
-                    'Application-Interface-Key': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'ApplicationInterfaceKey')<% } else { -%>process.env.ApplicationInterfaceKey<% } -%>,
-<% if (APIKeyHubSandbox !== ""){ -%>
-                    'APIKey': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'APIKeyHubSandbox')<% } else { -%>process.env.APIKeyHubSandbox<% } -%>
-<% } -%>
-
-                })
                 .execute({ 
                     destinationName: cds.env.requires.API_BUSINESS_PARTNER.credentials.destination
                 })
@@ -539,10 +525,10 @@ module.exports = cds.service.impl(async function () {
 
 <% if(apiSFSFRC && hana){ -%>
     em.on('<%= emNamespace %>/<%= projectName %>/candidate/updated', async msg => {
-        debug('Event Mesh: Candidate Updated:', msg.headers);
+        debug('Event Mesh: Candidate Updated:', msg.data);
         try {
             await db.tx(msg).run (
-                INSERT.into(CandidatesLog).entries({ candidateId: msg.headers.candidateId, cellPhone: msg.headers.cellPhone })
+                INSERT.into(CandidatesLog).entries({ candidateId: msg.data.candidateId, cellPhone: msg.data.cellPhone })
             );
         } catch (err) {
             console.error(err);
@@ -552,11 +538,11 @@ module.exports = cds.service.impl(async function () {
 
 <% if(apiSFSFEC){ -%>
     em.on('<%= emNamespace %>/<%= projectName %>/employee/transfer', async msg => {
-        debug('Event Mesh: Employee Transfer: Message Payload:', msg.headers);
+        debug('Event Mesh: Employee Transfer: Message Payload:', msg.data);
         try {
 <% if(hana){ -%>
             await db.tx(msg).run (
-                INSERT.into(EmployeeJobsLog).entries({ seqNumber: msg.headers.seqNumber, startDate: msg.headers.startDate, userId: msg.headers.userId, location: msg.headers.location, eventReason: msg.headers.eventReason })
+                INSERT.into(EmployeeJobsLog).entries({ seqNumber: msg.data.seqNumber, startDate: msg.data.startDate, userId: msg.data.userId, location: msg.data.location, eventReason: msg.data.eventReason })
             );
 <% } -%>
 <% if(apiARIBWS){ -%>
@@ -566,8 +552,6 @@ module.exports = cds.service.impl(async function () {
                 'user-agent': '<%= projectName %>-ariba-ws',
                 'Authorization': dest.authTokens[0].http_header.value,
                 'Content-Type': 'text/xml;charset=UTF-8',
-                'Application-Interface-Key': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'ApplicationInterfaceKey')<% } else { -%>process.env.ApplicationInterfaceKey<% } -%>,
-
                 'soapAction': ''
             };
             let soapXML = fs.readFileSync(path.resolve(__dirname, 'templates/AribaBuyerEnvelope.xml'), 'utf-8');
@@ -603,14 +587,7 @@ module.exports = cds.service.impl(async function () {
         try {
             const tx = s4hcso.transaction(req);
             return await tx.send({
-                query: req.query,
-                headers: {
-                    'Application-Interface-Key': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'ApplicationInterfaceKey')<% } else { -%>process.env.ApplicationInterfaceKey<% } -%>,
-<% if (APIKeyHubSandbox !== ""){ -%>
-                    'APIKey': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'APIKeyHubSandbox')<% } else { -%>process.env.APIKeyHubSandbox<% } -%>
-<% } -%>
-
-}
+                query: req.query
             })
         } catch (err) {
             req.reject(err);
@@ -627,14 +604,7 @@ module.exports = cds.service.impl(async function () {
             let cql = SELECT.one(SalesOrders).where({ SalesOrganization: res1[0].org }).orderBy({ TotalNetAmount: 'desc' });
             const tx2 = s4hcso.transaction(req);
             const res2 = await tx2.send({
-                query: cql,
-                headers: {
-                    'Application-Interface-Key': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'ApplicationInterfaceKey')<% } else { -%>process.env.ApplicationInterfaceKey<% } -%>,
-<% if (APIKeyHubSandbox !== ""){ -%>
-                    'APIKey': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'APIKeyHubSandbox')<% } else { -%>process.env.APIKeyHubSandbox<% } -%>
-<% } -%>
-
-                }
+                query: cql
             });
             if (res2) {
                 return res2.SoldToParty + ' @ ' + res2.TransactionCurrency + ' ' + Math.round(res2.TotalNetAmount).toString();
@@ -653,14 +623,7 @@ module.exports = cds.service.impl(async function () {
         try {
             const tx = s4hcbp.transaction(req);
             return await tx.send({
-                query: req.query,
-                headers: {
-                    'Application-Interface-Key': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'ApplicationInterfaceKey')<% } else { -%>process.env.ApplicationInterfaceKey<% } -%>,
-<% if (APIKeyHubSandbox !== ""){ -%>
-                    'APIKey': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'APIKeyHubSandbox')<% } else { -%>process.env.APIKeyHubSandbox<% } -%>
-<% } -%>
-
-                }
+                query: req.query
             })
         } catch (err) {
             req.reject(err);
@@ -673,14 +636,7 @@ module.exports = cds.service.impl(async function () {
         try {
             const tx = sfrcm.transaction(req);
             return await tx.send({
-                query: req.query,
-                headers: {
-                    'Application-Interface-Key': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'ApplicationInterfaceKey')<% } else { -%>process.env.ApplicationInterfaceKey<% } -%>,
-<% if (APIKeyHubSandbox !== ""){ -%>
-                    'APIKey': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'APIKeyHubSandbox')<% } else { -%>process.env.APIKeyHubSandbox<% } -%>
-<% } -%>
-
-                }
+                query: req.query
             })
         } catch (err) {
             req.reject(err);
@@ -693,14 +649,7 @@ module.exports = cds.service.impl(async function () {
         try {
             const tx = sfecei.transaction(req);
             return await tx.send({
-                query: req.query,
-                headers: {
-                    'Application-Interface-Key': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'ApplicationInterfaceKey')<% } else { -%>process.env.ApplicationInterfaceKey<% } -%>,
-<% if (APIKeyHubSandbox !== ""){ -%>
-                    'APIKey': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'APIKeyHubSandbox')<% } else { -%>process.env.APIKeyHubSandbox<% } -%>
-<% } -%>
-
-                }
+                query: req.query
             })
         } catch (err) {
             req.reject(err);
@@ -713,15 +662,7 @@ module.exports = cds.service.impl(async function () {
         try {
             const tx = aribapo.transaction(req);
             return await tx.send({
-                query: req.query,
-                headers: {
-                    'Application-Interface-Key': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'ApplicationInterfaceKey')<% } else { -%>process.env.ApplicationInterfaceKey<% } -%>,
-<% if (APIKeyHubSandbox !== ""){ -%>
-                    'APIKey': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'APIKeyAriba')<% } else { -%>process.env.APIKeyAriba<% } -%>,
-                    'X-ARIBA-NETWORK-ID': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'AribaNetworkId')<% } else { -%>process.env.AribaNetworkId<% } -%>
-<% } -%>
-
-                }
+                query: req.query
             })
         } catch (err) {
             req.reject(err);
@@ -763,13 +704,7 @@ module.exports = cds.service.impl(async function () {
         try {
             const tx = fgap.transaction(req);
             return await tx.send({
-                query: req.query,
-                headers: {
-<% if (APIKeyHubSandbox !== ""){ -%>
-                    'APIKey': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'APIKeyHubSandbox')<% } else { -%>process.env.APIKeyHubSandbox<% } -%>
-<% } -%>
-
-                }
+                query: req.query
             })
         } catch (err) {
             req.reject(err);
@@ -785,9 +720,7 @@ module.exports = cds.service.impl(async function () {
             return await tx.send({
                 query: req.query,
                 headers: {
-                    'Application-Interface-Key': <% if(credStore !== ''){ -%>await credStore.readCredentialValue('<%= credStoreNS %>', 'password', 'ApplicationInterfaceKey')<% } else { -%>process.env.ApplicationInterfaceKey<% } -%>,
                     'Authorization': 'Bearer ' + accessToken
-
                 }
             })
         } catch (err) {

@@ -2,7 +2,6 @@
 const Generator = require("yeoman-generator");
 const path = require("path");
 const glob = require("glob");
-const credStore = require('./credStore');
 const hanaUtils = require('./hanaUtils');
 const graphUtils = require('./graphUtils');
 
@@ -154,8 +153,8 @@ module.exports = class extends Generator {
       {
         when: response => response.api === true && (response.apiLoB.includes("SAP SuccessFactors Recruiting") || response.apiLoB.includes("SAP SuccessFactors Employee Central")),
         type: "input",
-        name: "SFSystemName",
-        message: "What is the System Name for SAP SuccessFactors?",
+        name: "SFAPIAccess",
+        message: "What is the name of your SAP SuccessFactors Extensibility service instance (api-access plan)? Leave blank for the SAP API Business Hub sandbox.",
         default: ""
       },
       {
@@ -527,7 +526,7 @@ module.exports = class extends Generator {
         when: response => response.api === true,
         type: "input",
         name: "credStore",
-        message: "What is the name of your SAP Credential Store service instance? Leave blank to use environment variables instead.",
+        message: "What is the name of your SAP Credential Store service instance? Leave blank for none.",
         validate: (s) => {
           if (/^[a-zA-Z0-9_-]*$/g.test(s)) {
             return true;
@@ -619,7 +618,7 @@ module.exports = class extends Generator {
       if (answers.api === false) {
         answers.apiLoB = [];
         answers.APIKeyHubSandbox = "";
-        answers.SFSystemName = "";
+        answers.SFAPIAccess = "";
         answers.AribaNetworkId = "";
         answers.APIKeyAriba = "";
         answers.AribaRealm = "";
@@ -665,11 +664,7 @@ module.exports = class extends Generator {
       answers.apiHERE = answers.apiLoB.includes("HERE Location Services");
       answers.apiNeoWs = answers.apiLoB.includes("NASA Near Earth Object Web Service");
       answers.apiNW = answers.apiLoB.includes("Northwind");
-      answers.ApplicationInterfaceKey = "";
       if (answers.api) {
-        if (answers.apiS4HCSO || answers.apiS4HCBP || answers.apiSFSFRC || answers.apiSFSFEC || answers.apiARIBPO || answers.apiARIBWS || answers.apiCONC || answers.apiSACTenant) {
-          answers.ApplicationInterfaceKey = "saptest0";
-        }
         if (!(answers.apiS4HCSO || answers.apiS4HCBP || answers.apiSFSFRC || answers.apiSFSFEC || answers.apiARIBPO || answers.apiFGAP)) {
           answers.APIKeyHubSandbox = "";
         }
@@ -678,7 +673,7 @@ module.exports = class extends Generator {
         answers.connectivity = false;
       }
       if (answers.apiSFSFRC === false && answers.apiSFSFEC === false) {
-        answers.SFSystemName = "";
+        answers.SFAPIAccess = "";
       }
       if (answers.apiARIBPO === false) {
         answers.AribaNetworkId = "";
@@ -791,7 +786,6 @@ module.exports = class extends Generator {
       if (answers.api === false) {
         answers.credStore = "";
       }
-      answers.credStoreNS = answers.projectName;
       if (answers.haa === false) {
         answers.haaHostname = "";
         answers.haaPersonalizeJWT = false;
@@ -843,58 +837,6 @@ module.exports = class extends Generator {
           }
         }
       }
-    }
-    var credsBinding;
-    if (answers.get('credStore') !== "") {
-      this.log("Configuring SAP Credential Service: Start");
-      this.log("Checking whether the service instance exists...");
-      let resCreds = this.spawnCommandSync('cf', ['service', answers.get('credStore'), '--guid'], { stdio: 'pipe' });
-      if (resCreds.status) {
-        this.log("Service instance does not exist. Will try to create it. Checking available service plans...");
-        resCreds = this.spawnCommandSync('cf', ['marketplace', '-e', 'credStore'], { stdio: 'pipe' });
-        let credsPlans = resCreds.stdout.toString('utf8');
-        // best guess for service plan - typically trial, free or standard - for other plans create the service instance before running the generator
-        let credsPlan = '';
-        if (credsPlans.search('standard') >= 0) {
-          credsPlan = 'standard';
-        } else if (credsPlans.search('free') >= 0) {
-          credsPlan = 'free';
-        } else if (credsPlans.search('trial') >= 0) {
-          credsPlan = 'trial';
-        }
-        this.log("Creating service instance...", answers.get('credStore'), credsPlan);
-        resCreds = this.spawnCommandSync('cf', ['create-service', 'credStore', credsPlan, answers.get('credStore')], { stdio: 'pipe' });
-        if (resCreds.status) {
-          this.log("Unable to create service instance:", resCreds.stdout.toString('utf8'));
-        }
-      }
-      this.log("Creating service key...");
-      const credsSK = 'sha-cap';
-      resCreds = this.spawnCommandSync('cf', ['create-service-key', answers.get('credStore'), credsSK], { stdio: 'pipe' });
-      if (resCreds.status) {
-        this.log("Unable to create service key:", resCreds.stdout.toString('utf8'));
-      }
-      this.log("Reading service key...");
-      resCreds = this.spawnCommandSync('cf', ['service-key', answers.get('credStore'), credsSK], { stdio: 'pipe' });
-      if (resCreds.status) {
-        this.log("Unable to read service key:", resCreds.stdout.toString('utf8'));
-      }
-      credsBinding = resCreds.stdout.toString('utf8');
-      credsBinding = JSON.parse(credsBinding.substring(credsBinding.indexOf('{')));
-      this.log("Writing credentials...");
-      const credsNS = answers.get('credStoreNS');
-      if (answers.get('ApplicationInterfaceKey') !== '') resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'ApplicationInterfaceKey', answers.get('ApplicationInterfaceKey'));
-      if (answers.get('APIKeyHubSandbox') !== '') resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'APIKeyHubSandbox', answers.get('APIKeyHubSandbox'));
-      if (answers.get('apiARIBPO')) {
-        resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'AribaNetworkId', answers.get('AribaNetworkId'));
-        resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'APIKeyAriba', answers.get('APIKeyAriba'));
-      }
-      if (answers.get('apiHERE')) resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'APIKeyHERE', answers.get('APIKeyHERE'));
-      if (answers.get('apiNeoWs')) resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'APIKeyNASA', answers.get('APIKeyNASA'));
-      if (answers.get('routes')) {
-        resCreds = await credStore.writeCredential(credsBinding, credsNS, 'password', 'CFAPI', '<password>', '<email>');
-      }
-      this.log("Configuring SAP Credential Service: End");
     }
 
     // scaffold the project
@@ -1024,32 +966,6 @@ module.exports = class extends Generator {
     var fs = this.fs;
     var destinationRoot = this.destinationRoot();
 
-    if (answers.get('credStore') !== "") {
-      let dotenv = fs.read(destinationRoot + "/.env");
-      let VCAPServices = {
-        "credstore": [
-          {
-            "binding_guid": "",
-            "binding_name": null,
-            "credentials": credsBinding,
-            "instance_guid": "",
-            "instance_name": answers.get('credStore'),
-            "label": "credstore",
-            "name": answers.get('credStore'),
-            "plan": "",
-            "tags": [
-              "credstore",
-              "securestore",
-              "keystore",
-              "credentials"
-            ]
-          }
-        ]
-      };
-      dotenv += "VCAP_SERVICES=" + JSON.stringify(VCAPServices);
-      fs.write(destinationRoot + "/.env", dotenv);
-    }
-
     if (answers.get('schemaName') !== "") {
       hanaUtils.processSchema(this, answers);
       hanaUtils.processSchemaUPS(this, answers);
@@ -1059,7 +975,7 @@ module.exports = class extends Generator {
     answers.delete('hanaUser');
     answers.delete('hanaPassword');
     answers.delete('APIKeyHubSandbox');
-    answers.delete('SFSystemName');
+    answers.delete('SFAPIAccess');
     answers.delete('AribaNetworkId');
     answers.delete('APIKeyAriba');
     answers.delete('AribaRealm');
@@ -1073,7 +989,6 @@ module.exports = class extends Generator {
     answers.delete('AICoreDeploymentId');
     answers.delete('APIKeyHERE');
     answers.delete('APIKeyNASA');
-    answers.delete('ApplicationInterfaceKey');
 
   }
 

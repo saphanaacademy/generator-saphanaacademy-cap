@@ -404,8 +404,13 @@
         "model": "srv/external/RCMCandidate",
         "credentials": {
           "[production]": {
-            "destination": "<%= projectName %>-sf-api",
+<% if(SFAPIAccess !== ''){ -%>
+            "destination": "<%= SFAPIAccess %>",
             "path": "odata/v2"
+<% }else{ -%>
+            "destination": "<%= projectName %>-RCMCandidate",
+            "path": "successfactors/odata/v2"
+<% } -%>
           },
           "[development]": {
             "url": "https://sandbox.api.sap.com/successfactors/odata/v2"
@@ -420,8 +425,13 @@
         "model": "srv/external/ECEmploymentInformation",
           "credentials": {
             "[production]": {
-              "destination": "<%= projectName %>-sf-api",
+<% if(SFAPIAccess !== ''){ -%>
+              "destination": "<%= SFAPIAccess %>",
               "path": "odata/v2"
+<% }else{ -%>
+              "destination": "<%= projectName %>-ECEmploymentInformation",
+              "path": "successfactors/odata/v2"
+<% } -%>
             },
             "[development]": {
               "url": "https://sandbox.api.sap.com/successfactors/odata/v2"

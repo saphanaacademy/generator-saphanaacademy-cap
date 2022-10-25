@@ -100,7 +100,6 @@ modules:
 <% if(customDomain !== ""){ -%>
       domain: <%= customDomain %>
 <% } -%>
-<% if(api){ -%>
 <% if((em && !multiTenant && apiS4HCBP) || apiFGCN || apiAICORE){ -%>
     properties:
 <% } -%>
@@ -115,28 +114,6 @@ modules:
 <% if(apiAICORE){ -%>
       AICoreDeploymentId: <%= AICoreDeploymentId %>
       AICoreModel: "<%= AICoreModel %>"
-<% } -%>
-<% if(credStore === ""){ -%>
-<% if (!((em && !multiTenant && apiS4HCBP) || apiFGCN || apiAICORE)){ -%>
-    properties:
-<% } -%>
-<% if(ApplicationInterfaceKey !== ""){ -%>
-      ApplicationInterfaceKey: <%= ApplicationInterfaceKey %>
-<% } -%>
-<% if(APIKeyHubSandbox !== ""){ -%>
-      APIKeyHubSandbox: <%= APIKeyHubSandbox %>
-<% } -%>
-<% if(apiARIBPO){ -%>
-      AribaNetworkId: <%= AribaNetworkId %>
-      APIKeyAriba: <%= APIKeyAriba %>
-<% } -%>
-<% if(apiHERE){ -%>
-      APIKeyHERE: <%= APIKeyHERE %>
-<% } -%>
-<% if(apiNeoWs){ -%>
-      APIKeyNASA: <%= APIKeyNASA %>
-<% } -%>
-<% } -%>
 <% } -%>
 <% if(authentication || api || routes || connectivity || em || applicationLogging || multiTenant || hana || schemaName !== '' || hanaTargetHDI !== '' || credStore !== "" || app2appType === "access"){ -%>
     requires:
@@ -617,6 +594,8 @@ resources:
                 Type: HTTP
                 ProxyType: Internet
                 Authentication: NoAuthentication
+                URL.headers.APIKey: <SetValueInCockpit>
+                URL.headers.Application-Interface-Key: <SetValueInCockpit>
                 HTML5.DynamicDestination: true
 <% } -%>
 <% if(apiS4HCBP){ -%>
@@ -626,6 +605,30 @@ resources:
                 Type: HTTP
                 ProxyType: Internet
                 Authentication: NoAuthentication
+                URL.headers.APIKey: <SetValueInCockpit>
+                URL.headers.Application-Interface-Key: <SetValueInCockpit>
+                HTML5.DynamicDestination: true
+<% } -%>
+<% if(apiSFSFRC && SFAPIAccess === ''){ -%>
+              - Name: <%= projectName %>-RCMCandidate
+                Description: SAP SuccessFactors Recruiting
+                URL: https://sandbox.api.sap.com
+                Type: HTTP
+                ProxyType: Internet
+                Authentication: NoAuthentication
+                URL.headers.APIKey: <SetValueInCockpit>
+                URL.headers.Application-Interface-Key: <SetValueInCockpit>
+                HTML5.DynamicDestination: true
+<% } -%>
+<% if(apiSFSFEC && SFAPIAccess === ''){ -%>
+              - Name: <%= projectName %>-ECEmploymentInformation
+                Description: SAP SuccessFactors Employee Central
+                URL: https://sandbox.api.sap.com
+                Type: HTTP
+                ProxyType: Internet
+                Authentication: NoAuthentication
+                URL.headers.APIKey: <SetValueInCockpit>
+                URL.headers.Application-Interface-Key: <SetValueInCockpit>
                 HTML5.DynamicDestination: true
 <% } -%>
 <% if(apiARIBPO){ -%>
@@ -638,6 +641,9 @@ resources:
                 tokenServiceURL: https://api.ariba.com/v2/oauth/token
                 clientId: <SetValueInCockpit>
                 clientSecret: <SetValueInCockpit>
+                URL.headers.X-ARIBA-NETWORK-ID: <SetValueInCockpit>
+                URL.headers.APIKey: <SetValueInCockpit>
+                URL.headers.Application-Interface-Key: <SetValueInCockpit>
                 HTML5.DynamicDestination: true
 <% } -%>
 <% if(apiARIBWS){ -%>
@@ -650,14 +656,13 @@ resources:
                 User: <SetValueInCockpit>
                 Password: <SetValueInCockpit>
                 Realm: <%= AribaRealm %>
+                URL.headers.Application-Interface-Key: <SetValueInCockpit>
                 HTML5.DynamicDestination: true
 <% } -%>
 <% if(apiFGCN || apiFGAP){ -%>
               - Name: <%= projectName %>-fieldglass-api
                 Description: SAP Fieldglass
                 URL: https://<%= FGHost %>.fgvms.com
-                URL.headers.x-ApplicationKey: <SetValueInCockpit>
-                URL.headers.Application-Interface-Key: <SetValueInCockpit>
                 Type: HTTP
                 ProxyType: Internet
                 Authentication: OAuth2ClientCredentials
@@ -665,6 +670,8 @@ resources:
                 tokenServiceURL.headers.x-ApplicationKey: <SetValueInCockpit>
                 clientId: <SetValueInCockpit>
                 clientSecret: <SetValueInCockpit>
+                URL.headers.x-ApplicationKey: <SetValueInCockpit>
+                URL.headers.Application-Interface-Key: <SetValueInCockpit>
                 HTML5.DynamicDestination: true
 <% } -%>
 <% if(apiCONC){ -%>
@@ -678,19 +685,21 @@ resources:
                 client_id: <SetValueInCockpit>
                 client_secret: <SetValueInCockpit>
                 refresh_token: <SetValueInCockpit>
+                URL.headers.Application-Interface-Key: <SetValueInCockpit>
                 HTML5.DynamicDestination: true
 <% } -%>
 <% if(apiAICORE){ -%>
               - Name: <%= projectName %>-aicore-api
                 Description: SAP AI Core
                 URL: <%= AICoreURL %>
-                URL.headers.AI-Resource-Group: <%= AICoreResourceGroup %>
                 Type: HTTP
                 ProxyType: Internet
                 Authentication: OAuth2ClientCredentials
                 tokenServiceURL: <%= AICoreTokenURL %>/oauth/token
                 clientId: <SetValueInCockpit>
                 clientSecret: <SetValueInCockpit>
+                URL.headers.AI-Resource-Group: <%= AICoreResourceGroup %>
+                URL.headers.Application-Interface-Key: <SetValueInCockpit>
                 HTML5.DynamicDestination: true
 <% } -%>
 <% if(apiSACTenant){ -%>
@@ -718,6 +727,7 @@ resources:
                 Type: HTTP
                 ProxyType: Internet
                 Authentication: NoAuthentication
+                URL.queries.apiKey: <SetValueInCockpit>
                 HTML5.DynamicDestination: true
 <% } -%>
 <% if(apiNeoWs){ -%>
@@ -727,6 +737,7 @@ resources:
                 Type: HTTP
                 ProxyType: Internet
                 Authentication: NoAuthentication
+                URL.queries.api_key: <SetValueInCockpit>
                 HTML5.DynamicDestination: true
 <% } -%>
 <% if(apiNW){ -%>
@@ -772,18 +783,6 @@ resources:
       service-plan: app-runtime
 <% } -%>
 <% } -%>
-<% } -%>
-
-<% if(apiSFSFRC || apiSFSFEC){ -%>
-  # ----------------- SUCCESSFACTORS API SERVICE ---------------
-  - name: <%= projectName %>-sf-api
-  # ------------------------------------------------------------
-    type: org.cloudfoundry.managed-service
-    parameters:
-      service: sap-successfactors-extensibility
-      service-plan: api-access
-      config:
-        systemName: <%= SFSystemName %>
 <% } -%>
 
 <% if(connectivity){ -%>
