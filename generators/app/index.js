@@ -877,26 +877,26 @@ module.exports = class extends Generator {
                                                             if (!((file.substring(0, 33) === 'srv/external/HERELocationServices') && answers.get('apiHERE') === false)) {
                                                               if (!((file.substring(0, 38) === 'srv/external/NearEarthObjectWebService') && answers.get('apiNeoWs') === false)) {
                                                                 if (!((file.substring(0, 15) === 'app/xs-app.json' || file.substring(0, 16) === 'app/package.json') && (answers.get('managedAppRouter') === true || (answers.get('authentication') === false && answers.get('ui') === false)))) {
-                                                                  if (!((file.substring(0, 13) === 'app/resources' || file.includes('i18n') || file.includes('index.cds')) && answers.get('ui') === false)) {
-                                                                    if (!((file.substring(0, 19) === 'app/resources/fiori' || file.includes('i18n') || file.includes('index.cds')) && answers.get('hana') === false)) {
+                                                                  if (!((file.substring(0, 13) === 'app/resources' || file.includes('i18n') || file.includes('app/index.cds')) && answers.get('ui') === false)) {
+                                                                    if (!((file.substring(0, 19) === 'app/resources/fiori' || file.includes('i18n') || file.includes('app/index.cds')) && answers.get('hana') === false)) {
                                                                       if (!(file.includes('MediaSection.fragment.xml') && answers.get('apiAICORE') === false)) {
                                                                         if (!((file.substring(0, 24) === 'app/resources/index.html') && answers.get('html5repo') === true)) {
                                                                           if (!((file.substring(0, 31) === 'app/resources/fiori/xs-app.json' || file.substring(0, 32) === 'app/resources/fiori/package.json' || file.substring(0, 35) === 'app/resources/fiori/ui5-deploy.yaml') && answers.get('html5repo') === false)) {
                                                                             if (!((file.substring(0, 31) === 'app/resources/html5/xs-app.json' || file.substring(0, 32) === 'app/resources/html5/package.json' || file.substring(0, 35) === 'app/resources/html5/ui5-deploy.yaml' || file.substring(0, 40) === 'app/resources/html5/webapp/manifest.json') && answers.get('html5repo') === false)) {
                                                                               if (!(file.substring(0, 2) === 'db' && answers.get('hana') === false && answers.get('schemaName') === "" && answers.get('hanaTargetHDI') === "")) {
-                                                                                if (!((file.substring(0, 17) === 'db/data-model.cds' || file.substring(0, 7) === 'db/data' || file.substring(0, 6) === 'db/csv') && answers.get('hana') === false)) {
-                                                                                  if (!(file.substring(0, 31) === 'db/data/_PROJECT_NAME_.db.Sales' && answers.get('hana') === false)) {
-                                                                                    if (!(file.substring(0, 35) === 'db/data/_PROJECT_NAME_.db.Anomalies' && answers.get('apiAICORE') === false)) {
-                                                                                      if (!(file.substring(0, 34) === 'db/data/_PROJECT_NAME_.db.Students' && (answers.get('hana') === false || answers.get('srv2') === false))) {
+                                                                                if (!((file.substring(0, 17) === 'db/data-model.cds' || file.substring(0, 12) === 'db/data-test' || file.substring(0, 14) === 'db/data-config') && answers.get('hana') === false)) {
+                                                                                  if (!(file.substring(0, 41) === 'db/data-test/data/_PROJECT_NAME_.db.Sales' && answers.get('hana') === false)) {
+                                                                                    if (!(file.substring(0, 45) === 'db/data-test/data/_PROJECT_NAME_.db.Anomalies' && answers.get('apiAICORE') === false)) {
+                                                                                      if (!(file.substring(0, 44) === 'db/data-test/data/_PROJECT_NAME_.db.Students' && (answers.get('hana') === false || answers.get('srv2') === false))) {
                                                                                         if (!((file.substring(0, 39) === 'db/src/_PROJECT_NAME_DB_EXTERNAL_ACCESS') && answers.get('hanaExternalHDI') === false)) {
-                                                                                          if (!((file.substring(0, 35) === 'db/csv/_PROJECT_NAME_.db.Conditions' || file.substring(0, 43) === 'db/data/_PROJECT_NAME_.db.CustomerProcesses' || file.substring(0, 31) === 'db/csv/_PROJECT_NAME_.db.Status') && (answers.get('apiS4HCBP') === false || answers.get('em') === false))) {
+                                                                                          if (!((file.substring(0, 48) === 'db/data-config/data/_PROJECT_NAME_.db.Conditions' || file.substring(0, 53) === 'db/data-test/data/_PROJECT_NAME_.db.CustomerProcesses' || file.substring(0, 44) === 'db/data-config/data/_PROJECT_NAME_.db.Status') && (answers.get('apiS4HCBP') === false || answers.get('em') === false))) {
                                                                                             if (!(file.substring(0, 7) === 'db/src/' && answers.get('hanaNative') === false && answers.get('hanaExternalHDI') === false && answers.get('hanaTargetHDI') === "" && answers.get('schemaName') === "")) {
                                                                                               if (!((file.substring(0, 10) === 'db/src/SP_' || file.substring(0, 10) === 'db/src/TT_' || file.substring(0, 10) === 'db/src/CV_' || file.substring(0, 10) === 'db/src/TF_' || file.substring(0, 10) === 'db/src/SYS') && answers.get('hanaNative') === false)) {
                                                                                                 const sOrigin = this.templatePath(file);
                                                                                                 let fileDest = file;
                                                                                                 if (fileDest.includes('_PROJECT_NAME_.db')) {
-                                                                                                  let folder = 'db/data';
-                                                                                                  if (fileDest.substring(0, 6) === 'db/csv') folder = fileDest.substring(0, 6);
+                                                                                                  let folder = 'db/data-test/data';
+                                                                                                  if (fileDest.substring(0, 19) === 'db/data-config/data') folder = 'db/data-config/data';
                                                                                                   fileDest = folder + '/' + answers.get('projectName') + '.db-' + fileDest.split(".", 3)[2] + '.csv';
                                                                                                 }
                                                                                                 if (fileDest.includes('_PROJECT_NAME_DB_EXTERNAL_ACCESS')) {
@@ -998,8 +998,14 @@ module.exports = class extends Generator {
       await graphUtils.graphImport(this, answers);
     }
     // install dev dependencies
-    let opt = { "cwd": this.destinationPath() };
-    this.spawnCommandSync("npm", ["install"], opt);
+    if (answers.get("hana") && answers.get("ui") || answers.get("v2support")) {
+      let opt = { "cwd": this.destinationPath() };
+      this.spawnCommandSync("npm", ["install"], opt);
+    }
+    this.log("");
+    this.log("You can test your project locally from the command line as follows:");
+    this.log(" cd " + answers.get("projectName"));
+    this.log(" cds watch");
     // build and deploy if requested
     var mta = "mta_archives/" + answers.get("projectName") + "_0.0.1.mtar";
     if (answers.get("buildDeploy")) {

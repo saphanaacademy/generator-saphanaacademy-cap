@@ -14,10 +14,6 @@ build-parameters:
       commands:
         - npm install --production
         - npx -p @sap/cds-dk cds build --production
-<% if(hana){ -%>
-#        - npx rimraf gen/db/src/gen/data # uncomment this line to prevent loading of initial data which is only relevant for dev/test deployments 
-#        - npx rimraf gen/db/src/gen/csv  # uncomment this line unless db/csv folder has been used for config/control table data which is entirely managed by the developer and never changed by the app
-<% } -%>
 
 modules:
 <% if((hana || schemaName !== '' || hanaTargetHDI !== '') && !multiTenant){ -%>

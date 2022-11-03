@@ -1,0 +1,1 @@
+namespace <%= projectName %>.db;
