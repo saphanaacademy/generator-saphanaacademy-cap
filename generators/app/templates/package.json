@@ -67,10 +67,13 @@
   },
   "devDependencies": {
 <% if(hana && ui){ -%>
-    ,"@sap/ux-specification": "^1.96.4"
+    "@sap/ux-specification": "^1.96.4"
 <% } -%>
 <% if(v2support){ -%>
-    ,"@sap/cds-odata-v2-adapter-proxy": "^1"
+<% if(hana && ui){ -%>
+    ,
+<% } -%>
+    "@sap/cds-odata-v2-adapter-proxy": "^1"
 <% } -%>
   },
 <% if(hana && ui){ -%>
