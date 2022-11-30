@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.services.srv2.name }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+    app: {{ .Values.services.srv2.name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.services.srv2.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.services.srv2.name }}
+    spec:
+      containers:
+        - image: "{{ .Values.dockerID }}/{{ .Values.services.srv2.image.repository }}:{{ .Values.services.srv2.image.tag }}"
+          name: {{ .Values.services.srv2.name }}
+          imagePullPolicy: {{ .Values.services.srv2.image.pullPolicy }}
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "1"
+            requests:
+              memory: 256Mi
+              cpu: "0.2"
+          ports:
+            - name: http
+              containerPort: {{ .Values.services.srv2.image.port }}
+<% if(authentication || api || multiTenant || hana){ -%>
+          env:
+            - name: SERVICE_BINDING_ROOT
+              value: /bindings
+          volumeMounts:
+<% } -%>
+<% if(authentication || api){ -%>
+            - name: <%= projectName %>-uaa
+              mountPath: "/bindings/<%= projectName %>-uaa"
+              readOnly: true
+<% } -%>
+<% if(api){ -%>
+            - name: <%= projectName %>-dest
+              mountPath: "/bindings/<%= projectName %>-dest"
+              readOnly: true
+<% } -%>
+<% if(multiTenant){ -%>
+            - name: <%= projectName %>-registry
+              mountPath: "/bindings/<%= projectName %>-registry"
+              readOnly: true
+            - name: <%= projectName %>-sm
+              mountPath: "/bindings/<%= projectName %>-sm"
+              readOnly: true
+<% if(common){ -%>
+            - name: <%= projectName %>-hdicommon
+              mountPath: "/bindings/<%= projectName %>-hdicommon"
+              readOnly: true
+<% } -%>
+<% } else if (hana){ -%>
+            - name: <%= projectName %>-hdi
+              mountPath: "/bindings/<%= projectName %>-hdi"
+              readOnly: true
+<% } -%>
+<% if(dockerRepositoryVisibility === 'private'){ -%>
+      imagePullSecrets:
+        - name: {{ .Values.services.srv2.image.imagePullSecretName }}
+<% } -%>
+<% if(authentication || api || multiTenant || hana){ -%>
+      volumes:
+<% } -%>
+<% if(authentication || api){ -%>
+        - name: <%= projectName %>-uaa
+          secret:
+            secretName: {{ .Values.services.uaa.bindingSecretName }}
+<% } -%>
+<% if(api){ -%>
+        - name: <%= projectName %>-dest
+          secret:
+            secretName: {{ .Values.services.dest.bindingSecretName }}
+<% } -%>
+<% if(multiTenant){ -%>
+        - name: <%= projectName %>-registry
+          secret:
+            secretName: {{ .Values.services.registry.bindingSecretName }}
+        - name: <%= projectName %>-sm
+          secret:
+            secretName: {{ .Values.services.sm.bindingSecretName }}
+<% if(common){ -%>
+        - name: <%= projectName %>-hdicommon
+          secret:
+            secretName: {{ .Values.services.hdicommon.bindingSecretName }}
+<% } -%>
+<% } else if (hana){ -%>
+        - name: <%= projectName %>-hdi
+          secret:
+            secretName: {{ .Values.services.hdi.bindingSecretName }}
+<% } -%>

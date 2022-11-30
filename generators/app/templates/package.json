@@ -19,7 +19,10 @@
 <% if(v2support){ -%>
     "@sap/cds-odata-v2-adapter-proxy": "^1",
 <% } -%>
-<% if(routes || api || app2appType === "access"){ -%>
+<% if(routes && BTPRuntime === 'Kyma'){ %>
+    "@kubernetes/client-node": "latest",
+<% } %>
+<% if((routes && BTPRuntime === 'CF') || api || app2appType === "access"){ -%>
     "@sap-cloud-sdk/http-client": "^2.5",
 <% } -%>
 <% if(em){ -%>
@@ -31,7 +34,7 @@
 <% if(authentication || credStore !== ""){ -%>
     "@sap/xsenv": "^3",
 <% } -%>
-<% if(authentication || hana || apiSACTenant){ -%>
+<% if(authentication || hana || api){ -%>
     "@sap/xssec": "^3",
     "passport": "^0.4.1",
 <% } -%>
@@ -41,6 +44,8 @@
 <% } -%>
 <% if(multiTenant){ -%>
     "@sap/cds-mtxs": "^1.1",
+<% } -%>
+<% if(BTPRuntime === 'CF' && routes){ -%>
     "cfenv": "^1",
 <% } -%>
 <% if(apiARIBWS || apiCONC || app2appType === "access"){ -%>
@@ -68,12 +73,6 @@
   "devDependencies": {
 <% if(hana && ui){ -%>
     "@sap/ux-specification": "^1.96.4"
-<% } -%>
-<% if(v2support){ -%>
-<% if(hana && ui){ -%>
-    ,
-<% } -%>
-    "@sap/cds-odata-v2-adapter-proxy": "^1"
 <% } -%>
   },
 <% if(hana && ui){ -%>
@@ -139,7 +138,7 @@
               "app",
 <% } -%>
 <% if(multiTenant){ -%>
-              "@sap/cds/srv/mtx",
+              "@sap/cds-mtxs/srv/bootstrap",
 <% if(toggles){ -%>
               "fts/comments/",
 <% } -%>
@@ -156,12 +155,14 @@
             "model": [
 <% if(hana || schemaName !== '' || hanaTargetHDI !== ''){ -%>
               "db",
+              "db/data-config",
+              "db/data-test",
 <% } -%>
 <% if(ui || authentication){ -%>
               "app",
 <% } -%>
 <% if(multiTenant){ -%>
-              "@sap/cds/srv/mtx",
+              "@sap/cds-mtxs/srv/bootstrap",
 <% if(toggles){ -%>
               "fts/comments/",
 <% } -%>
@@ -178,12 +179,14 @@
             "model": [
 <% if(hana || schemaName !== '' || hanaTargetHDI !== ''){ -%>
               "db",
+              "db/data-config",
+              "db/data-test",
 <% } -%>
 <% if(ui || authentication){ -%>
               "app",
 <% } -%>
 <% if(multiTenant){ -%>
-              "@sap/cds/srv/mtx",
+              "@sap/cds-mtxs/srv/bootstrap",
 <% if(toggles){ -%>
               "fts/comments/",
 <% } -%>
@@ -201,6 +204,8 @@
             "model": [
 <% if(hana){ -%>
               "db",
+              "db/data-config",
+              "db/data-test",
 <% } -%>
 <% if(ui || authentication){ -%>
               "app",
@@ -208,11 +213,9 @@
 <% if(srv2){ -%>
               "srv2",
 <% } -%>
-<% if(multiTenant){ -%>
-              "@sap/cds/srv/mtx",
+              "@sap/cds-mtxs/srv/bootstrap",
 <% if(toggles){ -%>
               "fts/comments/",
-<% } -%>
 <% } -%>
               "srv"
             ]
@@ -335,6 +338,14 @@
           "kind": "hana-mt",
 <% } else { -%>
           "kind": "hana-cloud",
+<% } -%>
+<% if(BTPRuntime === 'Kyma'){ -%>
+          "pool": {
+            "acquireTimeoutMillis": 30000,
+            "min": 0,
+            "max": 100,
+            "fifo": false
+          },
 <% } -%>
           "model": [
             "db/data-config",

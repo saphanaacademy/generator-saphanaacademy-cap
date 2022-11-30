@@ -1,0 +1,84 @@
+dockerID: <%= dockerID %>
+clusterDomain: <%= clusterDomain %>
+gateway: <%= gateway %>
+<% if(routes){ -%>
+apiRuleGroup: gateway.kyma-project.io
+apiRuleVersion: v1beta1
+apiRules: apirules
+<% } -%>
+services:
+  app:
+    name: <%= projectName %>-app
+    service:
+      port: 5000
+<% if(multiTenant){ -%>
+      protocol: https
+<% } -%>
+  srv:
+    name: <%= projectName %>-srv
+    image:
+<% if(dockerRepositoryName !== ''){ -%>
+      repository: <%= dockerRepositoryName %>
+      tag: "<%= projectName %>-srv"
+<% } else { -%>
+      repository: <%= projectName %>-srv
+      tag: "latest"
+<% } -%>
+      pullPolicy: Always
+<% if(dockerRepositoryVisibility === 'private'){ -%>
+      imagePullSecretName: <%= dockerRegistrySecretName %>
+<% } -%>
+      port: 4004
+    service:
+      port: 4004
+<% if(authentication || api){ -%>
+  uaa:
+    name: <%= projectName %>-uaa
+    xsappname: <%= projectName %>
+    bindingName: <%= projectName %>-uaa-binding
+    bindingSecretName: <%= projectName %>-uaa-binding-secret
+<% } -%>
+<% if(api || html5repo || app2appType === "access"){ -%>
+  dest:
+    name: <%= projectName %>-dest
+    bindingName: <%= projectName %>-dest-binding
+    bindingSecretName: <%= projectName %>-dest-binding-secret
+<% } -%>
+<% if(multiTenant){ -%>
+  registry:
+    name: <%= projectName %>-registry
+    bindingName: <%= projectName %>-registry-binding
+    bindingSecretName: <%= projectName %>-registry-binding-secret
+  sm:
+    name: <%= projectName %>-sm
+    bindingName: <%= projectName %>-sm-binding
+    bindingSecretName: <%= projectName %>-sm-binding-secret
+<% if(routes){ -%>
+  role:
+    name: <%= projectName %>-role
+    bindingName: <%= projectName %>-role-binding
+<% } -%>
+<% if(common){ -%>
+  hdicommon:
+    name: <%= projectName %>-hdicommon
+    bindingName: <%= projectName %>-hdicommon-binding
+    bindingSecretName: <%= projectName %>-hdicommon-binding-secret
+<% } -%>
+<% } else if (hana || schemaName !== '' || hanaTargetHDI !== ''){ -%>
+  hdi:
+    name: <%= projectName %>-hdi
+    bindingName: <%= projectName %>-hdi-binding
+    bindingSecretName: <%= projectName %>-hdi-binding-secret
+<% } -%>
+<% if(applicationLogging){ -%>
+  logging:
+    name:  <%= projectName %>-logging
+    bindingName: <%= projectName %>-logging-binding
+    bindingSecretName: <%= projectName %>-logging-binding-secret
+<% } -%>
+<% if(em){ -%>
+  em:
+    name:  <%= projectName %>-em
+    bindingName: <%= projectName %>-em-binding
+    bindingSecretName: <%= projectName %>-em-binding-secret
+<% } -%>

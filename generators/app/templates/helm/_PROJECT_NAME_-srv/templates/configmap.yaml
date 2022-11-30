@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.services.srv.name }}
+data:
+  clusterDomain: {{ .Values.clusterDomain }}
+  gateway: {{ .Values.gateway }}
+<% if(multiTenant){ -%>
+  APP_PROTOCOL: {{ .Values.services.app.service.protocol }}
+  APP_URI: {{ .Values.services.app.name }}.{{ .Values.clusterDomain }}
+<% } -%>
+<% if(routes){ -%>
+  namespace: {{ .Release.Namespace }}
+  apiRuleGroup: {{ .Values.apiRuleGroup }}
+  apiRuleVersion: {{ .Values.apiRuleVersion }}
+  apiRules: {{ .Values.apiRules }}
+  appServiceName: {{ .Values.services.app.name }}
+  appServicePort: '{{ .Values.services.app.service.port }}'
+<% } -%>
+<% if(em && !multiTenant && apiS4HCBP){ -%>
+  BusinessPartnerCountry: US
+  BusinessPartnerRole: FLCU01
+<% } -%>
+<% if(apiFGCN){ -%>
+  FGCNclientId: <%= FGCNclientId %>
+  FGCNsupplierId: <%= FGCNsupplierId %>
+<% } -%>
+<% if(apiAICORE){ -%>
+  AICoreDeploymentId: <%= AICoreDeploymentId %>
+  AICoreModel: "<%= AICoreModel %>"
+<% } -%>

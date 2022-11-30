@@ -1,0 +1,44 @@
+dockerID: <%= dockerID %>
+clusterDomain: <%= clusterDomain %>
+jobs:
+  html5:
+    name: <%= projectName %>-html5
+    image:
+<% if(dockerRepositoryName !== ''){ -%>
+      repository: <%= dockerRepositoryName %>
+      tag: "<%= projectName %>-html5"
+<% } else { -%>
+      repository: <%= projectName %>-html5
+      tag: "latest"
+<% } -%>
+      pullPolicy: Always
+<% if(dockerRepositoryVisibility === 'private'){ -%>
+      imagePullSecretName: <%= dockerRegistrySecretName %>
+<% } -%>
+services:
+  srv:
+    name: <%= projectName %>-srv
+<% if(srv2){ -%>
+  srv2:
+    name: <%= projectName %>-srv2
+<% } -%>
+<% if(srvjs){ -%>
+  srvjs:
+    name: <%= projectName %>-srvjs
+<% } -%>
+  html5repo:
+    name: <%= projectName %>-html5repo
+    bindingName: <%= projectName %>-html5repo-binding
+    bindingSecretName: <%= projectName %>-html5repo-binding-secret
+<% if(!managedAppRouter){ -%>
+  html5report:
+    name: <%= projectName %>-html5report
+    bindingName: <%= projectName %>-html5report-binding
+    bindingSecretName: <%= projectName %>-html5report-binding-secret
+<% } -%>
+  uaa:
+    name: <%= projectName %>-uaa
+    bindingSecretName: <%= projectName %>-uaa-binding-secret
+  dest:
+    name: <%= projectName %>-dest
+    bindingSecretName: <%= projectName %>-dest-binding-secret

@@ -1,0 +1,50 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.jobs.html5.name }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+    app: {{ .Values.jobs.html5.name }}
+spec:
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.jobs.html5.name }}
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - image: "{{ .Values.dockerID }}/{{ .Values.jobs.html5.image.repository }}:{{ .Values.jobs.html5.image.tag }}"
+          name: {{ .Values.jobs.html5.name }}
+          imagePullPolicy: {{ .Values.jobs.html5.image.pullPolicy }}
+          env:
+            - name: SERVICE_BINDING_ROOT
+              value: /bindings
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.jobs.html5.name }}
+          volumeMounts:
+            - name: <%= projectName %>-html5repo
+              mountPath: "/bindings/<%= projectName %>-html5repo"
+              readOnly: true
+            - name: <%= projectName %>-uaa
+              mountPath: "/bindings/<%= projectName %>-uaa"
+              readOnly: true
+            - name: <%= projectName %>-dest
+              mountPath: "/bindings/<%= projectName %>-dest"
+              readOnly: true
+<% if(dockerRepositoryVisibility === 'private'){ -%>
+      imagePullSecrets:
+        - name: {{ .Values.jobs.html5.image.imagePullSecretName }}
+<% } -%>
+      volumes:
+        - name: <%= projectName %>-html5repo
+          secret:
+            secretName: {{ .Values.services.html5repo.bindingSecretName }}
+        - name: <%= projectName %>-uaa
+          secret:
+            secretName: {{ .Values.services.uaa.bindingSecretName }}
+        - name: <%= projectName %>-dest
+          secret:
+            secretName: {{ .Values.services.dest.bindingSecretName }}

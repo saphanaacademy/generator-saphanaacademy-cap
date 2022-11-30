@@ -1,0 +1,9 @@
+{
+    "name": "<%= projectName %>-html5",
+    "dependencies": {
+        "@sap/html5-app-deployer": "latest"
+    },
+    "scripts": {
+        "start": "node node_modules/@sap/html5-app-deployer/index.js"
+    }
+}

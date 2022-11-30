@@ -1,16 +1,41 @@
 ---
 general:
+<% if(BTPRuntime === 'Kyma'){ -%>
+  buildTool: "docker"
+  dockerConfigJsonSecretTextCredentialsId: "docker"
+  containerImageName: "<%= dockerID %>/<%= projectName %>-srv"
+  containerImageTag: "latest"
+  containerRegistryUrl: "https://index.docker.io"
+steps:
+  kanikoExecute:
+    dockerfilePath: "srv/Dockerfile"
+  kubernetesDeploy:
+    kubeConfigSecretTextCredentialsId: "kyma"
+    deployTool: "helm3"
+    namespace: "<%= namespace %>"
+    chartPath: "helm/<%= projectName %>-srv"
+    deploymentName: "<%= projectName %>-srv"
+    force: false
+    helmValues:
+    - "helm/<%= projectName %>-srv/values.yaml"
+  tmsUpload:
+    nodeName: "qa"
+    credentialsId: "tms-sk"
+stages:
+  Build:
+    kanikoExecute: true
+  Release:
+    kubernetesDeploy: true
+    tmsUpload: false
+<% } else { -%>
   buildTool: "mta"
-
 stages:
   Build:
     mavenExecuteStaticCodeChecks: false
     npmExecuteLint: true
-
   Additional Unit Tests:
     npmExecuteScripts: false
     karmaExecuteTests: false
-
   Acceptance:
     cloudFoundryDeploy: false
     cfApiEndpoint: "<%= cfapi %>"
@@ -19,7 +44,6 @@ stages:
     cfAppName: "<%= projectName %>"
     cfCredentialsId: "deploy-to-cf"
     uiVeri5ExecuteTests: false
-
   Release:
     cloudFoundryDeploy: true
     cfApiEndpoint: "<%= cfapi %>"
@@ -28,17 +52,14 @@ stages:
     cfAppName: "<%= projectName %>"
     cfCredentialsId: "deploy-to-cf"
     tmsUpload: false
-
 steps:
   artifactPrepareVersion:
     versioningType: "cloud_noTag"
-
   npmExecuteLint:
     failOnError: true
-
   cloudFoundryDeploy:
     mtaDeployParameters: "-f --version-rule ALL"
-
   tmsUpload:
     nodeName: "qa"
     credentialsId: "tms-sk"
+<% } -%>

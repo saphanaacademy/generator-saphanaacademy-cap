@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.services.app.name }}
+data:
+<% if(multiTenant){ -%>
+  TENANT_HOST_PATTERN: "^(.*)-{{ .Values.services.app.name }}.{{ .Values.clusterDomain }}"
+<% } -%>
+  destinations: |
+    [
+      {
+        "name": "srv",
+        "url": "http://{{ .Values.services.srv.name }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.services.srv.service.port }}"
+<% if(authentication){ -%>
+        ,"forwardAuthToken": true
+<% } -%>
+      }
+<% if(srv2){ -%>
+      ,
+      {
+        "name": "srv2",
+        "url": "http://{{ .Values.services.srv2.name }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.services.srv2.service.port }}"
+<% if(authentication){ -%>
+        ,"forwardAuthToken": true
+<% } -%>
+      }
+<% } -%>
+<% if(srvjs){ -%>
+      ,
+      {
+        "name": "srvjs",
+        "url": "http://{{ .Values.services.srvjs.name }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.services.srvjs.service.port }}"
+<% if(authentication){ -%>
+        ,"forwardAuthToken": true
+<% } -%>
+      }
+<% } -%>
+<% if(multiTenant){ -%>
+      ,
+      {
+        "name": "mtx",
+        "url": "http://{{ .Values.services.srv.name }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.services.srv.service.port }}"
+<% if(authentication){ -%>
+        ,"forwardAuthToken": true
+<% } -%>
+      }
+<% } -%>
+    ]

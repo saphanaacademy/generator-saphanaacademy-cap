@@ -1,0 +1,12 @@
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceBinding
+metadata:
+  name: {{ .Values.services.logging.bindingName }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.services.logging.bindingName }}
+spec:
+  serviceInstanceName: {{ .Values.services.logging.name }}
+  externalName: {{ .Values.services.logging.name }}
+  secretName: {{ .Values.services.logging.bindingSecretName }}
+  parameters: {}
+  parametersFrom: []

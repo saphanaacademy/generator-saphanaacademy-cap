@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.services.srv2.name }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+    app: {{ .Values.services.srv2.name }}
+spec:
+  ports:
+    - name: http
+      port: {{ .Values.services.srv2.service.port }}
+      targetPort: {{ .Values.services.srv2.image.port }}
+      protocol: TCP
+  selector:
+    app: {{ .Values.services.srv2.name }}

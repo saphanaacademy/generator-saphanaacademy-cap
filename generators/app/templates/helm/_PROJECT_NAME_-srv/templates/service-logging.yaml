@@ -1,0 +1,10 @@
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceInstance
+metadata:
+  name: '{{ .Values.services.logging.name }}'
+  labels:
+    app.kubernetes.io/name: '{{ .Values.services.logging.name }}'
+spec:
+  externalName: '{{ .Values.services.logging.name }}'
+  serviceOfferingName: application-logs
+  servicePlanName: lite

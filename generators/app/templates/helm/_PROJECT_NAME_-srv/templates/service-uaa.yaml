@@ -1,0 +1,120 @@
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceInstance
+metadata:
+  name: '{{ .Values.services.uaa.name }}'
+  labels:
+    app.kubernetes.io/name: '{{ .Values.services.uaa.name }}'
+spec:
+  externalName: '{{ .Values.services.uaa.name }}'
+  serviceOfferingName: xsuaa
+  servicePlanName: application
+  parameters:
+    xsappname: '{{ .Values.services.uaa.xsappname }}'
+<% if(multiTenant){ -%>
+    tenant-mode: shared
+<% } else { -%>
+    tenant-mode: dedicated
+<% } -%>
+<% if(app2appType === "access" || multiTenant){ -%>
+<% if(app2appMethod.includes("user")){ -%>
+    foreign-scope-references:
+      - $ACCEPT_GRANTED_SCOPES
+<% if(multiTenant){ -%>
+    authorities-inheritance: false
+<% } -%>
+<% } -%>
+<% if(app2appMethod.includes("machine") || multiTenant){ -%>
+    authorities:
+<% if(multiTenant){ -%>
+      - $XSAPPNAME.cds.Subscriber
+<% } -%>
+<% if(app2appMethod.includes("machine")){ -%>
+      - $ACCEPT_GRANTED_AUTHORITIES
+<% } -%>
+<% } -%>
+<% } -%>
+    scopes:
+<% if(authorization){ -%>
+      - name: $XSAPPNAME.Viewer
+<% if(app2appType === "authorize"){ -%>
+<% if(app2appMethod.includes("user")){ -%>
+        granted-apps:
+          - $XSAPPNAME(application,<%= app2appName %>)
+<% } -%>
+<% if(app2appMethod.includes("machine")){ -%>
+        grant-as-authority-to-apps:
+          - $XSAPPNAME(application,<%= app2appName %>)
+<% } -%>
+<% } -%>
+        description: Viewer
+      - name: $XSAPPNAME.Admin
+        description: Admin
+<% }else{ -%>
+      - name: uaa.user
+        description: Token Exchange
+<% } -%>
+<% if(multiTenant){ -%>
+      - name: $XSAPPNAME.mtcallback
+        description: Subscription via SaaS Registry
+        grant-as-authority-to-apps:
+          - $XSAPPNAME(application,sap-provisioning,tenant-onboarding)
+      - name: $XSAPPNAME.cds.Subscriber
+        description: Subscribe to applications
+<% } -%>
+<% if(attributes){ -%>
+    attributes:
+      - name: Region
+        description: Region
+        valueType: string
+<% } -%>
+    role-templates:
+<% if(authorization){ -%>
+      - name: Viewer
+        description: Viewer
+<% if(attributes){ -%>
+        attribute-references:
+          - name: Region
+<% } -%>
+        scope-references:
+          - $XSAPPNAME.Viewer
+      - name: Admin
+        description: Admin
+        scope-references:
+          - $XSAPPNAME.Admin
+<% }else{ -%>
+      - name: Token_Exchange
+        description: Token Exchange
+        scope-references:
+          - uaa.user
+<% } -%>
+<% if(multiTenant){ -%>
+      - name: Subscriber
+        description: Subscriber
+        scope-references:
+          - $XSAPPNAME.cds.Subscriber
+<% } -%>
+    role-collections:
+<% if(authorization){ -%>
+<% if(!attributes){ -%>
+      - name: '{{ .Values.services.uaa.xsappname }}_Viewer'
+        description: '{{ .Values.services.uaa.xsappname }} Viewer'
+        role-template-references:
+          - $XSAPPNAME.Viewer
+<% } -%>
+      - name: '{{ .Values.services.uaa.xsappname }}_Admin'
+        description: '{{ .Values.services.uaa.xsappname }} Admin'
+        role-template-references:
+          - $XSAPPNAME.Admin
+<% } -%>
+<% if(multiTenant){ -%>
+      - name: <%= projectName %>_Subscriber
+        description: Subscriber access
+        role-template-references:
+          - $XSAPPNAME.Subscriber
+<% } -%>
+<% if(authentication){ -%>
+    oauth2-configuration:
+      token-validity: 3600
+      redirect-uris:
+        - 'https://<% if(multiTenant){ -%>*-<% } -%>{{ .Values.services.app.name }}.{{ .Values.clusterDomain }}/login/callback'
+<% } -%>

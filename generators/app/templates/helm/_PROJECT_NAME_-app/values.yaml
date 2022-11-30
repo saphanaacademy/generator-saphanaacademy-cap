@@ -1,0 +1,52 @@
+dockerID: <%= dockerID %>
+clusterDomain: <%= clusterDomain %>
+gateway: <%= gateway %>
+services:
+  app:
+    name: <%= projectName %>-app
+    image:
+<% if(dockerRepositoryName !== ''){ -%>
+      repository: <%= dockerRepositoryName %>
+      tag: "<%= projectName %>-app"
+<% } else { -%>
+      repository: <%= projectName %>-app
+      tag: "latest"
+<% } -%>
+      pullPolicy: Always
+<% if(dockerRepositoryVisibility === 'private'){ -%>
+      imagePullSecretName: <%= dockerRegistrySecretName %>
+<% } -%>
+      port: 5000
+    service:
+      port: 5000
+  srv:
+    name: <%= projectName %>-srv
+    service:
+      port: 4004
+<% if(srv2){ -%>
+  srv2:
+    name: <%= projectName %>-srv2
+    service:
+      port: 4004
+<% } -%>
+<% if(srvjs){ -%>
+  srvjs:
+    name: <%= projectName %>-srvjs
+    service:
+      port: 5002
+<% } -%>
+<% if(authentication || html5repo){ -%>
+  uaa:
+    name: <%= projectName %>-uaa
+    bindingSecretName: <%= projectName %>-uaa-binding-secret
+<% } -%>
+<% if(html5repo){ -%>
+  dest:
+    name: <%= projectName %>-dest
+    bindingSecretName: <%= projectName %>-dest-binding-secret
+<% if(!managedAppRouter){ -%>
+  html5report:
+    name: <%= projectName %>-html5report
+    bindingSecretName: <%= projectName %>-html5report-binding-secret
+<% } -%>
+<% } -%>

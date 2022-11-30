@@ -2,38 +2,125 @@ module.exports = {
     hanaTargetHDI2Schema: hanaTargetHDI2Schema,
     schemaNameAdjustedCase: schemaNameAdjustedCase,
     processSchema: processSchema,
-    processSchemaUPS: processSchemaUPS
+    processSchemaAuth: processSchemaAuth
 };
 
-const path = require("path");
+function sleep(ms) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
+  }
+
+const path = require('path');
 const hana = require('@sap/hana-client');
 const hanaCert = '-----BEGIN CERTIFICATE-----MIIDrzCCApegAwIBAgIQCDvgVpBCRrGhdWrJWZHHSjANBgkqhkiG9w0BAQUFADBhMQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMSAwHgYDVQQDExdEaWdpQ2VydCBHbG9iYWwgUm9vdCBDQTAeFw0wNjExMTAwMDAwMDBaFw0zMTExMTAwMDAwMDBaMGExCzAJBgNVBAYTAlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xIDAeBgNVBAMTF0RpZ2lDZXJ0IEdsb2JhbCBSb290IENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4jvhEXLeqKTTo1eqUKKPC3eQyaKl7hLOllsBCSDMAZOnTjC3U/dDxGkAV53ijSLdhwZAAIEJzs4bg7/fzTtxRuLWZscFs3YnFo97nh6Vfe63SKMI2tavegw5BmV/Sl0fvBf4q77uKNd0f3p4mVmFaG5cIzJLv07A6Fpt43C/dxC//AH2hdmoRBBYMql1GNXRor5H4idq9Joz+EkIYIvUX7Q6hL+hqkpMfT7PT19sdl6gSzeRntwi5m3OFBqOasv+zbMUZBfHWymeMr/y7vrTC0LUq7dBMtoM1O/4gdW7jVg/tRvoSSiicNoxBN33shbyTApOB6jtSj1etX+jkMOvJwIDAQABo2MwYTAOBgNVHQ8BAf8EBAMCAYYwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUA95QNVbRTLtm8KPiGxvDl7I90VUwHwYDVR0jBBgwFoAUA95QNVbRTLtm8KPiGxvDl7I90VUwDQYJKoZIhvcNAQEFBQADggEBAMucN6pIExIK+t1EnE9SsPTfrgT1eXkIoyQY/EsrhMAtudXH/vTBH1jLuG2cenTnmCmrEbXjcKChzUyImZOMkXDiqw8cvpOp/2PV5Adg06O/nVsJ8dWO41P0jmP6P6fbtGbfYmbW0W5BjfIttep3Sp+dWOIrWcBAI+0tKIJFPnlUkiaY4IBIqDfv8NZ5YBberOgOzW6sRBc4L0na4UU+Krk2U886UAb3LujEV0lsYSEY1QSteDwsOoBrp+uvFRTp2InBuThs4pFsiv9kuXclVzDAGySj4dzp30d8tbQkCAUw7C29C79Fv1C5qfPrmAESrciIxpg0X40KPMbp1ZWVbd4=-----END CERTIFICATE-----';
 
-function hanaTargetHDI2Schema(thisf, answers) {
+async function hanaTargetHDI2Schema(thisf, answers) {
     thisf.log("Accessing existing SAP HANA Cloud HDI Container: Start");
-    thisf.log("Checking whether the service instance exists...");
-    let resHDI = thisf.spawnCommandSync('cf', ['service', answers.get('hanaTargetHDI'), '--guid'], { stdio: 'pipe' });
-    if (resHDI.status) {
-        thisf.log("Service instance does not exist.");
-    }
-    thisf.log("Creating service key...");
-    const hdiSK = 'sha-cap';
-    resHDI = thisf.spawnCommandSync('cf', ['create-service-key', answers.get('hanaTargetHDI'), hdiSK], { stdio: 'pipe' });
-    if (resHDI.status) {
-        thisf.log("Unable to create service key:", resHDI.stdout.toString('utf8'));
-    }
-    thisf.log("Reading service key...");
-    resHDI = thisf.spawnCommandSync('cf', ['service-key', answers.get('hanaTargetHDI'), hdiSK], { stdio: 'pipe' });
-    if (resHDI.status) {
-        thisf.log("Unable to read service key:", resHDI.stdout.toString('utf8'));
-    }
     var hdiBinding;
-    hdiBinding = resHDI.stdout.toString('utf8');
-    hdiBinding = JSON.parse(hdiBinding.substring(hdiBinding.indexOf('{')));
-    answers.set('schemaName', hdiBinding.schema);
-    answers.set('hanaEndpoint', hdiBinding.host + ':' + hdiBinding.port);
-    answers.set('hanaUser', hdiBinding.user);
-    answers.set('hanaPassword', hdiBinding.password);
+    if (answers.get('BTPRuntime') === "CF") {
+        thisf.log("Checking whether the service instance exists...");
+        let resHDI = thisf.spawnCommandSync('cf', ['service', answers.get('hanaTargetHDI'), '--guid'], { stdio: 'pipe' });
+        if (resHDI.status) {
+            thisf.log("Service instance does not exist.");
+        }
+        thisf.log("Creating service key...");
+        const hdiSK = 'sha-cap';
+        resHDI = thisf.spawnCommandSync('cf', ['create-service-key', answers.get('hanaTargetHDI'), hdiSK], { stdio: 'pipe' });
+        if (resHDI.status) {
+            thisf.log("Unable to create service key:", resHDI.stdout.toString('utf8'));
+        }
+        thisf.log("Reading service key...");
+        resHDI = thisf.spawnCommandSync('cf', ['service-key', answers.get('hanaTargetHDI'), hdiSK], { stdio: 'pipe' });
+        if (resHDI.status) {
+            thisf.log("Unable to read service key:", resHDI.stdout.toString('utf8'));
+        }
+        hdiBinding = resHDI.stdout.toString('utf8');
+        hdiBinding = JSON.parse(hdiBinding.substring(hdiBinding.indexOf('{')));
+        answers.set('schemaName', hdiBinding.schema);
+        answers.set('hanaEndpoint', hdiBinding.host + ':' + hdiBinding.port);
+        answers.set('hanaUser', hdiBinding.user);
+        answers.set('hanaPassword', hdiBinding.password);
+    } else {
+        thisf.log('Checking whether the service instance exists...');
+        const k8s = require('@kubernetes/client-node');
+        const kc = new k8s.KubeConfig();
+        kc.loadFromDefault();
+        let k8sApi = kc.makeApiClient(k8s.CustomObjectsApi);
+        let result = await k8sApi.listNamespacedCustomObject(
+            'services.cloud.sap.com',
+            'v1',
+            answers.get('namespace'),
+            'serviceinstances',
+            false,
+            false,
+            '',
+            '',
+            'app.kubernetes.io/name = ' + answers.get('hanaTargetHDI')
+            ).catch(e => thisf.log(e.response.body));
+        thisf.log(result.response.statusCode, result.response.statusMessage, result.response.body.items.length);
+        if (result.response.body.items.length < 1) {
+            thisf.log('Service instance not found!', answers.get('hanaTargetHDI'));
+            return;
+        }
+        thisf.log("Checking whether the service binding exists...");
+        result = await k8sApi.listNamespacedCustomObject(
+            'services.cloud.sap.com',
+            'v1',
+            answers.get('namespace'),
+            'servicebindings',
+            false,
+            false,
+            '',
+            '',
+            'app.kubernetes.io/name = ' + answers.get('projectName') + '-db-' + answers.get('hanaTargetHDI') + '-binding'
+            ).catch(e => thisf.log(e.response.body));
+        thisf.log(result.response.statusCode, result.response.statusMessage, result.response.body.items.length);
+        if (result.response.body.items.length === 0) {
+            thisf.log("Creating binding...");
+            let k8sBinding = {
+                apiVersion: 'services.cloud.sap.com/v1',
+                kind: 'ServiceBinding',
+                metadata: {
+                    name: answers.get('projectName') + '-db-' + answers.get('hanaTargetHDI') + '-binding',
+                    labels: {
+                        'app.kubernetes.io/name': answers.get('projectName') + '-db-' + answers.get('hanaTargetHDI') + '-binding',
+                        'app.kubernetes.io/managed-by': answers.get('projectName') + '-db'
+                    }
+                },
+                spec: {
+                    serviceInstanceName: answers.get('hanaTargetHDI'),
+                    externalName: answers.get('projectName') + '-db-' + answers.get('hanaTargetHDI') + '-binding',
+                    secretName: answers.get('projectName') + '-db-' + answers.get('hanaTargetHDI') + '-binding-secret',
+                    parameters: {},
+                    parametersFrom: []
+                }
+            };
+            result = await k8sApi.createNamespacedCustomObject(
+                'services.cloud.sap.com',
+                'v1',
+                answers.get('namespace'),
+                'servicebindings',
+                k8sBinding
+                ).catch(e => thisf.log(e.response.body));
+            thisf.log(result.response.statusCode, result.response.statusMessage);
+            await sleep(5000);
+        } else {
+            thisf.log('Service binding already exists!', answers.get('projectName') + '-db-' + answers.get('hanaTargetHDI') + '-binding');
+        }
+        thisf.log("Reading binding secret...");
+        k8sApi = kc.makeApiClient(k8s.CoreV1Api);
+        result = await k8sApi.readNamespacedSecret(
+            answers.get('projectName') + '-db-' + answers.get('hanaTargetHDI') + '-binding-secret',
+            answers.get('namespace')
+            ).catch(e => thisf.log(e.response.body));
+        thisf.log(result.response.statusCode, result.response.statusMessage, result.response.body.data);
+        hdiBinding = result.response.body.data;
+        answers.set('schemaName', Buffer.from(hdiBinding.schema,'base64').toString('ascii'));
+        answers.set('hanaEndpoint', Buffer.from(hdiBinding.host,'base64').toString('ascii') + ':' + Buffer.from(hdiBinding.port,'base64').toString('ascii'));
+        answers.set('hanaUser', Buffer.from(hdiBinding.user,'base64').toString('ascii'));
+        answers.set('hanaPassword', Buffer.from(hdiBinding.password,'base64').toString('ascii'));
+    }
     thisf.log("Accessing existing SAP HANA Cloud HDI Container: End");
 }
 
@@ -387,10 +474,10 @@ function processSchema(thisf, answers) {
                         }
                     });
                     if (answers.get('hanaTargetHDI') !== "") {
-                        if (!fs2.existsSync(destinationRoot + "/db/cfg")) {
-                            fs2.mkdirSync(destinationRoot + "/db/cfg");
+                        if (!fs2.existsSync(destinationRoot + "/db/src")) {
+                            fs2.mkdirSync(destinationRoot + "/db/src");
                         };
-                        fileDest = destinationRoot + "/db/cfg/" + answers.get('hanaTargetHDI');
+                        fileDest = destinationRoot + "/db/src/" + answers.get('hanaTargetHDI');
                         fs2.writeFile(fileDest + ".hdbsynonymconfig", JSON.stringify(JSON.parse(hdbSynonymConfig), null, 4), 'utf8', function (err) {
                             if (err) {
                                 thisf.log(err.message);
@@ -480,7 +567,7 @@ function processSchema(thisf, answers) {
     });
 }
 
-function processSchemaUPS(thisf, answers) {
+async function processSchemaAuth(thisf, answers) {
     var prefix = answers.get('projectName') + '_' + answers.get('schemaName');
     var schemaNameAdjustedCase = this.schemaNameAdjustedCase(answers);
 
@@ -517,75 +604,81 @@ function processSchemaUPS(thisf, answers) {
         thisf.log('');
     }
 
-    // define user-provided service instance
-    // we take this approach instead of writing to mta.yaml to avoid the SAP HANA Cloud technical user & password being visible in project source files
-    const cupsParams = '{"user":"' + prefix + '_GRANTOR","password":"' + grantorPassword + '","schema":"' + schemaNameAdjustedCase + '","tags":["hana"]}';
+    // if CF define user-provided service instance, if Kyma we create a secret
+    // we take this approach instead of writing to mta.yaml to avoid the SAP HANA Cloud technical user credentials being visible in project source files
+    var cupsParams, k8sSecret;
     if (answers.get('hanaTargetHDI') === "") {
-        thisf.log('Syntax to create the User-Provided Service Instance:');
-        thisf.log('cf cups ' + answers.get('projectName') + '-db-' + answers.get('schemaName') + " -p '" + cupsParams + "'");
-        thisf.log('');
-        thisf.log('Syntax to delete the User-Provided Service Instance:');
-        thisf.log('cf delete-service ' + answers.get('projectName') + '-db-' + answers.get('schemaName'));
-        thisf.log('');
+        if (answers.get('BTPRuntime') === "CF") {
+            cupsParams = '{"user":"' + prefix + '_GRANTOR","password":"' + grantorPassword + '","schema":"' + schemaNameAdjustedCase + '","tags":["hana"]}';
+            thisf.log('Syntax to create the User-Provided Service Instance:');
+            thisf.log('cf cups ' + answers.get('projectName') + '-db-' + answers.get('schemaName') + " -p '" + cupsParams + "'");
+            thisf.log('');
+            thisf.log('Syntax to delete the User-Provided Service Instance:');
+            thisf.log('cf delete-service ' + answers.get('projectName') + '-db-' + answers.get('schemaName'));
+            thisf.log('');
+        } else {
+            // kyma
+            k8sSecret = {
+                apiVersion: 'v1',
+                kind: 'Secret',
+                metadata: {
+                    name: answers.get('projectName') + '-db-' + answers.get('schemaName') + '-binding-secret',
+                    labels: {
+                        'app.kubernetes.io/managed-by': answers.get('projectName') + '-db'
+                    }
+                },
+                type: 'Opaque',
+                data: {
+                    '.metadata': Buffer.from('{"credentialProperties":[{"name":"schema","format":"text"},{"name":"user","format":"text"},{"name":"password","format":"text"},{"name":"tags","format":"json"}],"metaDataProperties":[{"name":"instance_name","format":"text"},{"name":"label","format":"text"},{"name":"name","format":"text"}]}','utf-8').toString('base64'),
+                    instance_name: Buffer.from(answers.get('projectName') + '-db-' + answers.get('schemaName'),'utf-8').toString('base64'),
+                    label: Buffer.from('user-provided','utf-8').toString('base64'),
+                    name: Buffer.from(answers.get('projectName') + '-db-' + answers.get('schemaName'),'utf-8').toString('base64'),
+                    tags: Buffer.from('["hana", "password"]','utf-8').toString('base64'),
+                    user: Buffer.from(prefix + '_GRANTOR','utf-8').toString('base64'),
+                    password: Buffer.from(grantorPassword,'utf-8').toString('base64'),
+                    schema: Buffer.from(schemaNameAdjustedCase,'utf-8').toString('base64')
+                }
+            };
+        }
     }
 
-    // actually create HANA technical user & roles & UPS only if requested
-    if (answers.get('schemaUPS') === true) {
-        var done = thisf.async();
-        var connection = hana.createConnection();
-        var connOptions = {
-            serverNode: answers.get('hanaEndpoint'),
-            encrypt: 'true',
-            sslValidateCertificate: 'true',
-            ssltruststore: hanaCert,
-            uid: answers.get('hanaUser'),
-            pwd: answers.get('hanaPassword')
-        };
-        connection.connect(connOptions, function (err) {
-            if (err) {
-                thisf.log(err.message);
-                return;
+    // actually create HANA Cloud technical user & roles & grant auth & user-provided service / kyma secret only if requested
+    if (answers.get('schemaAuth') === true) {
+        try {
+            const hdb = await hana.createConnection();
+            const hdbOptions = {
+                serverNode: answers.get('hanaEndpoint'),
+                encrypt: 'true',
+                sslValidateCertificate: 'true',
+                ssltruststore: hanaCert,
+                uid: answers.get('hanaUser'),
+                pwd: answers.get('hanaPassword')
+            };
+            await hdb.connect(hdbOptions);
+            await hdb.exec(sql1);
+            await hdb.exec(sql2);
+            await hdb.exec(sql3);
+            await hdb.exec(sql4);
+            await hdb.exec(sql5);
+            await hdb.exec(sql6);
+            await hdb.disconnect();
+            if (answers.get('BTPRuntime') === 'CF') {
+                thisf.spawnCommandSync('cf', ['cups', answers.get('projectName') + '-db-' + answers.get('schemaName'), '-p', cupsParams]);
+            } else {
+                const k8s = require('@kubernetes/client-node');
+                const kc = new k8s.KubeConfig();
+                kc.loadFromDefault();
+                const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
+                const result = await k8sApi.createNamespacedSecret(
+                    answers.get('namespace'),
+                    k8sSecret
+                    ).catch(e => console.log(e))
+                ;
+                console.log('Secret for schema ' + answers.get('schemaName') + ':', result.response.statusCode, result.response.statusMessage);
             }
-            connection.exec(sql1, function (err, result) {
-                if (err) {
-                    thisf.log(err.message);
-                    return;
-                }
-                connection.exec(sql2, function (err, result) {
-                    if (err) {
-                        thisf.log(err.message);
-                        return;
-                    }
-                    connection.exec(sql3, function (err, result) {
-                        if (err) {
-                            thisf.log(err.message);
-                            return;
-                        }
-                        connection.exec(sql4, function (err, result) {
-                            if (err) {
-                                thisf.log(err.message);
-                                return;
-                            }
-                            connection.exec(sql5, function (err, result) {
-                                if (err) {
-                                    thisf.log(err.message);
-                                    return;
-                                }
-                                connection.exec(sql6, function (err, result) {
-                                    if (err) {
-                                        thisf.log(err.message);
-                                        return;
-                                    }
-                                    connection.disconnect(function (err) {
-                                        done(err);
-                                        thisf.spawnCommandSync('cf', ['cups', answers.get('projectName') + '-db-' + answers.get('schemaName'), '-p', cupsParams]);
-                                    });
-                                });
-                            });
-                        });
-                    });
-                });
-            });
-        });
+        } catch (err) {
+            thisf.log(err.message, err.stack);
+            return;
+        }
     }
 }

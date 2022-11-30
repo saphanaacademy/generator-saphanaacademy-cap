@@ -27,7 +27,7 @@ module.exports = class extends Generator {
     async writing() {
         var answers = this.config;
         if (answers.get("confirm")) {
-            hanaUtils.hanaTargetHDI2Schema(this, answers);
+            await hanaUtils.hanaTargetHDI2Schema(this, answers);
             hanaUtils.processSchema(this, answers);
             this.log("");
             this.log("Project files have been replaced.");

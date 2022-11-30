@@ -1,0 +1,61 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.jobs.db.name }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+    app: {{ .Values.jobs.db.name }}
+spec:
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.jobs.db.name }}
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - image: "{{ .Values.dockerID }}/{{ .Values.jobs.db.image.repository }}:{{ .Values.jobs.db.image.tag }}"
+          name: {{ .Values.jobs.db.name }}
+          imagePullPolicy: {{ .Values.jobs.db.image.pullPolicy }}
+          env:
+            - name: SERVICE_BINDING_ROOT
+              value: /bindings
+            - name: EXIT
+              value: 'true'
+<% if(hanaTargetHDI !== ""){ -%>
+            - name: TARGET_CONTAINER
+              value: <%= projectName %>-hdi
+<% } -%>
+          volumeMounts:
+            - name: <%= projectName %>-hdi
+              mountPath: "/bindings/<%= projectName %>-hdi"
+              readOnly: true
+<% if(schemaName !== "" && hanaTargetHDI === ""){ -%>
+            - name: <%= projectName %>-db-<%= schemaName %>
+              mountPath: "/bindings/<%= projectName %>-db-<%= schemaName %>"
+              readOnly: true
+<% } -%>
+<% if(hanaTargetHDI !== ""){ -%>
+            - name: <%= hanaTargetHDI %>
+              mountPath: "/bindings/<%= hanaTargetHDI %>"
+              readOnly: true
+<% } -%>
+<% if(dockerRepositoryVisibility === 'private'){ -%>
+      imagePullSecrets:
+        - name: {{ .Values.jobs.db.image.imagePullSecretName }}
+<% } -%>
+      volumes:
+        - name: <%= projectName %>-hdi
+          secret:
+            secretName: {{ .Values.jobs.hdi.bindingSecretName }}
+<% if(schemaName !== "" && hanaTargetHDI === ""){ -%>
+        - name: <%= projectName %>-db-<%= schemaName %>
+          secret:
+            secretName: {{ .Values.jobs.schema.bindingSecretName }}
+<% } -%>
+<% if(hanaTargetHDI !== ""){ -%>
+        - name: <%= hanaTargetHDI %>
+          secret:
+            secretName: {{ .Values.jobs.hanaTargetHDI.bindingSecretName }}
+<% } -%>

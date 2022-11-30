@@ -1,0 +1,22 @@
+apiVersion: gateway.kyma-project.io/v1beta1
+kind: APIRule
+metadata:
+  name: {{ .Values.services.srvjs.name }}
+spec:
+  gateway: {{ .Values.gateway }}
+  host: {{ .Values.services.srvjs.name }}.{{ .Values.clusterDomain }}
+  rules:
+    - path: /.*
+      accessStrategies:
+        - config: {}
+          handler: noop
+      methods:
+        - HEAD
+        - GET
+        - POST
+        - PUT
+        - PATCH
+        - DELETE
+  service:
+    name: {{ .Values.services.srvjs.name }}
+    port: {{ .Values.services.srvjs.service.port }}

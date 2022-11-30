@@ -1,0 +1,27 @@
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceBinding
+metadata:
+  name: {{ .Values.services.html5repo.bindingName }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.services.html5repo.bindingName }}
+spec:
+  serviceInstanceName: {{ .Values.services.html5repo.name }}
+  externalName: {{ .Values.services.html5repo.name }}
+  secretName: {{ .Values.services.html5repo.bindingSecretName }}
+  parameters: {}
+  parametersFrom: []
+<% if(!managedAppRouter){ -%>
+---
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceBinding
+metadata:
+  name: {{ .Values.services.html5report.bindingName }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.services.html5report.bindingName }}
+spec:
+  serviceInstanceName: {{ .Values.services.html5report.name }}
+  externalName: {{ .Values.services.html5report.name }}
+  secretName: {{ .Values.services.html5report.bindingSecretName }}
+  parameters: {}
+  parametersFrom: []
+<% } -%>

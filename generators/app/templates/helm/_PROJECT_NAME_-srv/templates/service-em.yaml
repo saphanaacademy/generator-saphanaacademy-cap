@@ -1,0 +1,35 @@
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceInstance
+metadata:
+  name: '{{ .Values.services.em.name }}'
+  labels:
+    app.kubernetes.io/name: '{{ .Values.services.em.name }}'
+spec:
+  externalName: '{{ .Values.services.em.name }}'
+  serviceOfferingName: enterprise-messaging
+  servicePlanName: default
+  parameters:
+    version: 1.1.0
+    emname: <%= projectName %>-em
+    namespace: '<%= emNamespace %>'
+    options:
+      management: true
+      messagingrest: true
+      messaging: true
+    rules:
+      topicRules:
+        publishFilter:
+          - '${namespace}/*'
+        subscribeFilter:
+<% if(apiS4HCSO || apiS4HCBP){ -%>
+          - 'sap/S4HANAOD/<%= emClientId %>/*'
+<% } -%>
+          - '${namespace}/*'
+      queueRules:
+        publishFilter:
+          - '${namespace}/*'
+        subscribeFilter:
+<% if(apiS4HCSO || apiS4HCBP){ -%>
+          - 'sap/S4HANAOD/<%= emClientId %>/*'
+<% } -%>
+          - '${namespace}/*'

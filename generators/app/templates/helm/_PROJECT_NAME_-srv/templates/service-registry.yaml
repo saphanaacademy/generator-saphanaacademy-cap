@@ -1,0 +1,24 @@
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceInstance
+metadata:
+  name: '{{ .Values.services.registry.name }}'
+  labels:
+    app.kubernetes.io/name: '{{ .Values.services.registry.name }}'
+spec:
+  externalName: '{{ .Values.services.registry.name }}'
+  serviceOfferingName: saas-registry
+  servicePlanName: application
+  parameters:
+    xsappname: '{{ .Values.services.uaa.xsappname }}'
+    appName: <%= projectName %>
+    displayName: '<%= displayName %>'
+    description: '<%= description %>'
+    category: '<%= category %>'
+    appUrls:
+      onSubscription: https://{{ .Values.services.srv.name }}.{{ .Values.clusterDomain }}/-/cds/saas-provisioning/tenant/{tenantId}
+<% if(api){ -%>
+      getDependencies: https://{{ .Values.services.srv.name }}.{{ .Values.clusterDomain }}/-/cds/saas-provisioning/dependencies
+<% } -%>
+      onSubscriptionAsync: false
+      onUnSubscriptionAsync: false
+      callbackTimeoutMillis: 300000

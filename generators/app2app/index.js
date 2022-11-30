@@ -1,5 +1,6 @@
 "use strict";
 const Generator = require("yeoman-generator");
+const YAML = require("js-yaml");
 
 module.exports = class extends Generator {
     prompting() {
@@ -11,14 +12,26 @@ module.exports = class extends Generator {
         this.log("");
         const fs2 = require('fs');
         var destinationRoot = this.destinationRoot();
-        let fileDest = destinationRoot + "/xs-security.json";
+        let fileDest = "";
+        if (this.config.get("BTPRuntime") === "Kyma") {
+            fileDest = destinationRoot + "/helm/" + this.config.get("projectName") + "-srv/templates/service-uaa.yaml";
+        } else {
+            fileDest = destinationRoot + "/xs-security.json";
+        }
         let fileContent = fs2.readFileSync(fileDest, 'utf8', function (err) {
             if (err) {
-                this.log("Unable to read /xs-security.json.");
+                this.log("Unable to read " + fileDest);
                 return;
             }
         });
-        let fileJSON = JSON.parse(fileContent);
+        let scopes = [];
+        if (this.config.get("BTPRuntime") === "Kyma") {
+            let fileYAML = YAML.load(fileContent);
+            scopes = fileYAML.spec.parameters.scopes;
+        } else {
+            let fileJSON = JSON.parse(fileContent);
+            scopes = fileJSON.scopes;
+        }
         return this.prompt([
             {
                 type: "list",
@@ -38,7 +51,7 @@ module.exports = class extends Generator {
                 type: "checkbox",
                 name: "app2appScopes",
                 message: "Select the application scope(s) to be authorized?",
-                choices: fileJSON.scopes
+                choices: scopes
             },
             {
                 type: "checkbox",
@@ -61,55 +74,96 @@ module.exports = class extends Generator {
     async writing() {
         var answers = this.config;
         if (answers.get("confirm")) {
-
             const fs2 = require('fs');
             var destinationRoot = this.destinationRoot();
-
-            let fileDest = destinationRoot + "/xs-security.json";
+            let fileDest = "";
+            if (this.config.get("BTPRuntime") === "Kyma") {
+                fileDest = destinationRoot + "/helm/" + this.config.get("projectName") + "-srv/templates/service-uaa.yaml";
+            } else {
+                fileDest = destinationRoot + "/xs-security.json";
+            }
             let fileContent = fs2.readFileSync(fileDest, 'utf8', function (err) {
                 if (err) {
-                    thisf.log(err.message);
+                    this.log("Unable to read " + fileDest);
                     return;
                 }
             });
-            let fileJSON = JSON.parse(fileContent);
-            if (answers.get("app2appType") === "authorize") {
-                fileJSON.scopes.forEach(scope => {
-                    delete scope["grant-as-authority-to-apps"];
-                    delete scope["granted-apps"];
-                    answers.get("app2appScopes").forEach(element => {
-                        if (scope.name === element) {
-                            if (answers.get("app2appMethod").includes("user")) {
-                                scope["granted-apps"] = ["$XSAPPNAME(application," + answers.get("app2appName") + ")"];
+            if (this.config.get("BTPRuntime") === "Kyma") {
+                let fileYAML = YAML.load(fileContent);
+                if (answers.get("app2appType") === "authorize") {
+                    fileYAML.spec.parameters.scopes.forEach(scope => {
+                        delete scope["grant-as-authority-to-apps"];
+                        delete scope["granted-apps"];
+                        answers.get("app2appScopes").forEach(element => {
+                            if (scope.name === element) {
+                                if (answers.get("app2appMethod").includes("user")) {
+                                    scope["granted-apps"] = ["$XSAPPNAME(application," + answers.get("app2appName") + ")"];
+                                }
+                                if (answers.get("app2appMethod").includes("machine")) {
+                                    scope["grant-as-authority-to-apps"] = ["$XSAPPNAME(application," + answers.get("app2appName") + ")"];
+                                }
                             }
-                            if (answers.get("app2appMethod").includes("machine")) {
-                                scope["grant-as-authority-to-apps"] = ["$XSAPPNAME(application," + answers.get("app2appName") + ")"];
-                            }
-                        }
+                        });
                     });
+                } else if (answers.get("app2appType") === "access") {
+                    delete fileYAML.spec.parameters["authorities"];
+                    delete fileYAML.spec.parameters["foreign-scope-references"];
+                    if (answers.get("app2appMethod").includes("user")) {
+                        fileYAML.spec.parameters["foreign-scope-references"] = ["$ACCEPT_GRANTED_SCOPES"];
+                    }
+                    if (answers.get("app2appMethod").includes("machine")) {
+                        fileYAML.spec.parameters["authorities"] = ["$ACCEPT_GRANTED_AUTHORITIES"];
+                    }
+                }
+                fs2.writeFile(fileDest, YAML.dump(fileYAML), "utf8", function (err) {
+                    if (err) {
+                        this.log(err.message);
+                        return;
+                    }
                 });
-            } else if (answers.get("app2appType") === "access") {
-                delete fileJSON["authorities"];
-                delete fileJSON["foreign-scope-references"];
-                if (answers.get("app2appMethod").includes("user")) {
-                    fileJSON["foreign-scope-references"] = ["$ACCEPT_GRANTED_SCOPES"];
+            } else {
+                let fileJSON = JSON.parse(fileContent);
+                if (answers.get("app2appType") === "authorize") {
+                    fileJSON.scopes.forEach(scope => {
+                        delete scope["grant-as-authority-to-apps"];
+                        delete scope["granted-apps"];
+                        answers.get("app2appScopes").forEach(element => {
+                            if (scope.name === element) {
+                                if (answers.get("app2appMethod").includes("user")) {
+                                    scope["granted-apps"] = ["$XSAPPNAME(application," + answers.get("app2appName") + ")"];
+                                }
+                                if (answers.get("app2appMethod").includes("machine")) {
+                                    scope["grant-as-authority-to-apps"] = ["$XSAPPNAME(application," + answers.get("app2appName") + ")"];
+                                }
+                            }
+                        });
+                    });
+                } else if (answers.get("app2appType") === "access") {
+                    delete fileJSON["authorities"];
+                    delete fileJSON["foreign-scope-references"];
+                    if (answers.get("app2appMethod").includes("user")) {
+                        fileJSON["foreign-scope-references"] = ["$ACCEPT_GRANTED_SCOPES"];
+                    }
+                    if (answers.get("app2appMethod").includes("machine")) {
+                        fileJSON["authorities"] = ["$ACCEPT_GRANTED_AUTHORITIES"];
+                    }
                 }
-                if (answers.get("app2appMethod").includes("machine")) {
-                    fileJSON["authorities"] = ["$ACCEPT_GRANTED_AUTHORITIES"];
-                }
+                fs2.writeFile(fileDest, JSON.stringify(fileJSON, null, 2), "utf8", function (err) {
+                    if (err) {
+                        this.log(err.message);
+                        return;
+                    }
+                });
             }
-            fs2.writeFile(fileDest, JSON.stringify(fileJSON, null, 2), 'utf8', function (err) {
-                if (err) {
-                    thisf.log(err.message);
-                    return;
-                }
-            });
-
             this.log("");
             this.log("Project files have been updated.");
             this.log("");
             this.log("You can update the xsuaa service instance as follows without needing to build & deploy the entire project:");
-            this.log("  cf update-service " + answers.get("projectName") + "-uaa -c xs-security.json");
+            if (this.config.get("BTPRuntime") === "Kyma") {
+                this.log("  helm upgrade " + answers.get("projectName") + "-srv helm/" + answers.get("projectName") + "-srv -f helm/" + answers.get("projectName") + "-srv/templates/service-uaa.yaml -n " + answers.get("namespace"));
+            } else {
+                this.log("  cf update-service " + answers.get("projectName") + "-uaa -c xs-security.json");
+            }
             this.log("");
         } else {
             this.log("");

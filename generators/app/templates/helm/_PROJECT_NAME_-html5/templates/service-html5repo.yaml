@@ -1,0 +1,23 @@
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceInstance
+metadata:
+  name: {{ .Values.services.html5repo.name }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.services.html5repo.name }}
+spec:
+  externalName: {{ .Values.services.html5repo.name }}
+  serviceOfferingName: html5-apps-repo
+  servicePlanName: app-host
+<% if(!managedAppRouter){ -%>
+---
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceInstance
+metadata:
+  name: {{ .Values.services.html5report.name }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.services.html5report.name }}
+spec:
+  externalName: {{ .Values.services.html5report.name }}
+  serviceOfferingName: html5-apps-repo
+  servicePlanName: app-runtime
+<% } -%>

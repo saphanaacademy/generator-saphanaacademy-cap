@@ -1,0 +1,121 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.services.srv.name }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+    app: {{ .Values.services.srv.name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.services.srv.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.services.srv.name }}
+    spec:
+      containers:
+        - image: "{{ .Values.dockerID }}/{{ .Values.services.srv.image.repository }}:{{ .Values.services.srv.image.tag }}"
+          name: {{ .Values.services.srv.name }}
+          imagePullPolicy: {{ .Values.services.srv.image.pullPolicy }}
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "1"
+            requests:
+              memory: 256Mi
+              cpu: "0.2"
+          ports:
+            - name: http
+              containerPort: {{ .Values.services.srv.image.port }}
+<% if(authentication || api || routes || connectivity || em || applicationLogging || multiTenant || hana || schemaName !== '' || hanaTargetHDI !== '' || credStore !== "" || app2appType === "access"){ -%>
+          env:
+            - name: SERVICE_BINDING_ROOT
+              value: /bindings
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.services.srv.name }}
+          volumeMounts:
+<% } -%>
+<% if(authentication || api){ -%>
+            - name: <%= projectName %>-uaa
+              mountPath: "/bindings/<%= projectName %>-uaa"
+              readOnly: true
+<% } -%>
+<% if(api || html5repo || app2appType === "access"){ -%>
+            - name: <%= projectName %>-dest
+              mountPath: "/bindings/<%= projectName %>-dest"
+              readOnly: true
+<% } -%>
+<% if(multiTenant){ -%>
+            - name: <%= projectName %>-registry
+              mountPath: "/bindings/<%= projectName %>-registry"
+              readOnly: true
+            - name: <%= projectName %>-sm
+              mountPath: "/bindings/<%= projectName %>-sm"
+              readOnly: true
+<% if(common){ -%>
+            - name: <%= projectName %>-hdicommon
+              mountPath: "/bindings/<%= projectName %>-hdicommon"
+              readOnly: true
+<% } -%>
+<% } else if (hana || schemaName !== '' || hanaTargetHDI !== ''){ -%>
+            - name: <%= projectName %>-hdi
+              mountPath: "/bindings/<%= projectName %>-hdi"
+              readOnly: true
+<% } -%>
+<% if(applicationLogging){ -%>
+            - name: <%= projectName %>-logging
+              mountPath: "/bindings/<%= projectName %>-logging"
+              readOnly: true
+<% } -%>
+<% if(em){ -%>
+            - name: <%= projectName %>-em
+              mountPath: "/bindings/<%= projectName %>-em"
+              readOnly: true
+<% } -%>
+<% if(dockerRepositoryVisibility === 'private'){ -%>
+      imagePullSecrets:
+        - name: {{ .Values.services.srv.image.imagePullSecretName }}
+<% } -%>
+<% if(authentication || api || routes || connectivity || em || applicationLogging || multiTenant || hana || schemaName !== '' || hanaTargetHDI !== '' || credStore !== "" || app2appType === "access"){ -%>
+      volumes:
+<% } -%>
+<% if(authentication || api){ -%>
+        - name: <%= projectName %>-uaa
+          secret:
+            secretName: {{ .Values.services.uaa.bindingSecretName }}
+<% } -%>
+<% if(api || html5repo || app2appType === "access"){ -%>
+        - name: <%= projectName %>-dest
+          secret:
+            secretName: {{ .Values.services.dest.bindingSecretName }}
+<% } -%>
+<% if(multiTenant){ -%>
+        - name: <%= projectName %>-registry
+          secret:
+            secretName: {{ .Values.services.registry.bindingSecretName }}
+        - name: <%= projectName %>-sm
+          secret:
+            secretName: {{ .Values.services.sm.bindingSecretName }}
+<% if(common){ -%>
+        - name: <%= projectName %>-hdicommon
+          secret:
+            secretName: {{ .Values.services.hdicommon.bindingSecretName }}
+<% } -%>
+<% } else if (hana || schemaName !== '' || hanaTargetHDI !== ''){ -%>
+        - name: <%= projectName %>-hdi
+          secret:
+            secretName: {{ .Values.services.hdi.bindingSecretName }}
+<% } -%>
+<% if(applicationLogging){ -%>
+        - name: <%= projectName %>-logging
+          secret:
+            secretName: {{ .Values.services.logging.bindingSecretName }}
+<% } -%>
+<% if(em){ -%>
+        - name: <%= projectName %>-em
+          secret:
+            secretName: {{ .Values.services.em.bindingSecretName }}
+<% } -%>

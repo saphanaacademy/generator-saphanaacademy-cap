@@ -1,0 +1,42 @@
+dockerID: <%= dockerID %>
+clusterDomain: <%= clusterDomain %>
+gateway: <%= gateway %>
+services:
+  srv2:
+    name: <%= projectName %>-srv2
+    image:
+<% if(dockerRepositoryName !== ''){ -%>
+      repository: <%= dockerRepositoryName %>
+      tag: "<%= projectName %>-srv2"
+<% } else { -%>
+      repository: <%= projectName %>-srv2
+      tag: "latest"
+<% } -%>
+      pullPolicy: Always
+<% if(dockerRepositoryVisibility === 'private'){ -%>
+      imagePullSecretName: <%= dockerRegistrySecretName %>
+<% } -%>
+      port: 4004
+    service:
+      port: 4004
+<% if(authentication || api){ -%>
+  uaa:
+    bindingSecretName: <%= projectName %>-uaa-binding-secret
+<% } -%>
+<% if(api){ -%>
+  dest:
+    bindingSecretName: <%= projectName %>-dest-binding-secret
+<% } -%>
+<% if(multiTenant){ -%>
+  registry:
+    bindingSecretName: <%= projectName %>-registry-binding-secret
+  sm:
+    bindingSecretName: <%= projectName %>-sm-binding-secret
+<% if(common){ -%>
+  hdicommon:
+    bindingSecretName: <%= projectName %>-hdicommon-binding-secret
+<% } -%>
+<% } else if (hana){ -%>
+  hdi:
+    bindingSecretName: <%= projectName %>-hdi-binding-secret
+<% } -%>

@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.services.app.name }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+    app: {{ .Values.services.app.name }}
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: {{ .Values.services.app.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.services.app.name }}
+    spec:
+      containers:
+        - image: "{{ .Values.dockerID }}/{{ .Values.services.app.image.repository }}:{{ .Values.services.app.image.tag }}"
+          name: {{ .Values.services.app.name }}
+          imagePullPolicy: {{ .Values.services.app.image.pullPolicy }}
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "1"
+            requests:
+              memory: 256Mi
+              cpu: "0.2"
+          ports:
+            - name: http
+              containerPort: {{ .Values.services.app.image.port }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.services.app.name }}
+<% if(authentication || html5repo || !managedAppRouter){ -%>
+          volumeMounts:
+<% } -%>
+<% if(authentication || html5repo){ -%>
+            - name: <%= projectName %>-uaa
+              mountPath: "/etc/secrets/sapcp/xsuaa/<%= projectName %>-uaa"
+              readOnly: true
+<% } -%>
+<% if(html5repo){ -%>
+            - name: <%= projectName %>-dest
+              mountPath: "/etc/secrets/sapcp/destination/<%= projectName %>-dest"
+              readOnly: true
+<% if(!managedAppRouter){ -%>
+            - name: <%= projectName %>-html5report
+              mountPath: "/etc/secrets/sapcp/html5-apps-repo-rt/<%= projectName %>-html5report"
+              readOnly: true
+<% } -%>
+<% } -%>
+<% if(dockerRepositoryVisibility === 'private'){ -%>
+      imagePullSecrets:
+        - name: {{ .Values.services.app.image.imagePullSecretName }}
+<% } -%>
+<% if(authentication || html5repo || !managedAppRouter){ -%>
+      volumes:
+<% } -%>
+<% if(authentication || html5repo){ -%>
+        - name: <%= projectName %>-uaa
+          secret:
+            secretName: {{ .Values.services.uaa.bindingSecretName }}
+<% } -%>
+<% if(html5repo){ -%>
+        - name: <%= projectName %>-dest
+          secret:
+            secretName: {{ .Values.services.dest.bindingSecretName }}
+<% if(!managedAppRouter){ -%>
+        - name: <%= projectName %>-html5report
+          secret:
+            secretName: {{ .Values.services.html5report.bindingSecretName }}
+<% } -%>
+<% } -%>

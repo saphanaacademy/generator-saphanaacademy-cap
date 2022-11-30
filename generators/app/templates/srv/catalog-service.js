@@ -876,7 +876,11 @@ module.exports = cds.service.impl(async function () {
             /*
             options = {
                 method: 'GET',
+<% if(BTPRuntime === "Kyma"){ -%>
+                url: 'https://<%= app2appName %>-srv.<%= clusterDomain %>/catalog/',
+<% }else{ -%>
                 url: 'https://<%= cforg %>-<%= cfspace %>-<%= app2appName %>-srv.cfapps.<%= cfregion %>.hana.ondemand.com/catalog/',
+<% } -%>
                 headers: {
                     Authorization: req.headers.authorization
                 }
@@ -920,7 +924,11 @@ module.exports = cds.service.impl(async function () {
             /*
             let options2 = {
                 method: 'GET',
+<% if(BTPRuntime === "Kyma"){ -%>
+                url: 'https://<%= app2appName %>-srv.<%= clusterDomain %>/catalog/',
+<% }else{ -%>
                 url: 'https://<%= cforg %>-<%= cfspace %>-<%= app2appName %>-srv.cfapps.<%= cfregion %>.hana.ondemand.com/catalog/',
+<% } -%>
                 headers: {
                     Authorization: 'Bearer ' + res1.data.access_token
                 }

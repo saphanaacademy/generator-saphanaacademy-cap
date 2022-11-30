@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.jobs.html5.name }}
+data:
+  EXIT_PROCESS_AFTER_UPLOAD: 'true'
+  SAP_CLOUD_SERVICE: '<%= projectName %>-service'
+  BACKEND_DESTINATIONS: |
+    [
+      {
+        "Name": "<%= projectName %>-srv",
+        "Description": "<%= displayName %> - Server Module",
+        "Type": "HTTP",
+        "ProxyType": "Internet",
+        "URL": "https://{{ .Values.services.srv.name }}.{{ .Values.clusterDomain }}/",
+        "Authentication": "NoAuthentication"
+<% if(authentication){ -%>
+        ,"HTML5.ForwardAuthToken": true
+<% } -%>
+      }
+<% if(srv2){ -%>
+      ,
+      {
+        "Name": "<%= projectName %>-srv2",
+        "Description": "<%= displayName %> - Additional Server Module",
+        "Type": "HTTP",
+        "ProxyType": "Internet",
+        "URL": "https://{{ .Values.services.srv2.name }}.{{ .Values.clusterDomain }}/",
+        "Authentication": "NoAuthentication"
+<% if(authentication){ -%>
+        ,"HTML5.ForwardAuthToken": true
+<% } -%>
+      }
+<% } -%>
+<% if(srvjs){ -%>
+      ,
+      {
+        "Name": "<%= projectName %>-srvjs",
+        "Description": "<%= displayName %> - Additional Server Module",
+        "Type": "HTTP",
+        "ProxyType": "Internet",
+        "URL": "https://{{ .Values.services.srvjs.name }}.{{ .Values.clusterDomain }}/",
+        "Authentication": "NoAuthentication"
+<% if(authentication){ -%>
+        ,"HTML5.ForwardAuthToken": true
+<% } -%>
+      }
+<% } -%>
+    ]

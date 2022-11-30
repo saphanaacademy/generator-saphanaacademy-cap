@@ -26,6 +26,10 @@ const services = xsenv.getServices({
 <% if(hana){ -%>
 const hdbext = require('@sap/hdbext');
 <% if(multiTenant){ -%>
+<% if (BTPRuntime === 'Kyma') {-%>
+// avoid inadvertent override of default plan (hdi-shared) in instance manager
+delete services.sm['plan'];
+<% } -%>
 const createInstanceManager = require('@sap/instance-manager').create;
 <% } -%>
 <% if(attributes === false && multiTenant === false){ -%>

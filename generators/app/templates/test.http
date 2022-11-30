@@ -370,6 +370,7 @@ GET http://localhost:5002/srvjs/info
 ###
 <% if(api){ -%>
 GET http://localhost:5002/srvjs/dest<% if(apiNW){ -%>?destination=<%= projectName %>-nw&path=Shippers?$top=1<% } -%>
+
 ###
 <% } -%>
 <% if(hana){ -%>

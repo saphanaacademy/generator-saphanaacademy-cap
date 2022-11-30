@@ -1,0 +1,10 @@
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceInstance
+metadata:
+  name: '{{ .Values.services.sm.name }}'
+  labels:
+    app.kubernetes.io/name: '{{ .Values.services.sm.name }}'
+spec:
+  externalName: '{{ .Values.services.sm.name }}'
+  serviceOfferingName: service-manager
+  servicePlanName: container

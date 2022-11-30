@@ -1,0 +1,26 @@
+dockerID: <%= dockerID %>
+jobs:
+  db:
+    name: <%= projectName %>-db
+    image:
+<% if(dockerRepositoryName !== ''){ -%>
+      repository: <%= dockerRepositoryName %>
+      tag: "<%= projectName %>-db"
+<% } else { -%>
+      repository: <%= projectName %>-db
+      tag: "latest"
+<% } -%>
+      pullPolicy: Always
+<% if(dockerRepositoryVisibility === 'private'){ -%>
+      imagePullSecretName: <%= dockerRegistrySecretName %>
+<% } -%>
+  hdi:
+    bindingSecretName: <%= projectName %>-hdi-binding-secret
+<% if(schemaName !== "" && hanaTargetHDI === ""){ -%>
+  schema:
+    bindingSecretName: <%= projectName %>-db-<%= schemaName %>-binding-secret
+<% } -%>
+<% if(hanaTargetHDI !== ""){ -%>
+  hanaTargetHDI:
+    bindingSecretName: <%= projectName %>-db-<%= hanaTargetHDI %>-binding-secret
+<% } -%>

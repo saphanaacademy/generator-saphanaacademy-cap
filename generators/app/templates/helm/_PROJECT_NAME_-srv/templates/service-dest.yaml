@@ -1,0 +1,233 @@
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceInstance
+metadata:
+  name: {{ .Values.services.dest.name }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.services.dest.name }}
+spec:
+  externalName: {{ .Values.services.dest.name }}
+  serviceOfferingName: destination
+  servicePlanName: lite
+  parameters:
+<% if(html5repo){ -%>
+    HTML5Runtime_enabled: true
+<% } -%>
+    init_data:
+      instance:
+        existing_destinations_policy: ignore
+        destinations:
+<% if(apiGRAPH){ -%>
+          - Name: <%= projectName %>-graph-api
+            Description: SAP Graph
+            URL: <%= GraphURL %>
+            Type: HTTP
+            ProxyType: Internet
+<% if(authentication){ -%>
+<% if(GraphSameSubaccount){ -%>
+            Authentication: OAuth2JWTBearer
+            tokenServiceURL: <%= GraphTokenURL %>/oauth/token
+            clientId: <SetValue>
+            clientSecret: <SetValue>
+<% }else{ -%>
+            Authentication: OAuth2SAMLBearerAssertion
+            audience: <%= GraphTokenURL %>
+            authnContextClassRef: urn:oasis:names:tc:SAML:2.0:ac:classes:PreviousSession
+            clientKey: <SetValue>
+            tokenServiceURL: <%= GraphTokenURL %>/oauth/token/alias/<SetValue>
+            tokenServiceUser: <SetValue>
+            tokenServicePassword: <SetValue>
+            nameIdFormat: urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress
+            userIdSource: email
+<% } -%>
+<% }else{ -%>
+            Authentication: OAuth2ClientCredentials
+            tokenServiceURL: <%= GraphTokenURL %>/oauth/token
+            clientId: <SetValue>
+            clientSecret: <SetValue>
+<% } -%>
+            tokenServiceURLType: Dedicated
+            URL.headers.Application-Interface-Key: <SetValue>
+            HTML5.DynamicDestination: true
+<% } -%>
+<% if(apiS4HCSO){ -%>
+          - Name: <%= projectName %>-API_SALES_ORDER_SRV
+            Description: SAP S/4HANA Cloud Sales Order (A2X)
+            URL: https://sandbox.api.sap.com
+            Type: HTTP
+            ProxyType: Internet
+            Authentication: NoAuthentication
+            URL.headers.APIKey: <SetValue>
+            URL.headers.Application-Interface-Key: <SetValue>
+            HTML5.DynamicDestination: true
+<% } -%>
+<% if(apiS4HCBP){ -%>
+          - Name: <%= projectName %>-API_BUSINESS_PARTNER
+            Description: SAP S/4HANA Cloud Business Partner (A2X)
+            URL: https://sandbox.api.sap.com
+            Type: HTTP
+            ProxyType: Internet
+            Authentication: NoAuthentication
+            URL.headers.APIKey: <SetValue>
+            URL.headers.Application-Interface-Key: <SetValue>
+            HTML5.DynamicDestination: true
+<% } -%>
+<% if(apiSFSFRC && SFAPIAccess === ''){ -%>
+          - Name: <%= projectName %>-RCMCandidate
+            Description: SAP SuccessFactors Recruiting
+            URL: https://sandbox.api.sap.com
+            Type: HTTP
+            ProxyType: Internet
+            Authentication: NoAuthentication
+            URL.headers.APIKey: <SetValue>
+            URL.headers.Application-Interface-Key: <SetValue>
+            HTML5.DynamicDestination: true
+<% } -%>
+<% if(apiSFSFEC && SFAPIAccess === ''){ -%>
+          - Name: <%= projectName %>-ECEmploymentInformation
+            Description: SAP SuccessFactors Employee Central
+            URL: https://sandbox.api.sap.com
+            Type: HTTP
+            ProxyType: Internet
+            Authentication: NoAuthentication
+            URL.headers.APIKey: <SetValue>
+            URL.headers.Application-Interface-Key: <SetValue>
+            HTML5.DynamicDestination: true
+<% } -%>
+<% if(apiARIBPO){ -%>
+          - Name: <%= projectName %>-ariba-api
+            Description: SAP Ariba
+            URL: https://openapi.ariba.com
+            Type: HTTP
+            ProxyType: Internet
+            Authentication: OAuth2ClientCredentials
+            tokenServiceURL: https://api.ariba.com/v2/oauth/token
+            clientId: <SetValue>
+            clientSecret: <SetValue>
+            URL.headers.X-ARIBA-NETWORK-ID: <SetValue>
+            URL.headers.APIKey: <SetValue>
+            URL.headers.Application-Interface-Key: <SetValue>
+            HTML5.DynamicDestination: true
+<% } -%>
+<% if(apiARIBWS){ -%>
+          - Name: <%= projectName %>-ariba-ws
+            Description: SAP Ariba Web Services
+            URL: https://s1.ariba.com
+            Type: HTTP
+            ProxyType: Internet
+            Authentication: BasicAuthentication
+            User: <SetValue>
+            Password: <SetValue>
+            Realm: <%= AribaRealm %>
+            URL.headers.Application-Interface-Key: <SetValue>
+            HTML5.DynamicDestination: true
+<% } -%>
+<% if(apiFGCN || apiFGAP){ -%>
+          - Name: <%= projectName %>-fieldglass-api
+            Description: SAP Fieldglass
+            URL: https://<%= FGHost %>.fgvms.com
+            Type: HTTP
+            ProxyType: Internet
+            Authentication: OAuth2ClientCredentials
+            tokenServiceURL: https://<%= FGHost %>.fgvms.com/api/oauth2/v2.0/token
+            tokenServiceURL.headers.x-ApplicationKey: <SetValue>
+            clientId: <SetValue>
+            clientSecret: <SetValue>
+            URL.headers.x-ApplicationKey: <SetValue>
+            URL.headers.Application-Interface-Key: <SetValue>
+            HTML5.DynamicDestination: true
+<% } -%>
+<% if(apiCONC){ -%>
+          - Name: <%= projectName %>-concur-api
+            Description: SAP Concur
+            URL: <%= ConcurGeolocation %>
+            Type: HTTP
+            ProxyType: Internet
+            Authentication: NoAuthentication
+            token_url: <%= ConcurGeolocation %>/oauth2/v0/token
+            client_id: <SetValue>
+            client_secret: <SetValue>
+            refresh_token: <SetValue>
+            URL.headers.Application-Interface-Key: <SetValue>
+            HTML5.DynamicDestination: true
+<% } -%>
+<% if(apiAICORE){ -%>
+          - Name: <%= projectName %>-aicore-api
+            Description: SAP AI Core
+            URL: <%= AICoreURL %>
+            Type: HTTP
+            ProxyType: Internet
+            Authentication: OAuth2ClientCredentials
+            tokenServiceURL: <%= AICoreTokenURL %>/oauth/token
+            clientId: <SetValue>
+            clientSecret: <SetValue>
+            URL.headers.AI-Resource-Group: <%= AICoreResourceGroup %>
+            URL.headers.Application-Interface-Key: <SetValue>
+            HTML5.DynamicDestination: true
+<% } -%>
+<% if(apiSACTenant){ -%>
+          - Name: <%= projectName %>-sac-tenant-api
+            Description: SAP Analytics Cloud Tenant API
+            URL: <%= SACHost %>
+            Type: HTTP
+            ProxyType: Internet
+            Authentication: OAuth2SAMLBearerAssertion
+            audience: <%= SACAudience %>
+            authnContextClassRef: urn:oasis:names:tc:SAML:2.0:ac:classes:PreviousSession
+            clientKey: <SetValue>
+            tokenServiceURL: <%= SACTokenURL %>
+            tokenServiceUser: <SetValue>
+            tokenServicePassword: <SetValue>
+            nameIdFormat: urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress
+            userIdSource: email
+            URL.headers.Application-Interface-Key: <SetValue>
+            HTML5.DynamicDestination: true
+<% } -%>
+<% if(apiHERE){ -%>
+          - Name: <%= projectName %>-HERE-api
+            Description: HERE Location Services
+            URL: https://geocode.search.hereapi.com
+            Type: HTTP
+            ProxyType: Internet
+            Authentication: NoAuthentication
+            URL.queries.apiKey: <SetValue>
+            HTML5.DynamicDestination: true
+<% } -%>
+<% if(apiNeoWs){ -%>
+          - Name: <%= projectName %>-NASA-api
+            Description: NASA APIs
+            URL: https://api.nasa.gov
+            Type: HTTP
+            ProxyType: Internet
+            Authentication: NoAuthentication
+            URL.queries.api_key: <SetValue>
+            HTML5.DynamicDestination: true
+<% } -%>
+<% if(apiNW){ -%>
+          - Name: <%= projectName %>-nw
+            Description: Northwind
+            URL: https://services.odata.org/v2/Northwind/Northwind.svc
+            Type: HTTP
+            ProxyType: Internet
+            Authentication: NoAuthentication
+            HTML5.DynamicDestination: true
+<% } -%>
+<% if(app2appType === "access"){ -%>
+          - Name: <%= projectName %>-<%= app2appName %>
+            Description: <%= displayName %> - App2App <%= app2appName %>
+<% if(BTPRuntime === "Kyma"){ -%>
+            URL: https://<%= app2appName %>-srv.<%= clusterDomain %>
+<% }else{ -%>
+            URL: https://${org}-${space}-<%= app2appName %>-srv.${default-domain}
+<% } -%>
+            Type: HTTP
+            ProxyType: Internet
+            Authentication: NoAuthentication
+<% } -%>
+<% if(html5repo && hana){ -%>
+          - Name: ui5
+            Description: SAPUI5
+            URL: https://ui5.sap.com
+            Type: HTTP
+            ProxyType: Internet
+            Authentication: NoAuthentication
+<% } -%>

@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.jobs.dbcommon.name }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+    app: {{ .Values.jobs.dbcommon.name }}
+spec:
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.jobs.dbcommon.name }}
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - image: "{{ .Values.dockerID }}/{{ .Values.jobs.dbcommon.image.repository }}:{{ .Values.jobs.dbcommon.image.tag }}"
+          name: {{ .Values.jobs.dbcommon.name }}
+          imagePullPolicy: {{ .Values.jobs.dbcommon.image.pullPolicy }}
+          env:
+            - name: SERVICE_BINDING_ROOT
+              value: /bindings
+            - name: EXIT
+              value: 'true'
+          volumeMounts:
+            - name: <%= projectName %>-hdicommon
+              mountPath: "/bindings/<%= projectName %>-hdi-common"
+              readOnly: true
+<% if(dockerRepositoryVisibility === 'private'){ -%>
+      imagePullSecrets:
+        - name: {{ .Values.jobs.dbcommon.image.imagePullSecretName }}
+<% } -%>
+      volumes:
+        - name: <%= projectName %>-hdicommon
+          secret:
+            secretName: {{ .Values.jobs.hdicommon.bindingSecretName }}

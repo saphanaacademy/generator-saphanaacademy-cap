@@ -1,0 +1,18 @@
+dockerID: <%= dockerID %>
+jobs:
+  dbcommon:
+    name: <%= projectName %>-dbcommon
+    image:
+<% if(dockerRepositoryName !== ''){ -%>
+      repository: <%= dockerRepositoryName %>
+      tag: "<%= projectName %>-dbcommon"
+<% } else { -%>
+      repository: <%= projectName %>-dbcommon
+      tag: "latest"
+<% } -%>
+      pullPolicy: Always
+<% if(dockerRepositoryVisibility === 'private'){ -%>
+      imagePullSecretName: <%= dockerRegistrySecretName %>
+<% } -%>
+  hdicommon:
+    bindingSecretName: <%= projectName %>-hdicommon-binding-secret
