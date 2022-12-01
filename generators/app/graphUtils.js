@@ -73,7 +73,7 @@ async function getgraphDataSources(thisf, answers) {
                 graphDataSources.forEach(element => {
                     thisf.log("Accessing SAP Graph: Writing EDMX:", element.name);
                     fileDest = destinationRoot + "/" + element.name;
-                    fs2.writeFile(fileDest + ".edmx", element.metadata, 'utf8', function (err) {
+                    fs2.writeFileSync(fileDest + ".edmx", element.metadata, 'utf8', function (err) {
                         if (err) {
                             thisf.log(err.message);
                             return;

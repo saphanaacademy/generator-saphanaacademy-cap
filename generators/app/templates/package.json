@@ -129,8 +129,10 @@
           "options": {
             "model": [
               "db",
+<% if(hana){ -%>
               "db/data-config",
               "db/data-test",
+<% } -%>
 <% if(srv2){ -%>
               "srv2",
 <% } -%>
@@ -155,8 +157,10 @@
             "model": [
 <% if(hana || schemaName !== '' || hanaTargetHDI !== ''){ -%>
               "db",
+<% if(hana){ -%>
               "db/data-config",
               "db/data-test",
+<% } -%>
 <% } -%>
 <% if(ui || authentication){ -%>
               "app",
@@ -179,8 +183,10 @@
             "model": [
 <% if(hana || schemaName !== '' || hanaTargetHDI !== ''){ -%>
               "db",
+<% if(hana){ -%>
               "db/data-config",
               "db/data-test",
+<% } -%>
 <% } -%>
 <% if(ui || authentication){ -%>
               "app",
@@ -335,33 +341,37 @@
       "db": {
         "[production]": {
 <% if(multiTenant){ -%>
-          "kind": "hana-mt",
+          "kind": "hana-mt"
 <% } else { -%>
-          "kind": "hana-cloud",
+          "kind": "hana-cloud"
 <% } -%>
 <% if(BTPRuntime === 'Kyma'){ -%>
-          "pool": {
+          ,"pool": {
             "acquireTimeoutMillis": 30000,
             "min": 0,
             "max": 100,
             "fifo": false
-          },
+          }
 <% } -%>
-          "model": [
+<% if(hana){ -%>
+          ,"model": [
             "db/data-config",
             "db/data-test"
           ]
+<% } -%>
         },
         "[development]": {
 <% if(multiTenant){ -%>
-          "kind": "sql-mt",
+          "kind": "sql-mt"
 <% } else { -%>
-          "kind": "sql",
+          "kind": "sql"
 <% } -%>
-          "model": [
+<% if(hana){ -%>
+          ,"model": [
             "db/data-config",
             "db/data-test"
           ]
+<% } -%>
         },
         "model": [
           "db",

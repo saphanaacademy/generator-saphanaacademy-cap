@@ -1046,52 +1046,54 @@ module.exports = class extends Generator {
                                                                                                                 if (!((file.substring(0, 31) === 'app/resources/fiori/xs-app.json' || file.substring(0, 32) === 'app/resources/fiori/package.json' || file.substring(0, 35) === 'app/resources/fiori/ui5-deploy.yaml') && answers.get('html5repo') === false)) {
                                                                                                                   if (!((file.substring(0, 31) === 'app/resources/html5/xs-app.json' || file.substring(0, 32) === 'app/resources/html5/package.json' || file.substring(0, 35) === 'app/resources/html5/ui5-deploy.yaml' || file.substring(0, 40) === 'app/resources/html5/webapp/manifest.json') && answers.get('html5repo') === false)) {
                                                                                                                     if (!(file.substring(0, 2) === 'db' && answers.get('hana') === false && answers.get('schemaName') === "" && answers.get('hanaTargetHDI') === "")) {
-                                                                                                                      if (!((file.substring(0, 17) === 'db/data-model.cds' || file.substring(0, 12) === 'db/data-test' || file.substring(0, 14) === 'db/data-config') && answers.get('hana') === false)) {
-                                                                                                                        if (!(file.substring(0, 41) === 'db/data-test/data/_PROJECT_NAME_.db.Sales' && answers.get('hana') === false)) {
-                                                                                                                          if (!(file.substring(0, 45) === 'db/data-test/data/_PROJECT_NAME_.db.Anomalies' && answers.get('apiAICORE') === false)) {
-                                                                                                                            if (!(file.substring(0, 44) === 'db/data-test/data/_PROJECT_NAME_.db.Students' && (answers.get('hana') === false || answers.get('srv2') === false))) {
-                                                                                                                              if (!((file.substring(0, 39) === 'db/src/_PROJECT_NAME_DB_EXTERNAL_ACCESS') && answers.get('hanaExternalHDI') === false)) {
-                                                                                                                                if (!((file.substring(0, 48) === 'db/data-config/data/_PROJECT_NAME_.db.Conditions' || file.substring(0, 53) === 'db/data-test/data/_PROJECT_NAME_.db.CustomerProcesses' || file.substring(0, 44) === 'db/data-config/data/_PROJECT_NAME_.db.Status') && (answers.get('apiS4HCBP') === false || answers.get('em') === false))) {
-                                                                                                                                  if (!(file.substring(0, 7) === 'db/src/' && answers.get('hanaNative') === false && answers.get('hanaExternalHDI') === false && answers.get('hanaTargetHDI') === "" && answers.get('schemaName') === "")) {
-                                                                                                                                    if (!((file.substring(0, 10) === 'db/src/SP_' || file.substring(0, 10) === 'db/src/TT_' || file.substring(0, 10) === 'db/src/CV_' || file.substring(0, 10) === 'db/src/TF_' || file.substring(0, 10) === 'db/src/SYS') && answers.get('hanaNative') === false)) {
-                                                                                                                                      const sOrigin = this.templatePath(file);
-                                                                                                                                      let fileDest = file;
-                                                                                                                                      if (fileDest.includes('_PROJECT_NAME_.db')) {
-                                                                                                                                        let folder = 'db/data-test/data';
-                                                                                                                                        if (fileDest.substring(0, 19) === 'db/data-config/data') folder = 'db/data-config/data';
-                                                                                                                                        fileDest = folder + '/' + answers.get('projectName') + '.db-' + fileDest.split(".", 3)[2] + '.csv';
-                                                                                                                                      }
-                                                                                                                                      if (fileDest.includes('_PROJECT_NAME_DB_EXTERNAL_ACCESS')) {
-                                                                                                                                        let tempDest = 'db/src/' + answers.get('projectName').toUpperCase() + '_DB_EXTERNAL_ACCESS';
-                                                                                                                                        if (fileDest.includes('EXTERNAL_ACCESS_G')) {
-                                                                                                                                          tempDest += '_G';
+                                                                                                                      if (!(file.substring(0, 16) === 'db/undeploy.json' && !(answers.get('schemaName') === "" && answers.get('hanaTargetHDI') === ""))) {
+                                                                                                                        if (!((file.substring(0, 17) === 'db/data-model.cds' || file.substring(0, 12) === 'db/data-test' || file.substring(0, 14) === 'db/data-config') && answers.get('hana') === false)) {
+                                                                                                                          if (!(file.substring(0, 41) === 'db/data-test/data/_PROJECT_NAME_.db.Sales' && answers.get('hana') === false)) {
+                                                                                                                            if (!(file.substring(0, 45) === 'db/data-test/data/_PROJECT_NAME_.db.Anomalies' && answers.get('apiAICORE') === false)) {
+                                                                                                                              if (!(file.substring(0, 44) === 'db/data-test/data/_PROJECT_NAME_.db.Students' && (answers.get('hana') === false || answers.get('srv2') === false))) {
+                                                                                                                                if (!((file.substring(0, 39) === 'db/src/_PROJECT_NAME_DB_EXTERNAL_ACCESS') && answers.get('hanaExternalHDI') === false)) {
+                                                                                                                                  if (!((file.substring(0, 48) === 'db/data-config/data/_PROJECT_NAME_.db.Conditions' || file.substring(0, 53) === 'db/data-test/data/_PROJECT_NAME_.db.CustomerProcesses' || file.substring(0, 44) === 'db/data-config/data/_PROJECT_NAME_.db.Status') && (answers.get('apiS4HCBP') === false || answers.get('em') === false))) {
+                                                                                                                                    if (!(file.substring(0, 7) === 'db/src/' && answers.get('hanaNative') === false && answers.get('hanaExternalHDI') === false && answers.get('hanaTargetHDI') === "" && answers.get('schemaName') === "")) {
+                                                                                                                                      if (!((file.substring(0, 10) === 'db/src/SP_' || file.substring(0, 10) === 'db/src/TT_' || file.substring(0, 10) === 'db/src/CV_' || file.substring(0, 10) === 'db/src/TF_' || file.substring(0, 10) === 'db/src/SYS') && answers.get('hanaNative') === false)) {
+                                                                                                                                        const sOrigin = this.templatePath(file);
+                                                                                                                                        let fileDest = file;
+                                                                                                                                        if (fileDest.includes('_PROJECT_NAME_.db')) {
+                                                                                                                                          let folder = 'db/data-test/data';
+                                                                                                                                          if (fileDest.substring(0, 19) === 'db/data-config/data') folder = 'db/data-config/data';
+                                                                                                                                          fileDest = folder + '/' + answers.get('projectName') + '.db-' + fileDest.split(".", 3)[2] + '.csv';
                                                                                                                                         }
-                                                                                                                                        fileDest = tempDest + '.' + fileDest.split(".", 3)[1];
-                                                                                                                                      }
-                                                                                                                                      if (fileDest.includes('app/resources/') && answers.get('html5repo')) {
-                                                                                                                                        if (answers.get('BTPRuntime') === "Kyma" && !(file === 'app/index.cds' || file.includes('annotations.cds'))) {
-                                                                                                                                          fileDest = 'html5/resources/' + fileDest.substring(14);
-                                                                                                                                          if (fileDest.includes('/webapp')) {
-                                                                                                                                            fileDest = fileDest.substring(0, fileDest.indexOf('/webapp')) + fileDest.substring(fileDest.indexOf('/webapp') + 7);
+                                                                                                                                        if (fileDest.includes('_PROJECT_NAME_DB_EXTERNAL_ACCESS')) {
+                                                                                                                                          let tempDest = 'db/src/' + answers.get('projectName').toUpperCase() + '_DB_EXTERNAL_ACCESS';
+                                                                                                                                          if (fileDest.includes('EXTERNAL_ACCESS_G')) {
+                                                                                                                                            tempDest += '_G';
                                                                                                                                           }
-                                                                                                                                        } else {
-                                                                                                                                          fileDest = 'app/' + fileDest.substring(14);
+                                                                                                                                          fileDest = tempDest + '.' + fileDest.split(".", 3)[1];
                                                                                                                                         }
+                                                                                                                                        if (fileDest.includes('app/resources/') && answers.get('html5repo')) {
+                                                                                                                                          if (answers.get('BTPRuntime') === "Kyma" && !(file === 'app/index.cds' || file.includes('annotations.cds'))) {
+                                                                                                                                            fileDest = 'html5/resources/' + fileDest.substring(14);
+                                                                                                                                            if (fileDest.includes('/webapp')) {
+                                                                                                                                              fileDest = fileDest.substring(0, fileDest.indexOf('/webapp')) + fileDest.substring(fileDest.indexOf('/webapp') + 7);
+                                                                                                                                            }
+                                                                                                                                          } else {
+                                                                                                                                            fileDest = 'app/' + fileDest.substring(14);
+                                                                                                                                          }
+                                                                                                                                        }
+                                                                                                                                        if (fileDest === 'dotenv') {
+                                                                                                                                          fileDest = '.env';
+                                                                                                                                        }
+                                                                                                                                        if (fileDest === 'dotgitignore') {
+                                                                                                                                          fileDest = '.gitignore';
+                                                                                                                                        }
+                                                                                                                                        if (fileDest === 'dotdockerignore') {
+                                                                                                                                          fileDest = '.dockerignore';
+                                                                                                                                        }
+                                                                                                                                        if (fileDest.includes('helm/_PROJECT_NAME_-')) {
+                                                                                                                                          fileDest = fileDest.replace('_PROJECT_NAME_', answers.get('projectName'));
+                                                                                                                                        }
+                                                                                                                                        const sTarget = this.destinationPath(fileDest);
+                                                                                                                                        this.fs.copyTpl(sOrigin, sTarget, this.config.getAll());
                                                                                                                                       }
-                                                                                                                                      if (fileDest === 'dotenv') {
-                                                                                                                                        fileDest = '.env';
-                                                                                                                                      }
-                                                                                                                                      if (fileDest === 'dotgitignore') {
-                                                                                                                                        fileDest = '.gitignore';
-                                                                                                                                      }
-                                                                                                                                      if (fileDest === 'dotdockerignore') {
-                                                                                                                                        fileDest = '.dockerignore';
-                                                                                                                                      }
-                                                                                                                                      if (fileDest.includes('helm/_PROJECT_NAME_-')) {
-                                                                                                                                        fileDest = fileDest.replace('_PROJECT_NAME_', answers.get('projectName'));
-                                                                                                                                      }
-                                                                                                                                      const sTarget = this.destinationPath(fileDest);
-                                                                                                                                      this.fs.copyTpl(sOrigin, sTarget, this.config.getAll());
                                                                                                                                     }
                                                                                                                                   }
                                                                                                                                 }
@@ -1158,7 +1160,7 @@ module.exports = class extends Generator {
       });
 
     if (answers.get('schemaName') !== "") {
-      hanaUtils.processSchema(this, answers);
+      await hanaUtils.processSchema(this, answers);
       await hanaUtils.processSchemaAuth(this, answers);
     }
 
@@ -1266,7 +1268,7 @@ module.exports = class extends Generator {
             fileDest = path.join(this.destinationRoot(), "sa-kubeconfig-cicd.yaml");
             fs2.writeFile(fileDest, yaml.dump(fileText), 'utf-8', function (err) {
               if (err) {
-                console.log(err.message);
+                this.log(err.message);
                 return;
               }
             });

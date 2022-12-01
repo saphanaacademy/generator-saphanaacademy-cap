@@ -1,9 +1,9 @@
 FROM node:16-slim
 WORKDIR /app
+COPY srv .
 <% if(multiTenant){ -%>
 RUN chown -R node /app
 <% } -%>
-COPY srv .
 RUN npm install --only=production
 <% if(hana || schemaName !== '' || hanaTargetHDI !== '' || multiTenant){ -%>
 RUN apt-get update
