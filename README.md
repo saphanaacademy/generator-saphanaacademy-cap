@@ -56,7 +56,7 @@ yo saphanaacademy-cap:graph
 ```
 
 ## SAP BTP, Kyma runtime
-We assume you have pre-installed [node.js](https://nodejs.org/), have a [Docker Hub](https://hub.docker.com/) ID and the ability to build and push containers either via Docker [Desktop](https://www.docker.com/products/docker-desktop) or an alternative such as Rancher [Desktop](https://rancherdesktop.io/) or [podman](https://podman.io) or a CI/CD pipeline with [kaniko](https://github.com/GoogleContainerTools/kaniko).
+We assume you have pre-installed [node.js](https://nodejs.org/), have a [Docker Hub](https://hub.docker.com/) ID and the ability to build and push containers either via Docker [Desktop](https://www.docker.com/products/docker-desktop) or an alternative such as Paketo Builder with the [pack](https://buildpacks.io/docs/tools/pack/) CLI, Rancher [Desktop](https://rancherdesktop.io/) or [podman](https://podman.io) or a CI/CD pipeline with [kaniko](https://github.com/GoogleContainerTools/kaniko).
 
 The Kubernetes command-line tool [kubectl](https://kubernetes.io/docs/tasks/tools/) is required with the [kubelogin](https://github.com/int128/kubelogin) extension.
 

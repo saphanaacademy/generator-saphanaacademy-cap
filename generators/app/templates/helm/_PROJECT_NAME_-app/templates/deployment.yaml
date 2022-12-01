@@ -29,6 +29,9 @@ spec:
           ports:
             - name: http
               containerPort: {{ .Values.services.app.image.port }}
+          env:
+            - name: SERVICE_BINDING_ROOT
+              value: /bindings
           envFrom:
             - configMapRef:
                 name: {{ .Values.services.app.name }}
@@ -37,16 +40,16 @@ spec:
 <% } -%>
 <% if(authentication || html5repo){ -%>
             - name: <%= projectName %>-uaa
-              mountPath: "/etc/secrets/sapcp/xsuaa/<%= projectName %>-uaa"
+              mountPath: "/bindings/<%= projectName %>-uaa"
               readOnly: true
 <% } -%>
 <% if(html5repo){ -%>
             - name: <%= projectName %>-dest
-              mountPath: "/etc/secrets/sapcp/destination/<%= projectName %>-dest"
+              mountPath: "/bindings/<%= projectName %>-dest"
               readOnly: true
 <% if(!managedAppRouter){ -%>
             - name: <%= projectName %>-html5report
-              mountPath: "/etc/secrets/sapcp/html5-apps-repo-rt/<%= projectName %>-html5report"
+              mountPath: "/bindings/<%= projectName %>-html5report"
               readOnly: true
 <% } -%>
 <% } -%>
