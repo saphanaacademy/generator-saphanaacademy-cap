@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.services.redis.name }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+    app: {{ .Values.services.redis.name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.services.redis.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.services.redis.name }}
+    spec:
+      containers:
+      - name: {{ .Values.services.redis.name }}
+        image: "bitnami/redis:latest"
+        imagePullPolicy: "Always"
+        env:
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.services.redis.bindingSecretName }}
+              key: REDIS_PASSWORD
+        ports:
+        - name: http
+          containerPort: {{ .Values.services.redis.service.port }}
+        livenessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          initialDelaySeconds: 30
+          timeoutSeconds: 5
+        readinessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
+        resources:
+          requests:
+            memory: "150Mi"
+            cpu: "50m"
+          limits:
+            memory: "250Mi"
+            cpu: "100m"

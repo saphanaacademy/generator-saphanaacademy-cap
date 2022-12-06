@@ -50,3 +50,10 @@ services:
     bindingSecretName: <%= projectName %>-html5report-binding-secret
 <% } -%>
 <% } -%>
+<% if(externalSessionManagement){ -%>
+  redis:
+    name: <%= projectName %>-redis
+    bindingSecretName: <%= projectName %>-redis-binding-secret
+    service:
+      port: 6379
+<% } -%>

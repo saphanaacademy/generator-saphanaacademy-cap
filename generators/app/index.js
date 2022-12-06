@@ -579,6 +579,13 @@ module.exports = class extends Generator {
         default: false
       },
       {
+        when: response => (response.ui === true || response.multiTenant === true) && response.BTPRuntime === "Kyma",
+        type: "confirm",
+        name: "externalSessionManagement",
+        message: "Would you like to configure external session management (using Redis)?",
+        default: false
+      },
+      {
         type: "confirm",
         name: "srv2",
         message: "Would you like to include an additional backend service using SAP Cloud Application Programming Model?",
@@ -716,6 +723,7 @@ module.exports = class extends Generator {
         answers.dockerRepositoryVisibility = "";
         answers.kubeconfig = "";
         answers.buildCmd = "";
+        answers.externalSessionManagement = false;
       } else {
         if (answers.customDomain !== "") {
           answers.clusterDomain = answers.customDomain;
@@ -864,7 +872,7 @@ module.exports = class extends Generator {
       } else if (answers.APIKeyNASA === "") {
         answers.APIKeyNASA = "DEMO_KEY";
       }
-      if (answers.multiTenant === true && answers.authentication == false) {
+      if (answers.multiTenant === true && answers.authentication === false) {
         answers.authentication = true;
         answers.authorization = false;
         answers.app2app = false;
@@ -876,7 +884,7 @@ module.exports = class extends Generator {
         answers.haa = false;
         answers.GraphSameSubaccount = false;
       }
-      if (answers.apiSACTenant === true && answers.authentication == false) {
+      if (answers.apiSACTenant === true && answers.authentication === false) {
         answers.authentication = true;
       }
       if (!(answers.api === true && answers.BTPRuntime !== "Kyma")) {
@@ -897,6 +905,7 @@ module.exports = class extends Generator {
         answers.html5repo = false;
         answers.managedAppRouter = false;
         answers.multiTenant = false;
+        answers.externalSessionManagement = false;
       }
       if (answers.html5repo === true) {
         answers.srvPath = "";
@@ -905,6 +914,9 @@ module.exports = class extends Generator {
       } else {
         answers.srvPath = "/";
         answers.managedAppRouter = false;
+      }
+      if (answers.managedAppRouter === true) {
+        answers.externalSessionManagement = false;
       }
       if (answers.multiTenant === false) {
         answers.category = "";
@@ -1010,89 +1022,91 @@ module.exports = class extends Generator {
                                         if (!((file.substring(0, 35) === 'app/resources/fiori/ui5-deploy.yaml' || file.substring(0, 32) === 'app/resources/fiori/package.json') && answers.get('BTPRuntime') === 'Kyma')) {
                                           if (!((file.includes('service-uaa.yaml') || file.includes('binding-uaa.yaml')) && answers.get('authentication') === false && answers.get('api') === false && answers.get('html5repo') === false)) {
                                             if (!((file.includes('service-dest.yaml') || file.includes('binding-dest.yaml')) && answers.get('api') === false && answers.get('html5repo') === false && answers.get('app2appType') !== 'access')) {
-                                              if (!((file === 'mta.yaml' || file === 'xs-security.json') && answers.get('BTPRuntime') !== 'CF')) {
-                                                if (!(file === 'xs-security.json' && answers.get('authentication') === false && answers.get('api') === false && answers.get('html5repo') === false)) {
-                                                  if (!(file.includes('-em.yaml') && answers.get('em') === false)) {
-                                                    if (!(file === 'em.json' && (answers.get('em') === false || answers.get('BTPRuntime') === 'Kyma'))) {
-                                                      if (!((file === 'Jenkinsfile' || file.substring(0, 9) === '.pipeline' || file.includes('-cicd.')) && answers.get('cicd') === false)) {
-                                                        if (!(file.substring(0, 3) === 'haa' && answers.get('haa') === false)) {
-                                                          if (!(file.substring(0, 19) === 'srv/catalog-service' && answers.get('hana') === false && answers.get('api') === false && answers.get('app2app') === false)) {
-                                                            if (!(file === 'srv/lib/credStore.js' && answers.get('credStore') === '')) {
-                                                              if (!(file === 'srv/lib/utils.js' && (answers.get('apiARIBWS') === false && answers.get('apiCONC') === false))) {
-                                                                if (!(file === 'app/custom.js' && answers.get('multiTenant') === false)) {
-                                                                  if (!(file.substring(0, 3) === 'fts' && answers.get('toggles') === false)) {
-                                                                    if (!(file.substring(0, 8) === 'dbcommon' && answers.get('common') === false)) {
-                                                                      if (!(file.substring(0, 4) === 'srv2' && answers.get('srv2') === false)) {
-                                                                        if (!(file.substring(0, 5) === 'srvjs' && answers.get('srvjs') === false)) {
-                                                                          if (!(file === 'srv/server.js' && answers.get('v2support') === false && answers.get('multiTenant') === false && answers.get('swagger') === false)) {
-                                                                            if (!(file.substring(0, 32) === 'srv/external/API_SALES_ORDER_SRV' && answers.get('apiS4HCSO') === false)) {
-                                                                              if (!(file.substring(0, 33) === 'srv/external/API_BUSINESS_PARTNER' && answers.get('apiS4HCBP') === false)) {
-                                                                                if (!((file.substring(0, 25) === 'srv/external/RCMCandidate' || file.includes('map.html')) && answers.get('apiSFSFRC') === false)) {
-                                                                                  if (!(file.substring(0, 36) === 'srv/external/ECEmploymentInformation' && answers.get('apiSFSFEC') === false)) {
-                                                                                    if (!((file.substring(0, 25) === 'srv/external/AribaNetwork') && answers.get('apiARIBPO') === false)) {
-                                                                                      if (!(file.substring(0, 19) === 'srv/templates/Ariba' && answers.get('apiARIBWS') === false)) {
-                                                                                        if (!((file.substring(0, 33) === 'srv/external/FieldglassConnectors') && answers.get('apiFGCN') === false)) {
-                                                                                          if (!(file.substring(0, 34) === 'srv/templates/FieldglassConnectors' && answers.get('apiFGCN') === false)) {
-                                                                                            if (!((file.substring(0, 32) === 'srv/external/FieldglassApprovals') && answers.get('apiFGAP') === false)) {
-                                                                                              if (!((file.substring(0, 19) === 'srv/external/Concur') && answers.get('apiCONC') === false)) {
-                                                                                                if (!((file.substring(0, 16) === 'srv/external/SAC') && answers.get('apiSACTenant') === false)) {
-                                                                                                  if (!((file.substring(0, 33) === 'srv/external/HERELocationServices') && answers.get('apiHERE') === false)) {
-                                                                                                    if (!((file.substring(0, 38) === 'srv/external/NearEarthObjectWebService') && answers.get('apiNeoWs') === false)) {
-                                                                                                      if (!((file.substring(0, 15) === 'app/xs-app.json' || file.substring(0, 16) === 'app/package.json') && (answers.get('managedAppRouter') === true || (answers.get('authentication') === false && answers.get('ui') === false)))) {
-                                                                                                        if (!((file.substring(0, 13) === 'app/resources' || file.includes('i18n') || file.includes('app/index.cds')) && answers.get('ui') === false)) {
-                                                                                                          if (!((file.substring(0, 19) === 'app/resources/fiori' || file.includes('i18n') || file.includes('app/index.cds')) && answers.get('hana') === false)) {
-                                                                                                            if (!(file.includes('MediaSection.fragment.xml') && answers.get('apiAICORE') === false)) {
-                                                                                                              if (!((file.substring(0, 24) === 'app/resources/index.html') && answers.get('html5repo') === true)) {
-                                                                                                                if (!((file.substring(0, 31) === 'app/resources/fiori/xs-app.json' || file.substring(0, 32) === 'app/resources/fiori/package.json' || file.substring(0, 35) === 'app/resources/fiori/ui5-deploy.yaml') && answers.get('html5repo') === false)) {
-                                                                                                                  if (!((file.substring(0, 31) === 'app/resources/html5/xs-app.json' || file.substring(0, 32) === 'app/resources/html5/package.json' || file.substring(0, 35) === 'app/resources/html5/ui5-deploy.yaml' || file.substring(0, 40) === 'app/resources/html5/webapp/manifest.json') && answers.get('html5repo') === false)) {
-                                                                                                                    if (!(file.substring(0, 2) === 'db' && answers.get('hana') === false && answers.get('schemaName') === "" && answers.get('hanaTargetHDI') === "")) {
-                                                                                                                      if (!(file.substring(0, 16) === 'db/undeploy.json' && !(answers.get('schemaName') === "" && answers.get('hanaTargetHDI') === ""))) {
-                                                                                                                        if (!((file.substring(0, 17) === 'db/data-model.cds' || file.substring(0, 12) === 'db/data-test' || file.substring(0, 14) === 'db/data-config') && answers.get('hana') === false)) {
-                                                                                                                          if (!(file.substring(0, 41) === 'db/data-test/data/_PROJECT_NAME_.db.Sales' && answers.get('hana') === false)) {
-                                                                                                                            if (!(file.substring(0, 45) === 'db/data-test/data/_PROJECT_NAME_.db.Anomalies' && answers.get('apiAICORE') === false)) {
-                                                                                                                              if (!(file.substring(0, 44) === 'db/data-test/data/_PROJECT_NAME_.db.Students' && (answers.get('hana') === false || answers.get('srv2') === false))) {
-                                                                                                                                if (!((file.substring(0, 39) === 'db/src/_PROJECT_NAME_DB_EXTERNAL_ACCESS') && answers.get('hanaExternalHDI') === false)) {
-                                                                                                                                  if (!((file.substring(0, 48) === 'db/data-config/data/_PROJECT_NAME_.db.Conditions' || file.substring(0, 53) === 'db/data-test/data/_PROJECT_NAME_.db.CustomerProcesses' || file.substring(0, 44) === 'db/data-config/data/_PROJECT_NAME_.db.Status') && (answers.get('apiS4HCBP') === false || answers.get('em') === false))) {
-                                                                                                                                    if (!(file.substring(0, 7) === 'db/src/' && answers.get('hanaNative') === false && answers.get('hanaExternalHDI') === false && answers.get('hanaTargetHDI') === "" && answers.get('schemaName') === "")) {
-                                                                                                                                      if (!((file.substring(0, 10) === 'db/src/SP_' || file.substring(0, 10) === 'db/src/TT_' || file.substring(0, 10) === 'db/src/CV_' || file.substring(0, 10) === 'db/src/TF_' || file.substring(0, 10) === 'db/src/SYS') && answers.get('hanaNative') === false)) {
-                                                                                                                                        const sOrigin = this.templatePath(file);
-                                                                                                                                        let fileDest = file;
-                                                                                                                                        if (fileDest.includes('_PROJECT_NAME_.db')) {
-                                                                                                                                          let folder = 'db/data-test/data';
-                                                                                                                                          if (fileDest.substring(0, 19) === 'db/data-config/data') folder = 'db/data-config/data';
-                                                                                                                                          fileDest = folder + '/' + answers.get('projectName') + '.db-' + fileDest.split(".", 3)[2] + '.csv';
-                                                                                                                                        }
-                                                                                                                                        if (fileDest.includes('_PROJECT_NAME_DB_EXTERNAL_ACCESS')) {
-                                                                                                                                          let tempDest = 'db/src/' + answers.get('projectName').toUpperCase() + '_DB_EXTERNAL_ACCESS';
-                                                                                                                                          if (fileDest.includes('EXTERNAL_ACCESS_G')) {
-                                                                                                                                            tempDest += '_G';
+                                              if (!((file.includes('-redis.yaml') || file.includes('destinationrule.yaml')) && answers.get('externalSessionManagement') === false)) {
+                                                if (!((file === 'mta.yaml' || file === 'xs-security.json') && answers.get('BTPRuntime') !== 'CF')) {
+                                                  if (!(file === 'xs-security.json' && answers.get('authentication') === false && answers.get('api') === false && answers.get('html5repo') === false)) {
+                                                    if (!(file.includes('-em.yaml') && answers.get('em') === false)) {
+                                                      if (!(file === 'em.json' && (answers.get('em') === false || answers.get('BTPRuntime') === 'Kyma'))) {
+                                                        if (!((file === 'Jenkinsfile' || file.substring(0, 9) === '.pipeline' || file.includes('-cicd.')) && answers.get('cicd') === false)) {
+                                                          if (!(file.substring(0, 3) === 'haa' && answers.get('haa') === false)) {
+                                                            if (!(file.substring(0, 19) === 'srv/catalog-service' && answers.get('hana') === false && answers.get('api') === false && answers.get('app2app') === false)) {
+                                                              if (!(file === 'srv/lib/credStore.js' && answers.get('credStore') === '')) {
+                                                                if (!(file === 'srv/lib/utils.js' && (answers.get('apiARIBWS') === false && answers.get('apiCONC') === false))) {
+                                                                  if (!(file === 'app/custom.js' && answers.get('multiTenant') === false)) {
+                                                                    if (!(file.substring(0, 3) === 'fts' && answers.get('toggles') === false)) {
+                                                                      if (!(file.substring(0, 8) === 'dbcommon' && answers.get('common') === false)) {
+                                                                        if (!(file.substring(0, 4) === 'srv2' && answers.get('srv2') === false)) {
+                                                                          if (!(file.substring(0, 5) === 'srvjs' && answers.get('srvjs') === false)) {
+                                                                            if (!(file === 'srv/server.js' && answers.get('v2support') === false && answers.get('multiTenant') === false && answers.get('swagger') === false)) {
+                                                                              if (!(file.substring(0, 32) === 'srv/external/API_SALES_ORDER_SRV' && answers.get('apiS4HCSO') === false)) {
+                                                                                if (!(file.substring(0, 33) === 'srv/external/API_BUSINESS_PARTNER' && answers.get('apiS4HCBP') === false)) {
+                                                                                  if (!((file.substring(0, 25) === 'srv/external/RCMCandidate' || file.includes('map.html')) && answers.get('apiSFSFRC') === false)) {
+                                                                                    if (!(file.substring(0, 36) === 'srv/external/ECEmploymentInformation' && answers.get('apiSFSFEC') === false)) {
+                                                                                      if (!((file.substring(0, 25) === 'srv/external/AribaNetwork') && answers.get('apiARIBPO') === false)) {
+                                                                                        if (!(file.substring(0, 19) === 'srv/templates/Ariba' && answers.get('apiARIBWS') === false)) {
+                                                                                          if (!((file.substring(0, 33) === 'srv/external/FieldglassConnectors') && answers.get('apiFGCN') === false)) {
+                                                                                            if (!(file.substring(0, 34) === 'srv/templates/FieldglassConnectors' && answers.get('apiFGCN') === false)) {
+                                                                                              if (!((file.substring(0, 32) === 'srv/external/FieldglassApprovals') && answers.get('apiFGAP') === false)) {
+                                                                                                if (!((file.substring(0, 19) === 'srv/external/Concur') && answers.get('apiCONC') === false)) {
+                                                                                                  if (!((file.substring(0, 16) === 'srv/external/SAC') && answers.get('apiSACTenant') === false)) {
+                                                                                                    if (!((file.substring(0, 33) === 'srv/external/HERELocationServices') && answers.get('apiHERE') === false)) {
+                                                                                                      if (!((file.substring(0, 38) === 'srv/external/NearEarthObjectWebService') && answers.get('apiNeoWs') === false)) {
+                                                                                                        if (!((file.substring(0, 15) === 'app/xs-app.json' || file.substring(0, 16) === 'app/package.json') && (answers.get('managedAppRouter') === true || (answers.get('authentication') === false && answers.get('ui') === false)))) {
+                                                                                                          if (!((file.substring(0, 13) === 'app/resources' || file.includes('i18n') || file.includes('app/index.cds')) && answers.get('ui') === false)) {
+                                                                                                            if (!((file.substring(0, 19) === 'app/resources/fiori' || file.includes('i18n') || file.includes('app/index.cds')) && answers.get('hana') === false)) {
+                                                                                                              if (!(file.includes('MediaSection.fragment.xml') && answers.get('apiAICORE') === false)) {
+                                                                                                                if (!((file.substring(0, 24) === 'app/resources/index.html') && answers.get('html5repo') === true)) {
+                                                                                                                  if (!((file.substring(0, 31) === 'app/resources/fiori/xs-app.json' || file.substring(0, 32) === 'app/resources/fiori/package.json' || file.substring(0, 35) === 'app/resources/fiori/ui5-deploy.yaml') && answers.get('html5repo') === false)) {
+                                                                                                                    if (!((file.substring(0, 31) === 'app/resources/html5/xs-app.json' || file.substring(0, 32) === 'app/resources/html5/package.json' || file.substring(0, 35) === 'app/resources/html5/ui5-deploy.yaml' || file.substring(0, 40) === 'app/resources/html5/webapp/manifest.json') && answers.get('html5repo') === false)) {
+                                                                                                                      if (!(file.substring(0, 2) === 'db' && answers.get('hana') === false && answers.get('schemaName') === "" && answers.get('hanaTargetHDI') === "")) {
+                                                                                                                        if (!(file.substring(0, 16) === 'db/undeploy.json' && !(answers.get('schemaName') === "" && answers.get('hanaTargetHDI') === ""))) {
+                                                                                                                          if (!((file.substring(0, 17) === 'db/data-model.cds' || file.substring(0, 12) === 'db/data-test' || file.substring(0, 14) === 'db/data-config') && answers.get('hana') === false)) {
+                                                                                                                            if (!(file.substring(0, 41) === 'db/data-test/data/_PROJECT_NAME_.db.Sales' && answers.get('hana') === false)) {
+                                                                                                                              if (!(file.substring(0, 45) === 'db/data-test/data/_PROJECT_NAME_.db.Anomalies' && answers.get('apiAICORE') === false)) {
+                                                                                                                                if (!(file.substring(0, 44) === 'db/data-test/data/_PROJECT_NAME_.db.Students' && (answers.get('hana') === false || answers.get('srv2') === false))) {
+                                                                                                                                  if (!((file.substring(0, 39) === 'db/src/_PROJECT_NAME_DB_EXTERNAL_ACCESS') && answers.get('hanaExternalHDI') === false)) {
+                                                                                                                                    if (!((file.substring(0, 48) === 'db/data-config/data/_PROJECT_NAME_.db.Conditions' || file.substring(0, 53) === 'db/data-test/data/_PROJECT_NAME_.db.CustomerProcesses' || file.substring(0, 44) === 'db/data-config/data/_PROJECT_NAME_.db.Status') && (answers.get('apiS4HCBP') === false || answers.get('em') === false))) {
+                                                                                                                                      if (!(file.substring(0, 7) === 'db/src/' && answers.get('hanaNative') === false && answers.get('hanaExternalHDI') === false && answers.get('hanaTargetHDI') === "" && answers.get('schemaName') === "")) {
+                                                                                                                                        if (!((file.substring(0, 10) === 'db/src/SP_' || file.substring(0, 10) === 'db/src/TT_' || file.substring(0, 10) === 'db/src/CV_' || file.substring(0, 10) === 'db/src/TF_' || file.substring(0, 10) === 'db/src/SYS') && answers.get('hanaNative') === false)) {
+                                                                                                                                          const sOrigin = this.templatePath(file);
+                                                                                                                                          let fileDest = file;
+                                                                                                                                          if (fileDest.includes('_PROJECT_NAME_.db')) {
+                                                                                                                                            let folder = 'db/data-test/data';
+                                                                                                                                            if (fileDest.substring(0, 19) === 'db/data-config/data') folder = 'db/data-config/data';
+                                                                                                                                            fileDest = folder + '/' + answers.get('projectName') + '.db-' + fileDest.split(".", 3)[2] + '.csv';
                                                                                                                                           }
-                                                                                                                                          fileDest = tempDest + '.' + fileDest.split(".", 3)[1];
-                                                                                                                                        }
-                                                                                                                                        if (fileDest.includes('app/resources/') && answers.get('html5repo')) {
-                                                                                                                                          if (answers.get('BTPRuntime') === "Kyma" && !(file === 'app/index.cds' || file.includes('annotations.cds'))) {
-                                                                                                                                            fileDest = 'html5/resources/' + fileDest.substring(14);
-                                                                                                                                            if (fileDest.includes('/webapp')) {
-                                                                                                                                              fileDest = fileDest.substring(0, fileDest.indexOf('/webapp')) + fileDest.substring(fileDest.indexOf('/webapp') + 7);
+                                                                                                                                          if (fileDest.includes('_PROJECT_NAME_DB_EXTERNAL_ACCESS')) {
+                                                                                                                                            let tempDest = 'db/src/' + answers.get('projectName').toUpperCase() + '_DB_EXTERNAL_ACCESS';
+                                                                                                                                            if (fileDest.includes('EXTERNAL_ACCESS_G')) {
+                                                                                                                                              tempDest += '_G';
                                                                                                                                             }
-                                                                                                                                          } else {
-                                                                                                                                            fileDest = 'app/' + fileDest.substring(14);
+                                                                                                                                            fileDest = tempDest + '.' + fileDest.split(".", 3)[1];
                                                                                                                                           }
+                                                                                                                                          if (fileDest.includes('app/resources/') && answers.get('html5repo')) {
+                                                                                                                                            if (answers.get('BTPRuntime') === "Kyma" && !(file === 'app/index.cds' || file.includes('annotations.cds'))) {
+                                                                                                                                              fileDest = 'html5/resources/' + fileDest.substring(14);
+                                                                                                                                              if (fileDest.includes('/webapp')) {
+                                                                                                                                                fileDest = fileDest.substring(0, fileDest.indexOf('/webapp')) + fileDest.substring(fileDest.indexOf('/webapp') + 7);
+                                                                                                                                              }
+                                                                                                                                            } else {
+                                                                                                                                              fileDest = 'app/' + fileDest.substring(14);
+                                                                                                                                            }
+                                                                                                                                          }
+                                                                                                                                          if (fileDest === 'dotenv') {
+                                                                                                                                            fileDest = '.env';
+                                                                                                                                          }
+                                                                                                                                          if (fileDest === 'dotgitignore') {
+                                                                                                                                            fileDest = '.gitignore';
+                                                                                                                                          }
+                                                                                                                                          if (fileDest === 'dotdockerignore') {
+                                                                                                                                            fileDest = '.dockerignore';
+                                                                                                                                          }
+                                                                                                                                          if (fileDest.includes('helm/_PROJECT_NAME_-')) {
+                                                                                                                                            fileDest = fileDest.replace('_PROJECT_NAME_', answers.get('projectName'));
+                                                                                                                                          }
+                                                                                                                                          const sTarget = this.destinationPath(fileDest);
+                                                                                                                                          this.fs.copyTpl(sOrigin, sTarget, this.config.getAll());
                                                                                                                                         }
-                                                                                                                                        if (fileDest === 'dotenv') {
-                                                                                                                                          fileDest = '.env';
-                                                                                                                                        }
-                                                                                                                                        if (fileDest === 'dotgitignore') {
-                                                                                                                                          fileDest = '.gitignore';
-                                                                                                                                        }
-                                                                                                                                        if (fileDest === 'dotdockerignore') {
-                                                                                                                                          fileDest = '.dockerignore';
-                                                                                                                                        }
-                                                                                                                                        if (fileDest.includes('helm/_PROJECT_NAME_-')) {
-                                                                                                                                          fileDest = fileDest.replace('_PROJECT_NAME_', answers.get('projectName'));
-                                                                                                                                        }
-                                                                                                                                        const sTarget = this.destinationPath(fileDest);
-                                                                                                                                        this.fs.copyTpl(sOrigin, sTarget, this.config.getAll());
                                                                                                                                       }
                                                                                                                                     }
                                                                                                                                   }
@@ -1209,6 +1223,52 @@ module.exports = class extends Generator {
           cmd.push("--kubeconfig", answers.get("kubeconfig"));
         }
         this.spawnCommandSync("kubectl", cmd, opt);
+      }
+      if (answers.get("externalSessionManagement") === true) {
+        // generate secret
+        const k8s = require('@kubernetes/client-node');
+        const kc = new k8s.KubeConfig();
+        kc.loadFromDefault();
+        let k8sApi = kc.makeApiClient(k8s.CoreV1Api);
+        this.log('Creating the external session management secret...');
+        let pwdgen = require('generate-password');
+        let redisPassword = pwdgen.generate({
+          length: 64,
+          numbers: true
+        });
+        let sessionSecret = pwdgen.generate({
+          length: 64,
+          numbers: true
+        });
+        let k8sSecret = {
+          apiVersion: 'v1',
+          kind: 'Secret',
+          metadata: {
+            name: answers.get('projectName') + '-redis-binding-secret',
+            labels: {
+              'app.kubernetes.io/managed-by': answers.get('projectName') + '-app'
+            }
+          },
+          type: 'Opaque',
+          data: {
+            EXT_SESSION_MGT: Buffer.from('{"instanceName":"' + answers.get("projectName") + '-redis", "storageType":"redis", "sessionSecret": "' + sessionSecret + '"}', 'utf-8').toString('base64'),
+            REDIS_PASSWORD: Buffer.from('"' + redisPassword + '"', 'utf-8').toString('base64'),
+            ".metadata": Buffer.from('{"credentialProperties":[{"name":"hostname","format":"text"},{"name":"port","format":"text"},{"name":"password","format":"text"},{"name":"cluster_mode","format":"text"},{"name":"tls","format":"text"}],"metaDataProperties":[{"name":"instance_name","format":"text"},{"name":"type","format":"text"},{"name":"label","format":"text"}]}', 'utf-8').toString('base64'),
+            instance_name: Buffer.from(answers.get('projectName') + '-db-' + answers.get('schemaName'), 'utf-8').toString('base64'),
+            type: Buffer.from("redis", 'utf-8').toString('base64'),
+            name: Buffer.from(answers.get("projectName") + "-redis", 'utf-8').toString('base64'),
+            instance_name: Buffer.from(answers.get("projectName") + "-redis", 'utf-8').toString('base64'),
+            hostname: Buffer.from(answers.get("projectName") + "-redis", 'utf-8').toString('base64'),
+            port: Buffer.from("6379", 'utf-8').toString('base64'),
+            password: Buffer.from(redisPassword, 'utf-8').toString('base64'),
+            cluster_mode: Buffer.from("false", 'utf-8').toString('base64'),
+            tls: Buffer.from("false", 'utf-8').toString('base64')
+          }
+        };
+        await k8sApi.createNamespacedSecret(
+          answers.get('namespace'),
+          k8sSecret
+        ).catch(e => this.log("createNamespacedSecret:", e.response.body));
       }
       if (answers.get("cicd") === true) {
         // generate service account & kubeconfig
