@@ -3,7 +3,11 @@ const Generator = require("yeoman-generator");
 const YAML = require("js-yaml");
 
 module.exports = class extends Generator {
-    prompting() {
+    initializing() {
+        process.chdir(this.destinationRoot());
+      }
+
+      prompting() {
         this.log("");
         if (this.config.get("authorization") === false) {
             this.log("This sub-generator only supports projects that use authorization.");

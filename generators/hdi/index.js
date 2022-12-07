@@ -3,6 +3,10 @@ const Generator = require("yeoman-generator");
 const hanaUtils = require('../app/hanaUtils');
 
 module.exports = class extends Generator {
+    initializing() {
+        process.chdir(this.destinationRoot());
+      }
+
     prompting() {
         this.log("");
         if (this.config.get("hanaTargetHDI") !== "") {

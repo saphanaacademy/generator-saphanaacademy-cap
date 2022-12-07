@@ -6,6 +6,10 @@ const hanaUtils = require('./hanaUtils');
 const graphUtils = require('./graphUtils');
 
 module.exports = class extends Generator {
+  initializing() {
+    process.chdir(this.destinationRoot());
+  }
+
   prompting() {
     return this.prompt([
       {
