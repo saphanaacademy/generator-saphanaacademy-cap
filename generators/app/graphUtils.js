@@ -99,6 +99,6 @@ async function graphImport(thisf, answers) {
         thisf.log("Accessing SAP Graph: Importing EDMX:", element.name);
         console.log(thisf.destinationPath());
         let opt = { "cwd": thisf.destinationPath() };
-        thisf.spawnCommandSync("cds", ["import", element.name + ".edmx", "-as", "cds", "--keep-namespace"], opt);
+        thisf.spawnCommandSync("cds", ["import", element.name + ".edmx", "-as", "csn", "--keep-namespace"], opt);
     });
 }
