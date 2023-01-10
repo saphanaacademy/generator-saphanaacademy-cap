@@ -308,6 +308,13 @@ Authorization: Basic joe:
 <% } -%>
 ###
 <% } -%>
+<% customEntities.forEach(element => { -%>
+GET http://localhost:4004/catalog/<%= element %>
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% }); -%>
 <% if(multiTenant && common){ -%>
 GET http://localhost:4004/catalog/common()
 Authorization: Basic joe:
@@ -584,6 +591,13 @@ Authorization: Basic joe:
 <% } -%>
 ###
 <% } -%>
+<% customEntities.forEach(element => { -%>
+GET http://localhost:4004/v2/catalog/<%= element %>
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+###
+<% }); -%>
 <% if(multiTenant && common){ -%>
 GET http://localhost:4004/v2/catalog/common()
 Authorization: Basic joe:

@@ -213,6 +213,9 @@
 <% if(apiNeoWs){ -%>
     <a href="<%= srvPath %>catalog/Asteroids">Near Earth Objects</a><br />
 <% } -%>
+<% customEntities.forEach(element => { -%>
+    <a href="<%= srvPath %>catalog/<%= element %>"><%= customNamespace %> - <%= element %></a><br />
+<% }); -%>
 <% if(multiTenant && common){ -%>
     <a href="<%= srvPath %>catalog/common()">Common</a><br />
 <% } -%>
@@ -323,6 +326,9 @@
 <% if(apiNeoWs){ -%>
     <a href="<%= srvPath %>v2/catalog/Asteroids">Near Earth Objects</a><br />
 <% } -%>
+<% customEntities.forEach(element => { -%>
+    <a href="<%= srvPath %>v2/catalog/<%= element %>"><%= customNamespace %> - <%= element %></a><br />
+<% }); -%>
 <% if(multiTenant && common){ -%>
     <a href="<%= srvPath %>v2/catalog/common()">Common</a><br />
 <% } -%>

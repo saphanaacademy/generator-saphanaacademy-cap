@@ -71,6 +71,9 @@ module.exports = cds.service.impl(async function () {
 <% if(apiNeoWs){ -%>
     const NeoWs = await cds.connect.to('NearEarthObjectWebService');
 <% } -%>
+<% if(apiCustom){ -%>
+    const <%= customNamespace %> = await cds.connect.to('<%= customNamespace %>');
+<% } -%>
 <% if(em){ -%>
     const em = await cds.connect.to('messaging'); 
 <% if(!multiTenant && hana){ -%>
@@ -187,6 +190,19 @@ module.exports = cds.service.impl(async function () {
             ,
 <% } -%>
             Asteroids
+<% } -%>
+<% if(apiCustom){ -%>
+<% if(hana || apiS4HCBP || apiS4HCSO || apiSFSFRC || apiSFSFEC || apiARIBPO || apiFGCN || apiFGAP || apiCONC || apiGRAPH || apiSACTenant || apiHERE || apiNeoWs){ -%>
+            ,
+<% } -%>
+<% let i = 0 -%>
+<% customEntities.forEach(element => { -%>
+            <%= element %>
+<% i = i + 1 -%>
+<% if(i !== customEntities.length){ -%>
+            ,
+<% } -%>
+<% }); -%>
 <% } -%>
           } = this.entities;
 
@@ -804,6 +820,19 @@ module.exports = cds.service.impl(async function () {
     this.on('READ', Asteroids, async (req) => {
         try {
             const tx = NeoWs.transaction(req);
+            return await tx.send({
+                query: req.query
+            })
+        } catch (err) {
+            req.reject(err);
+        }
+    });
+<% } -%>
+
+<% if(apiCustom){ -%>
+    this.on('READ', [<% let i = 0 -%><% customEntities.forEach(element => { -%><%= element %><% i = i + 1 -%><% if(i !== customEntities.length){ -%>, <% } -%><% }); -%>], async (req) => {
+        try {
+            const tx = <%= customNamespace %>.transaction(req);
             return await tx.send({
                 query: req.query
             })

@@ -4,6 +4,7 @@ const path = require("path");
 const glob = require("glob");
 const hanaUtils = require('./hanaUtils');
 const graphUtils = require('./graphUtils');
+const customUtils = require('./customUtils');
 
 module.exports = class extends Generator {
   initializing() {
@@ -65,7 +66,15 @@ module.exports = class extends Generator {
     answers.SACHost = "https://<tenant>.<region>.hcs.cloud.sap";
     answers.SACTokenURL = "https://<tenant>.authentication.<region>.hana.ondemand.com/oauth/token/alias/<alias>";
     answers.SACAudience = "https://<tenant>.authentication.<region>.hana.ondemand.com";
-    answers.APIKeyHERE = "";
+    answers.customURL = "";
+    answers.customAuth = "";
+    answers.customUser = "";
+    answers.customPassword = "";
+    answers.customTokenURL = "";
+    answers.customClientId = "";
+    answers.customClientSecret = "";
+    answers.customNamespace = "";
+    answers.customEntities = [];
     answers.APIKeyNASA = "DEMO_KEY";
     answers.APIKeyHubSandbox = "";
     answers.connectivity = false;
@@ -308,7 +317,7 @@ module.exports = class extends Generator {
         type: "checkbox",
         name: "apiLoB",
         message: "Which external API(s) would you like to use?",
-        choices: ["SAP S/4HANA Cloud Sales Order (A2X)", "SAP S/4HANA Cloud Business Partner (A2X)", "SAP SuccessFactors Recruiting", "SAP SuccessFactors Employee Central", "SAP Ariba Network Purchase Orders Buyer", "SAP Ariba Web Services", "SAP Fieldglass Connectors", "SAP Fieldglass Approvals", "SAP Concur", "SAP Graph", "SAP AI Core", "SAP Analytics Cloud Tenant API", "HERE Location Services", "NASA Near Earth Object Web Service", "Northwind"],
+        choices: ["SAP S/4HANA Cloud Sales Order (A2X)", "SAP S/4HANA Cloud Business Partner (A2X)", "SAP SuccessFactors Recruiting", "SAP SuccessFactors Employee Central", "SAP Ariba Network Purchase Orders Buyer", "SAP Ariba Web Services", "SAP Fieldglass Connectors", "SAP Fieldglass Approvals", "SAP Concur", "SAP Graph", "SAP AI Core", "SAP Analytics Cloud Tenant API", "HERE Location Services", "NASA Near Earth Object Web Service", "Northwind", "Custom OData"],
         default: answers.apiLoB
       },
       {
@@ -498,6 +507,74 @@ module.exports = class extends Generator {
         default: answers.SACAudience
       },
       {
+        when: response => response.api === true && response.apiLoB.includes("Custom OData"),
+        type: "input",
+        name: "customURL",
+        message: "What is your Custom OData API endpoint?",
+        default: answers.customURL
+      },
+      {
+        when: response => response.api === true && response.apiLoB.includes("Custom OData"),
+        type: "list",
+        name: "customAuth",
+        message: "What authentication does your Custom OData API require?",
+        choices: [{ name: "None", value: "" }, { name: "Basic Authentication", value: "basic" }, { name: "OAuth2 SAML Client Credentials", value: "oauth2cc" }],
+        default: answers.customAuth
+      },
+      {
+        when: response => response.api === true && response.apiLoB.includes("Custom OData") && response.customAuth === "basic",
+        type: "input",
+        name: "customUser",
+        message: "What is your Custom OData API user?",
+        default: answers.customUser
+      },
+      {
+        when: response => response.api === true && response.apiLoB.includes("Custom OData") && response.customAuth === "basic",
+        type: "password",
+        name: "customPassword",
+        message: "What is your Custom OData API password?",
+        mask: "*",
+        default: answers.customPassword
+      },
+      {
+        when: response => response.api === true && response.apiLoB.includes("Custom OData") && response.customAuth === "oauth2cc",
+        type: "input",
+        name: "customTokenURL",
+        message: "What is your Custom OData API Token URL?",
+        default: answers.customTokenURL
+      },
+      {
+        when: response => response.api === true && response.apiLoB.includes("Custom OData") && response.customAuth === "oauth2cc",
+        type: "input",
+        name: "customClientId",
+        message: "What is your Custom OData API Client Id?",
+        default: answers.customClientId
+      },
+      {
+        when: response => response.api === true && response.apiLoB.includes("Custom OData") && response.customAuth === "oauth2cc",
+        type: "password",
+        name: "customClientSecret",
+        message: "What is your Custom OData API Client Secret?",
+        mask: "*",
+        default: answers.customClientSecret
+      }
+    ]);
+    if (answers1.customURL !== '') {
+      let custom = await customUtils.customGet(this, answers1);
+      answers1.customEDMX = custom.EDMX;
+      answers1.customNamespace = custom.namespace;
+      answers1.customEntities = custom.entities;
+    }
+    const answers3 = await this.prompt([
+      {
+        when: answers1.customURL !== "",
+        type: "checkbox",
+        name: "customEntities",
+        message: "Which Custom OData API entities would you like from the namespace " + answers1.customNamespace + "?",
+        choices: answers1.customEntities,
+        default: answers1.customEntities
+      },
+      {
         when: response => response.api === true && response.apiLoB.includes("HERE Location Services"),
         type: "password",
         name: "APIKeyHERE",
@@ -627,7 +704,7 @@ module.exports = class extends Generator {
         default: answers.customDomain
       }
     ]);
-    if (answers1.BTPRuntime === "Kyma" && answers1.customDomain === "") {
+    if (answers1.BTPRuntime === "Kyma" && answers3.customDomain === "") {
       let cmd = ["get", "cm", "shoot-info", "-n", "kube-system", "-o", "jsonpath='{.data.domain}'"];
       if (answers1.kubeconfig !== "") {
         cmd.push("--kubeconfig", answers1.kubeconfig);
@@ -638,25 +715,25 @@ module.exports = class extends Generator {
         answers.clusterDomain = resGet.stdout.toString().replace(/'/g, '');
       }
     } else {
-      answers.clusterDomain = answers1.customDomain;
+      answers.clusterDomain = answers3.customDomain;
     }
     const answers2 = await this.prompt([
       {
-        when: answers1.BTPRuntime === "Kyma" && answers1.customDomain === "",
+        when: answers1.BTPRuntime === "Kyma" && answers3.customDomain === "",
         type: "input",
         name: "clusterDomain",
         message: "What is the cluster domain of your SAP BTP, Kyma runtime?",
         default: answers.clusterDomain
       },
       {
-        when: answers1.BTPRuntime === "Kyma" && answers1.customDomain !== "",
+        when: answers1.BTPRuntime === "Kyma" && answers3.customDomain !== "",
         type: "input",
         name: "gateway",
         message: "What is the gateway for the custom domain in your SAP BTP, Kyma runtime?",
         default: answers.gateway
       },
       {
-        when: answers1.hana === true && answers1.schemaName === "" && answers1.hanaTargetHDI === "" && answers1.ui === true && answers1.html5repo === false,
+        when: answers1.hana === true && answers1.schemaName === "" && answers1.hanaTargetHDI === "" && answers3.ui === true && answers3.html5repo === false,
         type: "confirm",
         name: "multiTenant",
         message: "Would you like to create a SaaS multitenant app?",
@@ -670,7 +747,7 @@ module.exports = class extends Generator {
         default: answers.category
       },
       {
-        when: response => response.multiTenant === true && answers1.customDomain === "",
+        when: response => response.multiTenant === true && answers3.customDomain === "",
         type: "confirm",
         name: "routes",
         message: "Would you like to include creation/deletion of tenant routes (CF) or API Rules (Kyma) / on subscribe/unsubscribe?",
@@ -693,7 +770,7 @@ module.exports = class extends Generator {
         default: answers.common
       },
       {
-        when: response => (answers1.ui === true || response.multiTenant === true) && answers1.BTPRuntime === "Kyma",
+        when: response => (answers3.ui === true || response.multiTenant === true) && answers1.BTPRuntime === "Kyma",
         type: "confirm",
         name: "externalSessionManagement",
         message: "Would you like to configure external session management (using Redis)?",
@@ -770,7 +847,7 @@ module.exports = class extends Generator {
         default: answers.credStore
       },
       {
-        when: answers1.BTPRuntime !== "Kyma" && answers1.hana === true && answers1.hanaNative === true && answers1.authentication === true,
+        when: answers1.BTPRuntime !== "Kyma" && answers1.hana === true && answers1.hanaNative === true && answers3.authentication === true,
         type: "confirm",
         name: "haa",
         message: "Would you like to include the SAP HANA Analytics Adapter (HAA)?",
@@ -828,19 +905,25 @@ module.exports = class extends Generator {
     if (answers1.newDir) {
       this.destinationRoot(`${answers1.projectName}`);
     }
-    if (answers1.html5repo === true) {
+    if (answers3.html5repo === true) {
       answers2.srvPath = "";
       answers2.multiTenant = false;
       answers2.haa = false;
     } else {
       answers2.srvPath = "/";
-      answers1.managedAppRouter = false;
+      answers3.managedAppRouter = false;
     }
-    if (answers1.managedAppRouter === true) {
+    if (answers3.managedAppRouter === true) {
       answers2.externalSessionManagement = false;
     }
-    if (answers2.multiTenant === false) {
+    if (answers1.hana === false) {
+      answers2.hanaNative = false;
+    } 
+    if (typeof answers2.multiTenant === 'undefined' || answers2.multiTenant === false) {
       answers2.routes = false;
+    }
+    if (answers3.authentication === false) {
+      answers3.authorization = false;
     }
     if (answers1.api === true) {
       answers2.apiS4HCSO = answers1.apiLoB.includes("SAP S/4HANA Cloud Sales Order (A2X)");
@@ -858,6 +941,7 @@ module.exports = class extends Generator {
       answers2.apiHERE = answers1.apiLoB.includes("HERE Location Services");
       answers2.apiNeoWs = answers1.apiLoB.includes("NASA Near Earth Object Web Service");
       answers2.apiNW = answers1.apiLoB.includes("Northwind");
+      answers2.apiCustom = answers1.apiLoB.includes("Custom OData");
     } else {
       answers2.apiS4HCSO = false;
       answers2.apiS4HCBP = false;
@@ -874,10 +958,12 @@ module.exports = class extends Generator {
       answers2.apiHERE = false;
       answers2.apiNeoWs = false;
       answers2.apiNW = false;
+      answers2.apiCustom = false;
     }
     answers2.destinationPath = this.destinationPath();
     this.config.set(answers);
     this.config.set(answers1);
+    this.config.set(answers3);
     this.config.set(answers2);
   }
 
@@ -890,12 +976,16 @@ module.exports = class extends Generator {
 
     let graphDataSources = [];
     if (answers.get('apiGRAPH')) {
-      graphDataSources = await graphUtils.getgraphDataSources(this, answers);
+      graphDataSources = await graphUtils.getGraphDataSources(this, answers);
       if (!graphDataSources) {
         this.env.error("Unable to obtain SAP Graph Data Sources.");
       }
     }
     answers.set('graphDataSources', graphDataSources);
+
+    if (answers.get('apiCustom')) {
+      await customUtils.customWrite(this, answers);
+    }
 
     if (this.config.get('BTPRuntime') === "CF" && (answers.get('cicd') === true || answers.get('app2appType') === "access")) {
       answers.set('cforg', 'org');
@@ -1109,25 +1199,6 @@ module.exports = class extends Generator {
       await hanaUtils.processSchemaAuth(this, answers);
     }
 
-    answers.delete('hanaEndpoint');
-    answers.delete('hanaUser');
-    answers.delete('hanaPassword');
-    answers.delete('APIKeyHubSandbox');
-    answers.delete('SFAPIAccess');
-    answers.delete('AribaNetworkId');
-    answers.delete('APIKeyAriba');
-    answers.delete('AribaRealm');
-    answers.delete('FGHost');
-    answers.delete('FGCNclientId');
-    answers.delete('FGCNsupplierId');
-    answers.delete('ConcurGeolocation');
-    answers.delete('GraphClientId');
-    answers.delete('GraphClientSecret');
-    answers.delete('AICoreResourceGroup');
-    answers.delete('AICoreDeploymentId');
-    answers.delete('APIKeyHERE');
-    answers.delete('APIKeyNASA');
-
   }
 
   async install() {
@@ -1135,6 +1206,9 @@ module.exports = class extends Generator {
     var opt = { "cwd": answers.get("destinationPath") };
     if (answers.get("apiGRAPH")) {
       await graphUtils.graphImport(this, answers);
+    }
+    if (answers.get("apiCustom")) {
+      await customUtils.customImport(this, answers);
     }
     // install dev dependencies
     if ((answers.get("hana") && answers.get("ui")) || answers.get("api")) {
@@ -1294,6 +1368,31 @@ module.exports = class extends Generator {
         this.log(" cf deploy " + mta);
       }
     }
+    answers.delete('hanaEndpoint');
+    answers.delete('hanaUser');
+    answers.delete('hanaPassword');
+    answers.delete('APIKeyHubSandbox');
+    answers.delete('SFAPIAccess');
+    answers.delete('AribaNetworkId');
+    answers.delete('APIKeyAriba');
+    answers.delete('AribaRealm');
+    answers.delete('FGHost');
+    answers.delete('FGCNclientId');
+    answers.delete('FGCNsupplierId');
+    answers.delete('ConcurGeolocation');
+    answers.delete('GraphClientId');
+    answers.delete('GraphClientSecret');
+    answers.delete('AICoreResourceGroup');
+    answers.delete('AICoreDeploymentId');
+    answers.delete('customUser');
+    answers.delete('customPassword');
+    answers.delete('customClientId');
+    answers.delete('customClientSecret');
+    answers.delete('customEDMX');
+    answers.delete('APIKeyHERE');
+    answers.delete('APIKeyNASA');
+    answers.delete('dockerEmailAddress');
+    answers.delete('dockerPassword');
   }
 
   end() {
@@ -1306,7 +1405,7 @@ module.exports = class extends Generator {
       this.log("Important: The wildcard custom domain route needs be mapped via the following CF CLI command after deployment:");
       this.log("  cf map-route " + this.config.get('projectName') + "-app " + this.config.get('customDomain') + ' --hostname "*"');
     }
-    if (this.config.get('routes') && this.config.get('BTPRuntime') === "CF") {
+    if (this.config.get('routes') && this.config.get('multiTenant') && this.config.get('BTPRuntime') === "CF") {
       this.log("");
       this.log("Important: The CF API is being used so please be sure to update the destination " + this.config.get('projectName') + "-cfapi - Token Service URL (replace login with uaa) and set User & Password. Client Secret needs to be empty.");
     }

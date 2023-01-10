@@ -1,11 +1,11 @@
 module.exports = {
-    getgraphDataSources: getgraphDataSources,
+    getGraphDataSources: getGraphDataSources,
     graphImport: graphImport
 };
 
 const axios = require('axios');
 
-async function getgraphDataSources(thisf, answers) {
+async function getGraphDataSources(thisf, answers) {
     const graphURL = answers.get('GraphURL');
     const graphId = answers.get('GraphId');
     const tokenURL = answers.get('GraphTokenURL');
@@ -97,7 +97,6 @@ async function graphImport(thisf, answers) {
     const graphDataSources = answers.get('graphDataSources');
     graphDataSources.forEach(element => {
         thisf.log("Accessing SAP Graph: Importing EDMX:", element.name);
-        console.log(thisf.destinationPath());
         let opt = { "cwd": thisf.destinationPath() };
         thisf.spawnCommandSync("cds", ["import", element.name + ".edmx", "-as", "csn", "--keep-namespace"], opt);
     });

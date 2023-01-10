@@ -35,3 +35,8 @@ cds.requires.HERELocationServices.credentials.[development].queries.apiKey=<%= A
 <% if(apiNeoWs){ -%>
 cds.requires.NearEarthObjectWebService.credentials.[development].queries.api_key=<%= APIKeyNASA %>
 <% } -%>
+<% if(customAuth === 'basic'){ -%>
+cds.requires.<%= customNamespace %>.credentials.[development].authentication=BasicAuthentication
+cds.requires.<%= customNamespace %>.credentials.[development].username=<%= customUser %>
+cds.requires.<%= customNamespace %>.credentials.[development].password=<%= customPassword %>
+<% } -%>

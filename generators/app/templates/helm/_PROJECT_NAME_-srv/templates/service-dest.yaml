@@ -211,6 +211,26 @@ spec:
             Authentication: NoAuthentication
             HTML5.DynamicDestination: true
 <% } -%>
+<% if(apiCustom){ -%>
+          - Name: <%= projectName %>-<%= customNamespace %>-api
+            Description: Custom
+            URL: <%= customURL %>
+            Type: HTTP
+            ProxyType: Internet
+<% if(customAuth === "basic"){ -%>
+            Authentication: BasicAuthentication
+            User: <SetValue>
+            Password: <SetValue>
+<% } else if(customAuth === "oauth2cc"){ -%>
+            Authentication: OAuth2ClientCredentials
+            tokenServiceURL: <%= customTokenURL %>/oauth/token
+            clientId: <SetValue>
+            clientSecret: <SetValue>
+<% } else { -%>
+            Authentication: NoAuthentication
+<% } -%>
+            HTML5.DynamicDestination: true
+<% } -%>
 <% if(app2appType === "access"){ -%>
           - Name: <%= projectName %>-<%= app2appName %>
             Description: <%= displayName %> - App2App <%= app2appName %>

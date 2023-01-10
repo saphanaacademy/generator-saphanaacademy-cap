@@ -625,6 +625,21 @@
         }
       }
 <% } -%>
+<% if(apiCustom){ -%>
+      ,
+      "<%= customNamespace %>": {
+        "kind": "odata",
+        "model": "srv/external/<%= customNamespace %>",
+        "credentials": {
+          "[production]": {
+            "destination": "<%= projectName %>-<%= customNamespace %>-api"
+          },
+          "[development]": {
+            "url": "<%= customURL %>"
+          }
+        }
+      }
+<% } -%>
 <% if(em){ -%>
       ,
       "messaging": {

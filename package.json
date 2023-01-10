@@ -2,7 +2,7 @@
   "name": "generator-saphanaacademy-cap",
   "displayName": "SAP HANA Academy CAP",
   "description": "Yeoman Generator to jump-start Full-Stack Cloud Applications",
-  "version": "0.0.103",
+  "version": "0.0.104",
   "license": "SEE LICENSE IN LICENSE",
   "homepage": "https://www.youtube.com/playlist?list=PLkzo92owKnVwQ-0oT78691fqvHrYXd5oN",
   "author": {
@@ -54,13 +54,14 @@
     "npm": ">=8"
   },
   "dependencies": {
+    "@kubernetes/client-node": "^0.17",
     "@sap/hana-client": "^2.14",
     "axios": "^0.24",
+    "chalk": "^5.1",
     "generate-password": "^1.7",
-    "@kubernetes/client-node": "^0.17",
     "node-fetch": "^2.6",
     "node-jose": "^2.1",
-    "chalk": "^5.1",
+    "x2js": "^3.4.4",
     "yeoman-generator": "^5.7",
     "yosay": "^2.0"
   },
