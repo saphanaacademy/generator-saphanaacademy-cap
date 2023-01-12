@@ -2,11 +2,60 @@
 const Generator = require("yeoman-generator");
 const path = require("path");
 const glob = require("glob");
+const types = require("@sap-devx/yeoman-ui-types");
 const hanaUtils = require('./hanaUtils');
 const graphUtils = require('./graphUtils');
 const customUtils = require('./customUtils');
 
 module.exports = class extends Generator {
+  constructor(args, opts) {
+    super(args, opts);
+    this.setPromptsCallback = (fn) => {
+      if (this.prompts) {
+        this.prompts.setCallback(fn);
+      }
+    };
+    const virtualPrompts = [
+      {
+        name: "Project Attributes",
+        description: "Configure the main project attributes."
+      },
+      {
+        name: "Runtime Selection",
+        description: "Choose and configure your runtime."
+      },
+      {
+        name: "SAP HANA Cloud Selection",
+        description: "Choose and configure SAP HANA Cloud."
+      },
+      {
+        name: "API Selection",
+        description: "Choose and configure APIs."
+      },
+      {
+        name: "Custom OData API Entities",
+        description: "Choose Custom OData API entities."
+      },
+      {
+        name: "Additional Attributes",
+        description: "Configure additional attributes."
+      },
+      {
+        name: "Domain Attributes",
+        description: "Configure domain attributes."
+      },
+      {
+        name: "Multitenant Attributes",
+        description: "Configure multitenant SaaS attributes."
+      },
+      {
+        name: "Further Attributes",
+        description: "Configure further attributes."
+      }
+    ];
+    this.prompts = new types.Prompts(virtualPrompts);
+  }
+
   initializing() {
     process.chdir(this.destinationRoot());
   }
@@ -115,7 +164,7 @@ module.exports = class extends Generator {
     answers.swagger = false;
     answers.buildDeploy = false;
     // prompts
-    const answers1 = await this.prompt([
+    const answersProject = await this.prompt([
       {
         type: "input",
         name: "projectName",
@@ -145,12 +194,15 @@ module.exports = class extends Generator {
         name: "description",
         message: "What is the description of your app?",
         default: answers.description
-      },
+      }
+    ]);
+    const answersRuntime = await this.prompt([
       {
         type: "list",
         name: "BTPRuntime",
         message: "Which runtime will you be deploying the project to?",
         choices: [{ name: "SAP BTP, Cloud Foundry runtime", value: "CF" }, { name: "SAP BTP, Kyma runtime", value: "Kyma" }],
+        store: true,
         default: answers.BTPRuntime
       },
       {
@@ -164,6 +216,7 @@ module.exports = class extends Generator {
           }
           return "Your SAP BTP, Kyma runtime namespace can only contain lowercase alphanumeric characters or -.";
         },
+        store: true,
         default: answers.namespace
       },
       {
@@ -177,6 +230,7 @@ module.exports = class extends Generator {
           }
           return "Your Docker ID must be between 4 and 30 characters long and can only contain numbers and lowercase letters.";
         },
+        store: true,
         default: answers.dockerID
       },
       {
@@ -198,6 +252,7 @@ module.exports = class extends Generator {
         name: "dockerRepositoryVisibility",
         message: "What is your Docker repository visibility?",
         choices: [{ name: "Public (Appears in Docker Hub search results)", value: "public" }, { name: "Private (Only visible to you)", value: "private" }],
+        store: true,
         default: answers.dockerRepositoryVisibility
       },
       {
@@ -205,6 +260,7 @@ module.exports = class extends Generator {
         type: "input",
         name: "dockerRegistrySecretName",
         message: "What is the name of your Docker Registry Secret? It will be created in the namespace if you specify your Docker Email Address and Docker Personal Access Token or Password.",
+        store: true,
         default: answers.dockerRegistrySecretName
       },
       {
@@ -212,20 +268,21 @@ module.exports = class extends Generator {
         type: "input",
         name: "dockerServerURL",
         message: "What is your Docker Server URL?",
+        store: true,
         default: answers.dockerServerURL
       },
       {
         when: response => response.BTPRuntime === "Kyma" && response.dockerRepositoryVisibility === "private",
         type: "input",
         name: "dockerEmailAddress",
-        message: "What is your Docker Email Address? Leave empty if your Docker Registry Secret already exists in the namespace.",
+        message: "What is your Docker Email Address? Leave blank if your Docker Registry Secret already exists in the namespace.",
         default: answers.dockerEmailAddress
       },
       {
         when: response => response.BTPRuntime === "Kyma" && response.dockerRepositoryVisibility === "private",
         type: "password",
         name: "dockerPassword",
-        message: "What is your Docker Personal Access Token or Password? Leave empty if your Docker Registry Secret already exists in the namespace.",
+        message: "What is your Docker Personal Access Token or Password? Leave blank if your Docker Registry Secret already exists in the namespace.",
         mask: "*",
         default: answers.dockerPassword
       },
@@ -242,8 +299,11 @@ module.exports = class extends Generator {
         name: "buildCmd",
         message: "How would you like to build container images?",
         choices: [{ name: "Paketo (Cloud Native Buildpacks)", value: "pack" }, { name: "Docker", value: "docker" }, { name: "Podman", value: "podman" }],
+        store: true,
         default: answers.buildCmd
-      },
+      }
+    ]);
+    const answersHANA = await this.prompt([
       {
         type: "input",
         name: "hanaTargetHDI",
@@ -305,7 +365,9 @@ module.exports = class extends Generator {
         name: "hanaExternalHDI",
         message: "Would you like to enable external access to the HDI Container?",
         default: answers.hanaExternalHDI
-      },
+      }
+    ]);
+    const answersAPI = await this.prompt([
       {
         type: "confirm",
         name: "api",
@@ -397,7 +459,7 @@ module.exports = class extends Generator {
         type: "input",
         name: "FGCNclientId",
         message: "What is your SAP Fieldglass Buyer Company Code?",
-        default: answers.FGCNclientId 
+        default: answers.FGCNclientId
       },
       {
         when: response => response.api === true && response.apiLoB.includes("SAP Fieldglass Connectors"),
@@ -507,6 +569,30 @@ module.exports = class extends Generator {
         default: answers.SACAudience
       },
       {
+        when: response => response.api === true && response.apiLoB.includes("HERE Location Services"),
+        type: "password",
+        name: "APIKeyHERE",
+        message: "What is your HERE Location Services API Key?",
+        mask: "*",
+        default: answers.APIKeyHERE
+      },
+      {
+        when: response => response.api === true && response.apiLoB.includes("NASA Near Earth Object Web Service"),
+        type: "password",
+        name: "APIKeyNASA",
+        message: "What is your NASA API Key? Leave blank to use a public demo key.",
+        mask: "*",
+        default: answers.APIKeyNASA
+      },
+      {
+        when: response => response.api === true && (response.apiLoB.includes("SAP S/4HANA Cloud Sales Order (A2X)") || response.apiLoB.includes("SAP S/4HANA Cloud Business Partner (A2X)") || response.apiLoB.includes("SAP SuccessFactors Recruiting") || response.apiLoB.includes("SAP SuccessFactors Employee Central") || response.apiLoB.includes("SAP Ariba Network Purchase Orders Buyer") || response.apiLoB.includes("SAP Fieldglass Approvals")),
+        type: "password",
+        name: "APIKeyHubSandbox",
+        message: "What is your API Key for the SAP API Business Hub sandbox?",
+        mask: "*",
+        default: answers.APIKeyHubSandbox
+      },
+      {
         when: response => response.api === true && response.apiLoB.includes("Custom OData"),
         type: "input",
         name: "customURL",
@@ -559,47 +645,29 @@ module.exports = class extends Generator {
         default: answers.customClientSecret
       }
     ]);
-    if (answers1.customURL !== '') {
-      let custom = await customUtils.customGet(this, answers1);
-      answers1.customEDMX = custom.EDMX;
-      answers1.customNamespace = custom.namespace;
-      answers1.customEntities = custom.entities;
+    if (answersAPI.apiLoB.includes("Custom OData")) {
+      try {
+        let custom = await customUtils.customGet(this, answersAPI);
+        answersAPI.customEDMX = custom.EDMX;
+        answersAPI.customNamespace = custom.namespace;
+        answersAPI.customEntities = custom.entities;
+      } catch (error) { 
+        this.log("Custom OData API EDMX:", error);
+      }
     }
-    const answers3 = await this.prompt([
+    const answersCustomODataAPI = await this.prompt([
       {
-        when: answers1.customURL !== "",
+        when: answersAPI.apiLoB.includes("Custom OData"),
         type: "checkbox",
         name: "customEntities",
-        message: "Which Custom OData API entities would you like from the namespace " + answers1.customNamespace + "?",
-        choices: answers1.customEntities,
-        default: answers1.customEntities
-      },
+        message: "Which Custom OData API entities would you like from the namespace " + answersAPI.customNamespace + "?",
+        choices: answersAPI.customEntities,
+        default: answersAPI.customEntities
+      }
+    ]);
+    const answersAdditional = await this.prompt([
       {
-        when: response => response.api === true && response.apiLoB.includes("HERE Location Services"),
-        type: "password",
-        name: "APIKeyHERE",
-        message: "What is your HERE Location Services API Key?",
-        mask: "*",
-        default: answers.APIKeyHERE
-      },
-      {
-        when: response => response.api === true && response.apiLoB.includes("NASA Near Earth Object Web Service"),
-        type: "password",
-        name: "APIKeyNASA",
-        message: "What is your NASA API Key? Leave blank to use a public demo key.",
-        mask: "*",
-        default: answers.APIKeyNASA
-      },
-      {
-        when: response => response.api === true && (response.apiLoB.includes("SAP S/4HANA Cloud Sales Order (A2X)") || response.apiLoB.includes("SAP S/4HANA Cloud Business Partner (A2X)") || response.apiLoB.includes("SAP SuccessFactors Recruiting") || response.apiLoB.includes("SAP SuccessFactors Employee Central") || response.apiLoB.includes("SAP Ariba Network Purchase Orders Buyer") || response.apiLoB.includes("SAP Fieldglass Approvals")),
-        type: "password",
-        name: "APIKeyHubSandbox",
-        message: "What is your API Key for the SAP API Business Hub sandbox?",
-        mask: "*",
-        default: answers.APIKeyHubSandbox
-      },
-      {
-        when: response => response.api === true && response.BTPRuntime !== "Kyma",
+        when: answersAPI.api === true && answersRuntime.BTPRuntime !== "Kyma",
         type: "confirm",
         name: "connectivity",
         message: "Will you be accessing on-premise systems via the Cloud Connector?",
@@ -619,14 +687,14 @@ module.exports = class extends Generator {
         default: answers.authorization
       },
       {
-        when: response => response.hana === true && response.authentication === true && response.authorization === true,
+        when: response => answersHANA.hana === true && response.authentication === true && response.authorization === true,
         type: "confirm",
         name: "attributes",
         message: "Would you like to use role attributes?",
         default: answers.attributes
       },
       {
-        when: response => response.authentication === true && response.api === true && response.apiLoB.includes("SAP Graph"),
+        when: response => response.authentication === true && answersAPI.api === true && answersAPI.apiLoB.includes("SAP Graph"),
         type: "confirm",
         name: "GraphSameSubaccount",
         message: "Will you be deploying to the subaccount of the SAP Graph service instance?",
@@ -704,36 +772,42 @@ module.exports = class extends Generator {
         default: answers.customDomain
       }
     ]);
-    if (answers1.BTPRuntime === "Kyma" && answers3.customDomain === "") {
+    if (answersRuntime.BTPRuntime === "Kyma" && answersAdditional.customDomain === "") {
       let cmd = ["get", "cm", "shoot-info", "-n", "kube-system", "-o", "jsonpath='{.data.domain}'"];
-      if (answers1.kubeconfig !== "") {
-        cmd.push("--kubeconfig", answers1.kubeconfig);
+      if (answersRuntime.kubeconfig !== "") {
+        cmd.push("--kubeconfig", answersRuntime.kubeconfig);
       }
-      let opt = { "cwd": answers1.destinationPath, "stdio": [process.stdout] };
-      let resGet = this.spawnCommandSync("kubectl", cmd, opt);
-      if (resGet.exitCode === 0) {
-        answers.clusterDomain = resGet.stdout.toString().replace(/'/g, '');
+      let opt = { "stdio": [process.stdout] };
+      try {
+        let resGet = this.spawnCommandSync("kubectl", cmd, opt);
+        if (resGet.exitCode === 0) {
+          answers.clusterDomain = resGet.stdout.toString().replace(/'/g, '');
+        }
+      } catch (error) {
+        this.log("kubectl:", error);
       }
     } else {
-      answers.clusterDomain = answers3.customDomain;
+      answers.clusterDomain = answersAdditional.customDomain;
     }
-    const answers2 = await this.prompt([
+    const answersDomain = await this.prompt([
       {
-        when: answers1.BTPRuntime === "Kyma" && answers3.customDomain === "",
+        when: answersRuntime.BTPRuntime === "Kyma" && answersAdditional.customDomain === "",
         type: "input",
         name: "clusterDomain",
         message: "What is the cluster domain of your SAP BTP, Kyma runtime?",
         default: answers.clusterDomain
       },
       {
-        when: answers1.BTPRuntime === "Kyma" && answers3.customDomain !== "",
+        when: answersRuntime.BTPRuntime === "Kyma" && answersAdditional.customDomain !== "",
         type: "input",
         name: "gateway",
         message: "What is the gateway for the custom domain in your SAP BTP, Kyma runtime?",
         default: answers.gateway
-      },
+      }
+    ]);
+    const answersMTX = await this.prompt([
       {
-        when: answers1.hana === true && answers1.schemaName === "" && answers1.hanaTargetHDI === "" && answers3.ui === true && answers3.html5repo === false,
+        when: answersHANA.hana === true && answersHANA.schemaName === "" && answersHANA.hanaTargetHDI === "" && answersAdditional.ui === true && answersAdditional.html5repo === false,
         type: "confirm",
         name: "multiTenant",
         message: "Would you like to create a SaaS multitenant app?",
@@ -747,7 +821,7 @@ module.exports = class extends Generator {
         default: answers.category
       },
       {
-        when: response => response.multiTenant === true && answers3.customDomain === "",
+        when: response => response.multiTenant === true && answersAdditional.customDomain === "",
         type: "confirm",
         name: "routes",
         message: "Would you like to include creation/deletion of tenant routes (CF) or API Rules (Kyma) / on subscribe/unsubscribe?",
@@ -768,9 +842,11 @@ module.exports = class extends Generator {
         name: "common",
         message: "Would you like to include common SAP HANA Cloud persistence?",
         default: answers.common
-      },
+      }
+    ]);
+    const answersFurther = await this.prompt([
       {
-        when: response => (answers3.ui === true || response.multiTenant === true) && answers1.BTPRuntime === "Kyma",
+        when: response => (answersAdditional.ui === true || answersMTX.multiTenant === true) && answersRuntime.BTPRuntime === "Kyma",
         type: "confirm",
         name: "externalSessionManagement",
         message: "Would you like to configure external session management (using Redis)?",
@@ -808,7 +884,7 @@ module.exports = class extends Generator {
         default: answers.emNamespace
       },
       {
-        when: response => response.em === true && (answers1.apiLoB.includes("SAP S/4HANA Cloud Sales Order (A2X)") || answers1.apiLoB.includes("SAP S/4HANA Cloud Business Partner (A2X)")),
+        when: response => response.em === true && (answersAPI.apiLoB.includes("SAP S/4HANA Cloud Sales Order (A2X)") || answersAPI.apiLoB.includes("SAP S/4HANA Cloud Business Partner (A2X)")),
         type: "input",
         name: "emClientId",
         message: "What is the emClientId of your SAP S/4HANA Cloud Extensibility messaging service instance?",
@@ -827,14 +903,14 @@ module.exports = class extends Generator {
         default: answers.cicd
       },
       {
-        when: answers1.BTPRuntime !== "Kyma",
+        when: answersRuntime.BTPRuntime !== "Kyma",
         type: "confirm",
         name: "applicationLogging",
         message: "Would you like to enable Application Logging?",
         default: answers.applicationLogging
       },
       {
-        when: answers1.BTPRuntime !== "Kyma" && answers1.api === true,
+        when: answersRuntime.BTPRuntime !== "Kyma" && answersAPI.api === true,
         type: "input",
         name: "credStore",
         message: "What is the name of your SAP Credential Store service instance? Leave blank for none.",
@@ -847,7 +923,7 @@ module.exports = class extends Generator {
         default: answers.credStore
       },
       {
-        when: answers1.BTPRuntime !== "Kyma" && answers1.hana === true && answers1.hanaNative === true && answers3.authentication === true,
+        when: answersRuntime.BTPRuntime !== "Kyma" && answersHANA.hana === true && answersHANA.hanaNative === true && answersAdditional.authentication === true,
         type: "confirm",
         name: "haa",
         message: "Would you like to include the SAP HANA Analytics Adapter (HAA)?",
@@ -887,7 +963,7 @@ module.exports = class extends Generator {
         type: "confirm",
         name: "graphql",
         message: "Would you like to enable GraphQL?",
-        default: answers.graphql 
+        default: answers.graphql
       },
       {
         type: "confirm",
@@ -902,69 +978,75 @@ module.exports = class extends Generator {
         default: answers.buildDeploy
       }
     ]);
-    if (answers1.newDir) {
-      this.destinationRoot(`${answers1.projectName}`);
+    if (answersProject.newDir) {
+      this.destinationRoot(`${answersProject.projectName}`);
     }
-    if (answers3.html5repo === true) {
-      answers2.srvPath = "";
-      answers2.multiTenant = false;
-      answers2.haa = false;
+    if (answersAdditional.html5repo === true) {
+      answersFurther.srvPath = "";
+      answersFurther.multiTenant = false;
+      answersFurther.haa = false;
     } else {
-      answers2.srvPath = "/";
-      answers3.managedAppRouter = false;
+      answersFurther.srvPath = "/";
+      answersAdditional.managedAppRouter = false;
     }
-    if (answers3.managedAppRouter === true) {
-      answers2.externalSessionManagement = false;
+    if (answersAdditional.managedAppRouter === true) {
+      answersFurther.externalSessionManagement = false;
     }
-    if (answers1.hana === false) {
-      answers2.hanaNative = false;
-    } 
-    if (typeof answers2.multiTenant === 'undefined' || answers2.multiTenant === false) {
-      answers2.routes = false;
+    if (answersHANA.hana === false) {
+      answersFurther.hanaNative = false;
     }
-    if (answers3.authentication === false) {
-      answers3.authorization = false;
+    if (typeof answersMTX.multiTenant === 'undefined' || answersMTX.multiTenant === false) {
+      answersMTX.routes = false;
     }
-    if (answers1.api === true) {
-      answers2.apiS4HCSO = answers1.apiLoB.includes("SAP S/4HANA Cloud Sales Order (A2X)");
-      answers2.apiS4HCBP = answers1.apiLoB.includes("SAP S/4HANA Cloud Business Partner (A2X)");
-      answers2.apiSFSFRC = answers1.apiLoB.includes("SAP SuccessFactors Recruiting");
-      answers2.apiSFSFEC = answers1.apiLoB.includes("SAP SuccessFactors Employee Central");
-      answers2.apiARIBPO = answers1.apiLoB.includes("SAP Ariba Network Purchase Orders Buyer");
-      answers2.apiARIBWS = answers1.apiLoB.includes("SAP Ariba Web Services");
-      answers2.apiFGCN = answers1.apiLoB.includes("SAP Fieldglass Connectors");
-      answers2.apiFGAP = answers1.apiLoB.includes("SAP Fieldglass Approvals");
-      answers2.apiCONC = answers1.apiLoB.includes("SAP Concur");
-      answers2.apiGRAPH = answers1.apiLoB.includes("SAP Graph");
-      answers2.apiAICORE = answers1.apiLoB.includes("SAP AI Core");
-      answers2.apiSACTenant = answers1.apiLoB.includes("SAP Analytics Cloud Tenant API");
-      answers2.apiHERE = answers1.apiLoB.includes("HERE Location Services");
-      answers2.apiNeoWs = answers1.apiLoB.includes("NASA Near Earth Object Web Service");
-      answers2.apiNW = answers1.apiLoB.includes("Northwind");
-      answers2.apiCustom = answers1.apiLoB.includes("Custom OData");
+    if (answersAdditional.authentication === false) {
+      answersAdditional.authorization = false;
+    }
+    if (answersAPI.api === true) {
+      answersFurther.apiS4HCSO = answersAPI.apiLoB.includes("SAP S/4HANA Cloud Sales Order (A2X)");
+      answersFurther.apiS4HCBP = answersAPI.apiLoB.includes("SAP S/4HANA Cloud Business Partner (A2X)");
+      answersFurther.apiSFSFRC = answersAPI.apiLoB.includes("SAP SuccessFactors Recruiting");
+      answersFurther.apiSFSFEC = answersAPI.apiLoB.includes("SAP SuccessFactors Employee Central");
+      answersFurther.apiARIBPO = answersAPI.apiLoB.includes("SAP Ariba Network Purchase Orders Buyer");
+      answersFurther.apiARIBWS = answersAPI.apiLoB.includes("SAP Ariba Web Services");
+      answersFurther.apiFGCN = answersAPI.apiLoB.includes("SAP Fieldglass Connectors");
+      answersFurther.apiFGAP = answersAPI.apiLoB.includes("SAP Fieldglass Approvals");
+      answersFurther.apiCONC = answersAPI.apiLoB.includes("SAP Concur");
+      answersFurther.apiGRAPH = answersAPI.apiLoB.includes("SAP Graph");
+      answersFurther.apiAICORE = answersAPI.apiLoB.includes("SAP AI Core");
+      answersFurther.apiSACTenant = answersAPI.apiLoB.includes("SAP Analytics Cloud Tenant API");
+      answersFurther.apiHERE = answersAPI.apiLoB.includes("HERE Location Services");
+      answersFurther.apiNeoWs = answersAPI.apiLoB.includes("NASA Near Earth Object Web Service");
+      answersFurther.apiNW = answersAPI.apiLoB.includes("Northwind");
+      answersFurther.apiCustom = answersAPI.apiLoB.includes("Custom OData");
     } else {
-      answers2.apiS4HCSO = false;
-      answers2.apiS4HCBP = false;
-      answers2.apiSFSFRC = false;
-      answers2.apiSFSFEC = false;
-      answers2.apiARIBPO = false;
-      answers2.apiARIBWS = false;
-      answers2.apiFGCN = false;
-      answers2.apiFGAP = false;
-      answers2.apiCONC = false;
-      answers2.apiGRAPH = false;
-      answers2.apiAICORE = false;
-      answers2.apiSACTenant = false;
-      answers2.apiHERE = false;
-      answers2.apiNeoWs = false;
-      answers2.apiNW = false;
-      answers2.apiCustom = false;
+      answersFurther.apiS4HCSO = false;
+      answersFurther.apiS4HCBP = false;
+      answersFurther.apiSFSFRC = false;
+      answersFurther.apiSFSFEC = false;
+      answersFurther.apiARIBPO = false;
+      answersFurther.apiARIBWS = false;
+      answersFurther.apiFGCN = false;
+      answersFurther.apiFGAP = false;
+      answersFurther.apiCONC = false;
+      answersFurther.apiGRAPH = false;
+      answersFurther.apiAICORE = false;
+      answersFurther.apiSACTenant = false;
+      answersFurther.apiHERE = false;
+      answersFurther.apiNeoWs = false;
+      answersFurther.apiNW = false;
+      answersFurther.apiCustom = false;
     }
-    answers2.destinationPath = this.destinationPath();
+    answersFurther.destinationPath = this.destinationPath();
     this.config.set(answers);
-    this.config.set(answers1);
-    this.config.set(answers3);
-    this.config.set(answers2);
+    this.config.set(answersProject);
+    this.config.set(answersRuntime);
+    this.config.set(answersHANA);
+    this.config.set(answersAPI);
+    this.config.set(answersCustomODataAPI);
+    this.config.set(answersAdditional);
+    this.config.set(answersDomain);
+    this.config.set(answersMTX);
+    this.config.set(answersFurther);
   }
 
   async writing() {
