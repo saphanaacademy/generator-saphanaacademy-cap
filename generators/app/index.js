@@ -170,10 +170,10 @@ module.exports = class extends Generator {
         name: "projectName",
         message: "What project name would you like?",
         validate: (s) => {
-          if (/^[a-zA-Z0-9_-]*$/g.test(s)) {
+          if (/^[a-zA-Z][a-zA-Z0-9]*$/g.test(s)) {
             return true;
           }
-          return "Please only use alphanumeric characters for the project name.";
+          return "Please start with a letter and only use alphanumeric characters for the project name.";
         },
         default: answers.projectName
       },
@@ -645,7 +645,7 @@ module.exports = class extends Generator {
         default: answers.customClientSecret
       }
     ]);
-    if (answersAPI.apiLoB.includes("Custom OData")) {
+    if (answersAPI.api === true && answersAPI.apiLoB.includes("Custom OData")) {
       try {
         let custom = await customUtils.customGet(this, answersAPI);
         answersAPI.customEDMX = custom.EDMX;
@@ -657,7 +657,7 @@ module.exports = class extends Generator {
     }
     const answersCustomODataAPI = await this.prompt([
       {
-        when: answersAPI.apiLoB.includes("Custom OData"),
+        when: answersAPI.api === true && answersAPI.apiLoB.includes("Custom OData"),
         type: "checkbox",
         name: "customEntities",
         message: "Which Custom OData API entities would you like from the namespace " + answersAPI.customNamespace + "?",
