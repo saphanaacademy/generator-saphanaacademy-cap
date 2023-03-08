@@ -1036,6 +1036,9 @@ module.exports = class extends Generator {
       answersFurther.apiNW = false;
       answersFurther.apiCustom = false;
     }
+    if (answers.app2app === false) {
+      answers.app2appType = "";
+    }
     answersFurther.destinationPath = this.destinationPath();
     this.config.set(answers);
     this.config.set(answersProject);
