@@ -320,7 +320,7 @@ GET http://localhost:4004/catalog/common()
 Authorization: Basic joe:
 ###
 <% } -%>
-<% if(authentication){ -%>
+<% if(authentication && (hana || api || app2appType === "access")){ -%>
 GET http://localhost:4004/catalog/userInfo()
 Authorization: Basic joe:
 ###
@@ -603,7 +603,7 @@ GET http://localhost:4004/v2/catalog/common()
 Authorization: Basic joe:
 ###
 <% } -%>
-<% if(authentication){ -%>
+<% if(authentication && (hana || api || app2appType === "access")){ -%>
 GET http://localhost:4004/v2/catalog/userInfo()
 Authorization: Basic joe:
 ###

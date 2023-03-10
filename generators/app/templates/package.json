@@ -8,7 +8,7 @@
     "node": "^16"
   },
   "dependencies": {
-    "@sap/cds": "^6.1",
+    "@sap/cds": "^6.6",
 <% if(graphql){ -%>
     "@sap/cds-graphql": "^1",
 <% } -%>

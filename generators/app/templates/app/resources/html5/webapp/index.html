@@ -219,7 +219,7 @@
 <% if(multiTenant && common){ -%>
     <a href="<%= srvPath %>catalog/common()">Common</a><br />
 <% } -%>
-<% if(authentication){ -%>
+<% if(authentication && (hana || api || app2appType === "access")){ -%>
     <a href="<%= srvPath %>catalog/userInfo()">User Info</a><br />
 <% } -%>
 <% if(app2appType === "access"){ -%>
@@ -332,7 +332,7 @@
 <% if(multiTenant && common){ -%>
     <a href="<%= srvPath %>v2/catalog/common()">Common</a><br />
 <% } -%>
-<% if(authentication){ -%>
+<% if(authentication && (hana || api || app2appType === "access")){ -%>
     <a href="<%= srvPath %>v2/catalog/userInfo()">User Info</a><br />
 <% } -%>
 <% if(app2appType === "access"){ -%>
