@@ -7,6 +7,8 @@ default-*.json
 coverage/
 gen/
 dist/
+secret-*.yaml
+*-cicd.*
 *-content.zip
 manifest-bundle.zip
 connection.properties

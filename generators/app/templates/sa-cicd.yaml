@@ -3,6 +3,14 @@ kind: ServiceAccount
 metadata:
   name: <%= projectName %>-cicd
 ---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: <%= projectName %>-cicd
+  annotations:
+    kubernetes.io/service-account.name: <%= projectName %>-cicd
+type: kubernetes.io/service-account-token
+---
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -15,6 +23,7 @@ rules:
       - apps
       - gateway.kyma-project.io
       - servicecatalog.k8s.io
+      - services.cloud.sap.com
     resources:
       - deployments
       - replicasets
@@ -41,6 +50,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: <%= projectName %>-cicd
+    namespace: <%= namespace %>
 roleRef:
   kind: Role
   name: <%= projectName %>-cicd

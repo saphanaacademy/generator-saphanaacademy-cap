@@ -2,40 +2,43 @@
 general:
 <% if(BTPRuntime === 'Kyma'){ -%>
   buildTool: "docker"
-  dockerConfigJsonSecretTextCredentialsId: "docker"
   containerImageName: "<%= dockerID %>/<%= projectName %>-srv"
   containerImageTag: "latest"
   containerRegistryUrl: "https://index.docker.io"
+service:
+  automaticVersioning: false
+  dockerConfigJsonSecretTextCredentialsId: "docker"
+  Acceptance:
+    kubeConfigSecretTextCredentialsId: "kyma"
+    helmValuePath: "helm/<%= projectName %>-srv/values.yaml"
+  Release:
+    kubeConfigSecretTextCredentialsId: "kyma"
+    helmValuePath: "helm/<%= projectName %>-srv/values.yaml"
 steps:
   kanikoExecute:
     dockerfilePath: "srv/Dockerfile"
-  kubernetesDeploy:
-    kubeConfigSecretTextCredentialsId: "kyma"
+stages:
+  Build:
+    kanikoExecute: true
+  Acceptance:
+    kubernetesDeploy: false
+  Release:
+    kubernetesDeploy: true
     deployTool: "helm3"
     namespace: "<%= namespace %>"
     chartPath: "helm/<%= projectName %>-srv"
     deploymentName: "<%= projectName %>-srv"
     force: false
-    helmValues:
-    - "helm/<%= projectName %>-srv/values.yaml"
-  tmsUpload:
-    nodeName: "qa"
-    credentialsId: "tms-sk"
-stages:
-  Build:
-    kanikoExecute: true
-  Release:
-    kubernetesDeploy: true
-    tmsUpload: false
 <% } else { -%>
   buildTool: "mta"
+service:
+  buildToolVersion: "MBTJ11N16" #see SAP Continuous Integration and Delivery service for more build tool version options
 stages:
   Build:
     mavenExecuteStaticCodeChecks: false
     npmExecuteLint: true
   Additional Unit Tests:
     npmExecuteScripts: false
-    karmaExecuteTests: false
   Acceptance:
     cloudFoundryDeploy: false
     cfApiEndpoint: "<%= cfapi %>"
@@ -43,7 +46,10 @@ stages:
     cfSpace: "<%= cfspace %>"
     cfAppName: "<%= projectName %>"
     cfCredentialsId: "deploy-to-cf"
-    uiVeri5ExecuteTests: false
+    deployType: "standard"
+    npmExecuteEndToEndTests: false
+  Compliance:
+    sonarExecuteScan: false
   Release:
     cloudFoundryDeploy: true
     cfApiEndpoint: "<%= cfapi %>"
@@ -51,6 +57,7 @@ stages:
     cfSpace: "<%= cfspace %>"
     cfAppName: "<%= projectName %>"
     cfCredentialsId: "deploy-to-cf"
+    deployType: "standard"
     tmsUpload: false
 steps:
   artifactPrepareVersion:
