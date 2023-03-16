@@ -784,7 +784,7 @@ module.exports = class extends Generator {
           answers.clusterDomain = resGet.stdout.toString().replace(/'/g, '');
         }
       } catch (error) {
-        this.log("kubectl:", error);
+        this.log("kubectl error:", error);
       }
     } else {
       answers.clusterDomain = answersAdditional.customDomain;
@@ -1318,49 +1318,57 @@ module.exports = class extends Generator {
       }
       if (answers.get("externalSessionManagement") === true) {
         // generate secret
-        const k8s = require('@kubernetes/client-node');
-        const kc = new k8s.KubeConfig();
-        kc.loadFromDefault();
-        let k8sApi = kc.makeApiClient(k8s.CoreV1Api);
-        this.log('Creating the external session management secret...');
-        let pwdgen = require('generate-password');
-        let redisPassword = pwdgen.generate({
-          length: 64,
-          numbers: true
-        });
-        let sessionSecret = pwdgen.generate({
-          length: 64,
-          numbers: true
-        });
-        let k8sSecret = {
-          apiVersion: 'v1',
-          kind: 'Secret',
-          metadata: {
-            name: answers.get('projectName') + '-redis-binding-secret',
-            labels: {
-              'app.kubernetes.io/managed-by': answers.get('projectName') + '-app'
-            }
-          },
-          type: 'Opaque',
-          data: {
-            EXT_SESSION_MGT: Buffer.from('{"instanceName":"' + answers.get("projectName") + '-redis", "storageType":"redis", "sessionSecret": "' + sessionSecret + '"}', 'utf-8').toString('base64'),
-            REDIS_PASSWORD: Buffer.from('"' + redisPassword + '"', 'utf-8').toString('base64'),
-            ".metadata": Buffer.from('{"credentialProperties":[{"name":"hostname","format":"text"},{"name":"port","format":"text"},{"name":"password","format":"text"},{"name":"cluster_mode","format":"text"},{"name":"tls","format":"text"}],"metaDataProperties":[{"name":"instance_name","format":"text"},{"name":"type","format":"text"},{"name":"label","format":"text"}]}', 'utf-8').toString('base64'),
-            instance_name: Buffer.from(answers.get('projectName') + '-db-' + answers.get('schemaName'), 'utf-8').toString('base64'),
-            type: Buffer.from("redis", 'utf-8').toString('base64'),
-            name: Buffer.from(answers.get("projectName") + "-redis", 'utf-8').toString('base64'),
-            instance_name: Buffer.from(answers.get("projectName") + "-redis", 'utf-8').toString('base64'),
-            hostname: Buffer.from(answers.get("projectName") + "-redis", 'utf-8').toString('base64'),
-            port: Buffer.from("6379", 'utf-8').toString('base64'),
-            password: Buffer.from(redisPassword, 'utf-8').toString('base64'),
-            cluster_mode: Buffer.from("false", 'utf-8').toString('base64'),
-            tls: Buffer.from("false", 'utf-8').toString('base64')
+        try {
+          const k8s = require('@kubernetes/client-node');
+          const kc = new k8s.KubeConfig();
+          if (answers.get("kubeconfig") !== "") {
+            kc.loadFromFile(answers.get('kubeconfig'));
+          } else {
+            kc.loadFromDefault();
           }
-        };
-        await k8sApi.createNamespacedSecret(
-          answers.get('namespace'),
-          k8sSecret
-        ).catch(e => this.log("createNamespacedSecret:", e.response.body));
+          let k8sApi = kc.makeApiClient(k8s.CoreV1Api);
+          this.log('Creating the external session management secret...');
+          let pwdgen = require('generate-password');
+          let redisPassword = pwdgen.generate({
+            length: 64,
+            numbers: true
+          });
+          let sessionSecret = pwdgen.generate({
+            length: 64,
+            numbers: true
+          });
+          let k8sSecret = {
+            apiVersion: 'v1',
+            kind: 'Secret',
+            metadata: {
+              name: answers.get('projectName') + '-redis-binding-secret',
+              labels: {
+                'app.kubernetes.io/managed-by': answers.get('projectName') + '-app'
+              }
+            },
+            type: 'Opaque',
+            data: {
+              EXT_SESSION_MGT: Buffer.from('{"instanceName":"' + answers.get("projectName") + '-redis", "storageType":"redis", "sessionSecret": "' + sessionSecret + '"}', 'utf-8').toString('base64'),
+              REDIS_PASSWORD: Buffer.from('"' + redisPassword + '"', 'utf-8').toString('base64'),
+              ".metadata": Buffer.from('{"credentialProperties":[{"name":"hostname","format":"text"},{"name":"port","format":"text"},{"name":"password","format":"text"},{"name":"cluster_mode","format":"text"},{"name":"tls","format":"text"}],"metaDataProperties":[{"name":"instance_name","format":"text"},{"name":"type","format":"text"},{"name":"label","format":"text"}]}', 'utf-8').toString('base64'),
+              instance_name: Buffer.from(answers.get('projectName') + '-db-' + answers.get('schemaName'), 'utf-8').toString('base64'),
+              type: Buffer.from("redis", 'utf-8').toString('base64'),
+              name: Buffer.from(answers.get("projectName") + "-redis", 'utf-8').toString('base64'),
+              instance_name: Buffer.from(answers.get("projectName") + "-redis", 'utf-8').toString('base64'),
+              hostname: Buffer.from(answers.get("projectName") + "-redis", 'utf-8').toString('base64'),
+              port: Buffer.from("6379", 'utf-8').toString('base64'),
+              password: Buffer.from(redisPassword, 'utf-8').toString('base64'),
+              cluster_mode: Buffer.from("false", 'utf-8').toString('base64'),
+              tls: Buffer.from("false", 'utf-8').toString('base64')
+            }
+          };
+          await k8sApi.createNamespacedSecret(
+            answers.get('namespace'),
+            k8sSecret
+          ).catch(e => this.log("createNamespacedSecret:", e.response.body));
+        } catch (error) {
+          this.log("kubeconfig error:", error);
+        }
       }
       if (answers.get("cicd") === true) {
         // generate service account & kubeconfig
