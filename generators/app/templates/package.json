@@ -10,7 +10,7 @@
   "dependencies": {
     "@sap/cds": "^6.6",
 <% if(graphql){ -%>
-    "@sap/cds-graphql": "^1",
+    "@cap-js/graphql": "^0.3",
 <% } -%>
     "@sap/audit-logging": "^5",
 <% if(hana || schemaName !== '' || hanaTargetHDI !== ''){ -%>
@@ -232,12 +232,12 @@
     },
 <% } -%>
 <% if(graphql){ -%>
-    "plugins": [
-      {
-        "impl": "@sap/cds-graphql",
+    "protocols": {
+      "graphql": {
+        "impl": "@cap-js/graphql",
         "path": "/graphql"
       }
-    ],
+    },
 <% } -%>
     "requires": {
 <% if(authentication){ -%>

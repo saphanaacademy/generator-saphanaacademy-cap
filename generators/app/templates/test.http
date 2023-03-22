@@ -10,65 +10,45 @@ Authorization: Basic joe:
 <% } -%>
 ###
 <% if(graphql){ -%>
-GET http://localhost:4004/graphql?query={CatalogService {Sales {ID region country org amount comments}}}
+POST http://localhost:4004/graphql
 <% if(authentication){ -%>
 Authorization: Basic joe:
 <% } -%>
-###
-GET http://localhost:4004/graphql?query={CatalogService {Sales (top: 3 orderBy: {amount: desc} filter: {amount: {gt: 700}}) {country amount}}}
-<% if(authentication){ -%>
-Authorization: Basic joe:
-<% } -%>
+Content-Type: application/json
+
+{"query":"query {CatalogService {Sales {nodes {ID region country org amount comments}}}}","variables":{}}
 ###
 POST http://localhost:4004/graphql
 <% if(authentication){ -%>
 Authorization: Basic joe:
 <% } -%>
-Content-Type: application/graphql
+Content-Type: application/json
 
-mutation C1 {
-  CatalogService {
-    Sales {
-      create (input: {ID: 16 region: "Asia" country: "Thailand" org: "TH01" amount: 721}) {
-        ID
-        country
-        amount
-      }
-    }
-  }
-}
+{"query":"query ($top: Int!, $amount: Int!) {CatalogService {Sales (top: $top orderBy: {amount: desc} filter: {amount: {gt: $amount}}) {nodes {country amount}}}}","variables":{"top":3, "amount":700}}
 ###
 POST http://localhost:4004/graphql
 <% if(authentication){ -%>
 Authorization: Basic joe:
 <% } -%>
-Content-Type: application/graphql
+Content-Type: application/json
 
-mutation U1 {
-  CatalogService {
-    Sales {
-      update (filter: {ID: {eq: 16}} input: {amount: 897}) {
-        ID
-        country
-        amount
-      }
-    }
-  }
-}
+{"query":"mutation C1 ($id: Int!){CatalogService {Sales {create (input: {ID: $id region: \"Asia\" country: \"Thailand\" org: \"TH01\" amount: 721}) {ID country amount}}}}","variables":{"id":16}}
 ###
 POST http://localhost:4004/graphql
 <% if(authentication){ -%>
 Authorization: Basic joe:
 <% } -%>
-Content-Type: application/graphql
+Content-Type: application/json
 
-mutation D1 {
-  CatalogService {
-    Sales {
-      delete (filter: {ID: {eq: 16}})
-    }
-  }
-}
+{"query":"mutation U1 ($id: Int!, $amount: Int!) {CatalogService {Sales {update (filter: {ID: {eq: $id}} input: {amount: $amount}) {ID country amount}}}}","variables":{"id":16, "amount":897}}
+###
+POST http://localhost:4004/graphql
+<% if(authentication){ -%>
+Authorization: Basic joe:
+<% } -%>
+Content-Type: application/json
+
+{"query":"mutation D1 ($id: Int!) {CatalogService {Sales {delete (filter: {ID: {eq: $id}})}}}","variables":{"id":16}}
 ###
 <% } -%>
 <% if(swagger){ -%>
