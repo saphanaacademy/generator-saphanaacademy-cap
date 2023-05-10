@@ -103,6 +103,11 @@
             "phone": true
         }
     },
+<% if(html5repo){ -%>
+    "sap.platform.cf": {
+        "ui5VersionNumber": "1.110.1"
+    },
+<% } -%>
     "sap.ui5": {
         "resources": {
             "js": [],
