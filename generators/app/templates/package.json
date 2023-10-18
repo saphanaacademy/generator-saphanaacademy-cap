@@ -5,14 +5,14 @@
   "license": "UNLICENSED",
   "description": "<%= description %>",
   "engines": {
-    "node": "^16"
+    "node": "^18"
   },
   "dependencies": {
     "@sap/cds": "^6.8",
 <% if(graphql){ -%>
     "@cap-js/graphql": "^0.3",
 <% } -%>
-    "@sap/audit-logging": "^5",
+    "@sap/audit-logging": "5.7.1",
 <% if(hana || schemaName !== '' || hanaTargetHDI !== ''){ -%>
     "hdb": "^0.19",
 <% } -%>
@@ -23,7 +23,7 @@
     "@kubernetes/client-node": "latest",
 <% } %>
 <% if((routes && BTPRuntime === 'CF') || api || app2appType === "access"){ -%>
-    "@sap-cloud-sdk/http-client": "^2.5",
+    "@sap-cloud-sdk/http-client": "latest",
 <% } -%>
 <% if(em){ -%>
     "@sap/xb-msg-amqp-v100": "^0.9.51",
