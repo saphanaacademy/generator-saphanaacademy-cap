@@ -37,6 +37,7 @@ async function hanaTargetHDI2Schema(thisf, answers) {
         }
         hdiBinding = resHDI.stdout.toString('utf8');
         hdiBinding = JSON.parse(hdiBinding.substring(hdiBinding.indexOf('{')));
+        if(!hdiBinding.schema && hdiBinding.credentials) hdiBinding = hdiBinding.credentials;
         answers.set('schemaName', hdiBinding.schema);
         answers.set('hanaEndpoint', hdiBinding.host + ':' + hdiBinding.port);
         answers.set('hanaUser', hdiBinding.user);
